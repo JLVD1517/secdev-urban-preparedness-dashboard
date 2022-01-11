@@ -498,4 +498,4 @@ Finally, on line 350 of app-config.ts there is a `sidebarText` variable. If desi
 * If changes have been made to different parts of the program, it may be helpful to stop all uppd images and run `docker system prune` to clean them up before rebuilding
 * If a production deploy is desired, be sure to
     * Search all directories for `localhost` and change as appropriate
-    * Ensure that all database credentials have been changed appropriately
+    * Ensure that all database credentials have been changed appropriately.
