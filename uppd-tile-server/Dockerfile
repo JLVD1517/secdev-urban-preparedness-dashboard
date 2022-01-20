@@ -6,7 +6,8 @@ WORKDIR /src/
 
 COPY requirements.txt /src/
 COPY /html/index.html /src/html/
-
+RUN apt-get update
+RUN apt-get -y install gcc
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py /src/

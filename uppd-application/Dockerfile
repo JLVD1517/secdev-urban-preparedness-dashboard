@@ -1,4 +1,4 @@
-FROM node:current-alpine as build
+FROM node:16-alpine as build
 
 LABEL maintainer="Mason Banning <Mason@rs21.io>"
 

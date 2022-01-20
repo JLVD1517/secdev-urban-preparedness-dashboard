@@ -19,7 +19,7 @@ from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 from string import Template
 from tenacity import retry, stop_after_attempt, wait_fixed
-
+import uvicorn
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CACHE_DIR = os.path.join(BASE_DIR, "cache")
 pool = None
@@ -50,7 +50,7 @@ async def db_connection_pool():
         user=os.getenv("DB_USER", "postgres"),
         password=os.getenv("DB_PASSWORD", "changeMe"),
         database=os.getenv("DATABASE", "uppd_data"),
-        host=os.getenv("DB_HOST", "localhost"),
+        host="localhost", #os.getenv("localhost"),
         port=5432,
     )
 
@@ -148,7 +148,7 @@ async def insert_geometry(path):
     user = os.getenv("DB_USER", "postgres")
     password = (os.getenv("DB_PASSWORD", "changeMe"),)
     database = (os.getenv("DATABASE", "uppd_data"),)
-    host = os.getenv("DB_HOST", "localhost")
+    host = "0.0.0.0", #os.getenv("DB_HOST", "localhost")
     port = 5432
     cmd = f'ogr2ogr \
             -f "PostgreSQL" PG:"host={host} port={port} dbname={database} user={user} password={password}" \
@@ -232,6 +232,8 @@ async def fields(request):
 async def data_years(request):
     """Get the years of data available"""
     query = "SELECT DISTINCT data_year FROM view_data WHERE data_year IS NOT NULL ORDER BY data_year;"
+    
+    print("arr",[i for i in [1,2,3,4,5]])
     async with pool.acquire() as conn:
         rows = await conn.fetch(query)
         return JSONResponse({"years": [row[0] for row in rows], "error": None})
@@ -257,6 +259,8 @@ async def get_column(request):
 
 async def on_startup():
     """Operations to perform when application starts up"""
+    variable = 'haha'
+    print("server is started by sanjay",variable)
     await db_connection_pool()
 
 
@@ -291,7 +295,136 @@ year_query_template = Template(
     ) AS tile;
     """
 )
+# commune_query_template = Template(
+#     """
+#     SELECT ST_AsMVT(tile, 'tile')
+#     FROM (
+#         SELECT gid,
+#             ST_AsMVTGeom(ST_Transform(ST_SetSRID(geom,4326), 3857),
+#             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
+#                 4096, 0, false) AS g
+#         FROM haiti_commune
+#         WHERE (geom &&
+#             ST_Transform(ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857), 4326))
+#     ) AS tile;
+#     """
+    
+# )
 
+
+
+# subcommune_query_template = Template(
+#     """
+#     SELECT ST_AsMVT(tile, 'tile')
+#     FROM (
+#         SELECT gid,
+#             ST_AsMVTGeom(ST_Transform(ST_SetSRID(geom,4326), 3857),
+#             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
+#                 4096, 0, false) AS g
+#         FROM haiti_subcommune
+#         WHERE (geom &&
+#             ST_Transform(ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857), 4326))
+#     ) AS tile;
+#     """
+    
+# )
+
+subcommune_query_template = Template(
+    """
+    SELECT tile
+    FROM (
+        SELECT ${fields},
+            ST_AsMVTGeom(ST_Transform(ST_SetSRID(geom,4326), 3857),
+            ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
+                4096, 0, false) AS g
+        FROM gang AS g, group_activities AS ga, sub_commune AS sb, haiti_subcommune AS hsb
+                WHERE g.group_id = ga.group_id AND ga.sub_commune_id = sb.sub_commune_id AND hsb.gid = sb.sub_commune_id
+        WHERE (geom &&
+            ST_Transform(ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857), 4326))
+    ) AS tile;
+    """
+    
+)
+commune_query_template = Template(
+    """
+    SELECT tile
+    FROM (
+        SELECT ${fields},
+            ST_AsMVTGeom(ST_Transform(ST_SetSRID(geom,4326), 3857),
+            ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
+                4096, 0, false) AS g
+        FROM    events AS e , event_info AS ei , commune AS c, haiti_commune AS hc
+                WHERE e.event_id = ei.event_id AND ei.commune_id = c.commune_id AND c.commune_id = hc.gid ;)
+        WHERE (geom &&
+            ST_Transform(ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857), 4326))
+    ) AS tile;
+    """
+    
+)
+
+async def get_commune(request):
+    """Parse request parameters and get tile"""
+    fields = request.query_params.get("fields", "gid")
+    fields = ",".join([f'"{field}"' for field in fields.split(",")])
+    x = request.path_params["x"]
+    y = request.path_params["y"]
+    z = request.path_params["z"]
+    return await get_commune_tile(x, y, z, fields)
+
+async def get_commune_tile(x, y, z, fields="gid"):
+    """Retrieve the year tile from the database or cache"""
+    tilepath = f"{CACHE_DIR}/{z}/{x}/{y}.pbf"
+    if not os.path.exists(tilepath):
+        xmin, xmax, ymin, ymax = tile_extent(x, y, z)
+        query = commune_query_template.substitute(
+            xmin=xmin,
+            xmax=xmax,
+            ymin=ymin,
+            ymax=ymax,
+            fields=fields,
+        )
+        async with pool.acquire() as conn:
+            tile = await conn.fetchval(query)
+        if not os.path.exists(os.path.dirname(tilepath)):
+            os.makedirs(os.path.dirname(tilepath))
+        async with aiofiles.open(tilepath, mode="wb") as f:
+            await f.write(tile)
+        response = Response(tile, media_type="application/x-protobuf")
+    else:
+        response = FileResponse(tilepath, media_type="application/x-protobuf")
+    return response
+
+async def get_subcommune(request):
+    """Parse request parameters and get tile"""
+    fields = request.query_params.get("fields", "gid")
+    fields = ",".join([f'"{field}"' for field in fields.split(",")])
+    x = request.path_params["x"]
+    y = request.path_params["y"]
+    z = request.path_params["z"]
+    return await get_subcommune_tile(x, y, z, fields)
+
+async def get_subcommune_tile(x, y, z, fields="gid"):
+    """Retrieve the year tile from the database or cache"""
+    tilepath = f"{CACHE_DIR}/{z}/{x}/{y}.pbf"
+    if not os.path.exists(tilepath):
+        xmin, xmax, ymin, ymax = tile_extent(x, y, z)
+        query = subcommune_query_template.substitute(
+            xmin=xmin,
+            xmax=xmax,
+            ymin=ymin,
+            ymax=ymax,
+            fields=fields,
+        )
+        async with pool.acquire() as conn:
+            tile = await conn.fetchval(query)
+        if not os.path.exists(os.path.dirname(tilepath)):
+            os.makedirs(os.path.dirname(tilepath))
+        async with aiofiles.open(tilepath, mode="wb") as f:
+            await f.write(tile)
+        response = Response(tile, media_type="application/x-protobuf")
+    else:
+        response = FileResponse(tilepath, media_type="application/x-protobuf")
+    return response
 
 async def index(request):
     """Serve test index.html to help with debugging"""
@@ -303,6 +436,8 @@ async def index(request):
         html = await f.read()
     return HTMLResponse(html)
 
+async def name(request):
+    return JSONResponse("sanjay")
 
 routes = [
     Route("/", index),
@@ -312,8 +447,14 @@ routes = [
     Route("/upload", upload, methods=["POST"]),
     Route("/data-years", data_years),
     Route("/{column:str}/{year:int}", get_column),
+    Route("/name",name),
+    Route("/get-commune/{z:int}/{x:int}/{y:int}",get_commune),
+    Route("/get-subcommune/{z:int}/{x:int}/{y:int}",get_subcommune)
 ]
 middleware = [
     Middleware(CORSMiddleware, allow_origins=["*"])
     ]
 app = Starlette(routes=routes, middleware=middleware, on_startup=[on_startup])
+
+if __name__ == "__main__":
+    uvicorn.run(app, host='localhost', port=8000)

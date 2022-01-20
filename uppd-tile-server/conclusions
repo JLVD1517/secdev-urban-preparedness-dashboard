@@ -1,0 +1,9 @@
+
+steps:
+1. api get called 
+2. layers or asests ?
+3.  a file is serached from cache if not abvailbe then 
+write a file with binary tile data
+else 
+b. send file from cache
+ 
