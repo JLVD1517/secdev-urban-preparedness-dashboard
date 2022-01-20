@@ -331,31 +331,30 @@ year_query_template = Template(
 
 subcommune_query_template = Template(
     """
-    SELECT tile
+    SELECT ST_AsMVT(tile, 'tile')
     FROM (
-        SELECT ${fields},
-            ST_AsMVTGeom(ST_Transform(ST_SetSRID(geom,4326), 3857),
+        SELECT sum(g.group_id),
+            ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
-                4096, 0, false) AS g
+                4096, 0, false) AS gs
         FROM gang AS g, group_activities AS ga, sub_commune AS sb, haiti_subcommune AS hsb
-                WHERE g.group_id = ga.group_id AND ga.sub_commune_id = sb.sub_commune_id AND hsb.gid = sb.sub_commune_id
-        WHERE (geom &&
+        WHERE g.group_id = ga.group_id AND ga.sub_commune_id = sb.sub_commune_id AND hsb.gid = sb.sub_commune_id AND (geom &&
             ST_Transform(ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857), 4326))
+        GROUP BY hsb.geom  
     ) AS tile;
     """
     
 )
 commune_query_template = Template(
     """
-    SELECT tile
+    SELECT ST_AsMVT(tile, 'tile')
     FROM (
         SELECT ${fields},
-            ST_AsMVTGeom(ST_Transform(ST_SetSRID(geom,4326), 3857),
+            ST_AsMVTGeom(ST_Transform(ST_SetSRID(hc.geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
-                4096, 0, false) AS g
+                4096, 0, false) AS gs
         FROM    events AS e , event_info AS ei , commune AS c, haiti_commune AS hc
-                WHERE e.event_id = ei.event_id AND ei.commune_id = c.commune_id AND c.commune_id = hc.gid ;)
-        WHERE (geom &&
+        WHERE e.event_id = ei.event_id AND ei.commune_id = c.commune_id AND c.commune_id = hc.gid AND (geom &&
             ST_Transform(ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857), 4326))
     ) AS tile;
     """
@@ -417,6 +416,7 @@ async def get_subcommune_tile(x, y, z, fields="gid"):
         )
         async with pool.acquire() as conn:
             tile = await conn.fetchval(query)
+            print("tile:",tile)
         if not os.path.exists(os.path.dirname(tilepath)):
             os.makedirs(os.path.dirname(tilepath))
         async with aiofiles.open(tilepath, mode="wb") as f:
@@ -436,9 +436,6 @@ async def index(request):
         html = await f.read()
     return HTMLResponse(html)
 
-async def name(request):
-    return JSONResponse("sanjay")
-
 routes = [
     Route("/", index),
     Route("/layers/assets/{table:str}/{z:int}/{x:int}/{y:int}", tile),
@@ -447,7 +444,6 @@ routes = [
     Route("/upload", upload, methods=["POST"]),
     Route("/data-years", data_years),
     Route("/{column:str}/{year:int}", get_column),
-    Route("/name",name),
     Route("/get-commune/{z:int}/{x:int}/{y:int}",get_commune),
     Route("/get-subcommune/{z:int}/{x:int}/{y:int}",get_subcommune)
 ]
