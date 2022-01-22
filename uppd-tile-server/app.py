@@ -341,7 +341,7 @@ subcommune_query_template = Template(
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
                 4096, 0, false) AS g
         FROM groups AS gs inner join group_records AS ga ON gs.group_id = ga.group_id  inner join  sub_commune AS sb on ga.sub_commune_id = sb.sub_commune_id inner join haiti_subcommune AS hsb on  hsb.gid = sb.sub_commune_id 
-            where ga.month_number = 51
+            where ga.month_number = ${month_number}
             GROUP BY hsb.geom ,hsb.adm3_en,hsb.gid
     ) AS tile;
     """
