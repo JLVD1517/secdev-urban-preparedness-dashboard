@@ -1,0 +1,41 @@
+SELECT ST_AsMVT(tile, 'tile')
+	    FROM (
+ 	        SELECT sum(g.group_id),
+	            ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
+	            ST_MakeEnvelope(-19822261.671138145, 19626582.87872809, -19802693.791897137, 19646150.757969096, 3857),
+	                4096, 0, false) AS gs
+	        FROM groups AS g, group_records AS ga, sub_commune AS sb, haiti_subcommune AS hsb
+	        WHERE g.group_id = ga.group_id AND ga.sub_commune_id = sb.sub_commune_id AND hsb.gid = sb.sub_commune_id AND (geom &&
+            ST_Transform(ST_MakeEnvelope(-19822261.671138145, 19626582.87872809, -19802693.791897137, 19646150.757969096, 3857), 4326))
+	        GROUP BY hsb.geom  
+	    ) AS tile;
+
+here ::::::use this
+        SELECT ST_AsMVT(tile,'tile')
+	    FROM (
+ 	        SELECT count(gs.group_id) AS no_of_groups,
+            hsb.gid,
+            hsb.adm3_en,
+            ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857) ,
+	            ST_MakeEnvelope(-19822261.671138145, 19626582.87872809, -19802693.791897137, 19646150.757969096, 3857),
+	                4096, 0, false) AS g
+	        FROM groups AS gs inner join group_records AS ga ON gs.group_id = ga.group_id  inner join  sub_commune AS sb on ga.sub_commune_id = sb.sub_commune_id inner join haiti_subcommune AS hsb on  hsb.gid = sb.sub_commune_id 
+            where ga.month_number = 51
+            GROUP BY hsb.geom ,hsb.adm3_en,hsb.gid
+	        ) AS tile    ;
+	
+
+(geom && ST_Transform(ST_MakeEnvelope(-19822261.671138145, 19626582.87872809, -19802693.791897137, 19646150.757969096, 4326), 3857));
+
+
+
+        working:
+        SELECT count(g.group_id) as no_of_groups,
+        hsb.adm3_en
+	        FROM groups AS g inner join group_records AS ga ON g.group_id = ga.group_id  inner join  sub_commune AS sb on ga.sub_commune_id = sb.sub_commune_id inner join haiti_subcommune AS hsb on  hsb.gid = sb.sub_commune_id 
+            group by hsb.geom,hsb.gid 
+
+
+            ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857) ,
+	            ST_MakeEnvelope(-19822261.671138145, 19626582.87872809, -19802693.791897137, 19646150.757969096, 3857),
+	                4096, 0, false) AS gs
