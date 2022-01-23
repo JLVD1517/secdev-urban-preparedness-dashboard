@@ -426,7 +426,7 @@ query_template2 = Template(
 )
 query_template3 = Template(
     """
-        insert into sub_commune_group_count_map values(${sub_commune_id},${group_count}) on conflict do  nothing
+        insert into sub_commune_group_count_map values(${sub_commune_id},${group_count}) on conflict(sub_commune_id) do  update set group_count = ${group_count}
     """   
 )
 
