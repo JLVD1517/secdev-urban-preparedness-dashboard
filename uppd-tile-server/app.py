@@ -330,23 +330,6 @@ year_query_template = Template(
 # )
 
 
-subcommune_query_template = Template(
-    """
-    SELECT ST_AsMVT(tile, 'tile')
-    FROM (
-        SELECT count(gs.group_id) AS no_of_groups,
-            hsb.gid,
-            hsb.adm3_en,
-            ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
-            ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
-                4096, 0, false) AS g
-        FROM groups AS gs inner join group_records AS ga ON gs.group_id = ga.group_id  inner join  sub_commune AS sb on ga.sub_commune_id = sb.sub_commune_id inner join haiti_subcommune AS hsb on  hsb.gid = sb.sub_commune_id 
-            where ga.month_number = ${month_number}
-            GROUP BY hsb.geom ,hsb.adm3_en,hsb.gid
-    ) AS tile;
-    """
-    
-)
 
 
 commune_query_template = Template(
@@ -397,6 +380,95 @@ async def get_commune_tile(x, y, z, fields="gid"):
         response = FileResponse(tilepath, media_type="application/x-protobuf")
     return response
 
+
+
+
+
+
+subcommune_query_template = Template(
+    """
+    SELECT ST_AsMVT(tile, 'tile')
+    FROM (
+        SELECT count(gs.group_id) AS no_of_groups,
+            hsb.gid,
+            hsb.adm3_en,
+            ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
+            ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
+                4096, 0, false) AS g
+        FROM groups AS gs inner join group_records AS ga ON gs.group_id = ga.group_id  inner join  sub_commune AS sb on ga.sub_commune_id = sb.sub_commune_id inner join haiti_subcommune AS hsb on  hsb.gid = sb.sub_commune_id 
+            where ga.month_number = ${month_number}
+            GROUP BY hsb.geom ,hsb.adm3_en,hsb.gid
+    ) AS tile;
+    """
+    
+)
+subcommune_query_template1 = Template(
+    """
+    SELECT ST_AsMVT(tile, 'tile')
+    FROM (
+        SELECT scgc.group_count AS no_of_groups,
+            hsb.gid,
+            hsb.adm3_en,
+            ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
+            ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
+                4096, 0, false) AS g
+        FROM sub_commune_group_count_map as scgc inner join haiti_subcommune AS hsb on  scgc.sub_commune_id = hsb.gid 
+    ) AS tile;
+    """
+    
+)
+
+query_template2 = Template(
+    """
+        SELECT * 
+        FROM group_records where month_number = ${month_number} 
+    """
+)
+query_template3 = Template(
+    """
+        insert into sub_commune_group_count_map values(${sub_commune_id},${group_count}) on conflict do  nothing
+    """   
+)
+
+
+#async def get_temp_res(request):
+async def get_temp_res(month_number):
+    print("innn")
+    #print(request)
+    month_number = month_number # request.query_params.get('month_number',51)
+    month_query = query_template2.substitute(
+        month_number=month_number
+    )
+    print(month_query) 
+    dict_new = dict()
+    dict_group_count = dict()
+    async with pool.acquire() as conn:
+        #print("conn",conn)
+        tile12 = await conn.fetch(month_query)
+        all_sub_commune = [i for i in range(1,35)]
+        print(all_sub_commune)
+        for i in all_sub_commune:
+            l = []
+            for r in iter(tile12):
+                print(r['group_id'])
+                arr = r['sub_commune_influence'].split('[')[1].split(']')[0]
+                sc_list = list(map(int, arr.split(",")))
+                if sc_list.count(i) > 0:
+                    l.append(r['group_id'])
+            dict_new[i] = l
+            dict_group_count[i] = len(dict_new[i])
+        print(dict_group_count)
+    for s in all_sub_commune:
+        query2 = query_template3.substitute(
+            sub_commune_id=s,
+            group_count=dict_group_count[s]
+        ) 
+        async with pool.acquire() as conn:
+            await conn.execute(query2)   
+
+    return Response("sanjay")       
+
+
 async def get_subcommune(request):
     """Parse request parameters and get tile"""
     fields = request.query_params.get("fields", "gid")
@@ -406,22 +478,24 @@ async def get_subcommune(request):
     y = request.path_params["y"]
     z = request.path_params["z"]
     month_number = request.path_params['month_number']
+    temp_res = await get_temp_res(month_number)
+    print("rawadata:",temp_res)
     return await get_subcommune_tile(x, y, z, fields,month_number)
 
 async def get_subcommune_tile(x, y, z, fields="gid",month_number=51):
     """Retrieve the year tile from the database or cache"""
-    tilepath = f"{CACHE_DIR}/{z}/{x}/{y}.pbf"
-    if not os.path.exists(tilepath):
+    tilepath = f"{CACHE_DIR}/{month_number}/{z}/{x}/{y}.pbf"
+    if  not os.path.exists(tilepath):
         xmin, xmax, ymin, ymax = tile_extent(x, y, z)
-        query = subcommune_query_template.substitute(
+        query = subcommune_query_template1.substitute(
             xmin=xmin,
             xmax=xmax,
             ymin=ymin,
             ymax=ymax,
-            fields=fields,
             month_number=month_number,
         )
         async with pool.acquire() as conn:
+            
             tile = await conn.fetchval(query)
             print("tile:",tile)
         if not os.path.exists(os.path.dirname(tilepath)):
@@ -452,7 +526,8 @@ routes = [
     Route("/data-years", data_years),
     Route("/{column:str}/{year:int}", get_column),
     Route("/get-commune/{z:int}/{x:int}/{y:int}",get_commune),
-    Route("/get-subcommune/{month_number:int}/{z:int}/{x:int}/{y:int}",get_subcommune)
+    Route("/get-subcommune/{month_number:int}/{z:int}/{x:int}/{y:int}",get_subcommune),
+    Route("/get-data",get_temp_res)
 ]
 middleware = [
     Middleware(CORSMiddleware, allow_origins=["*"])

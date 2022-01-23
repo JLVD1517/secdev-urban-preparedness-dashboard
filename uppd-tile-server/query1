@@ -39,3 +39,13 @@ here ::::::use this
             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857) ,
 	            ST_MakeEnvelope(-19822261.671138145, 19626582.87872809, -19802693.791897137, 19646150.757969096, 3857),
 	                4096, 0, false) AS gs
+
+
+                    WITH X AS(
+    SELECT unnest(ARRAY[1, 5, 0, 12, 1, 0, 30, 20, 8, 3, 15, 15, 20, 8]) AS VALOR
+
+
+    CREATE FUNCTION isOkay(text[],text) RETURNS boolean AS $$
+    select  $2 = any($1);
+$$ LANGUAGE SQL;
+)
