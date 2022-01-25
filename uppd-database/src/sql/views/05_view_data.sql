@@ -15,4 +15,10 @@
 -- FROM    events AS e , event_info AS ei , commune AS c, haiti_commune AS hc
 -- WHERE e.event_id = ei.event_id AND ei.commune_id = c.commune_id AND c.commune_id = hc.gid ;
 
+Create table sub_commune_group_count_map (sub_commune_id int primary key,group_count int );
 
+
+
+
+alter table event_info add column pub_month varchar(20) ;
+update event_info set pub_month =  split_part(publication_date,'-',2)||'-'||split_part(publication_date,'-',3) ;

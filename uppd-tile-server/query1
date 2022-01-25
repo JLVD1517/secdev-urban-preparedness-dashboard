@@ -45,7 +45,41 @@ here ::::::use this
     SELECT unnest(ARRAY[1, 5, 0, 12, 1, 0, 30, 20, 8, 3, 15, 15, 20, 8]) AS VALOR
 
 
-    CREATE FUNCTION isOkay(text[],text) RETURNS boolean AS $$
+    CREATE FUNCTION isOkay(int[],int) RETURNS boolean AS $$
     select  $2 = any($1);
 $$ LANGUAGE SQL;
 )
+
+
+Must query:
+alter table event_info add column pub_month varchar(20) ;
+update event_info set pub_month =  split_part(publication_date,'-',2)||'-'||split_part(publication_date,'-',3) ;
+
+
+
+
+test:
+select ei.pub_month , array_agg(e.type) , count(ei.event_info_id) from event_info ei left join events e on e.event_id = ei.event_id group by (ei.pub_month,e.type) ;
+
+
+1. final working query 1 :::
+select ei.pub_month , e.type  as event_type , count(ei.event_info_id) as no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ei.language = 'ENGLISH'  group by (ei.pub_month,e.type) ;
+
+ pub_month | event_type | no_of_articles 
+-----------+------------+----------------
+ DEC-2021  | general    |              2
+ DEC-2021  | news       |              1
+(2 rows)
+
+
+2. final query 2:
+
+select ei.pub_month , count(ei.event_info_id) as no_of_articles, avg(ei.tone) as avg_tone from event_info ei left join events e on e.event_id = ei.event_id  where ei.language = 'ENGLISH'  group by ei.pub_month ;
+
+3. query 3 :
+
+select ei.pub_month , ei.commune_id , count(ei.event_info_id) as  no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ei.language = 'ENGLISH'  group by (ei.pub_month,ei.commune_id) ;
+
+
+
+

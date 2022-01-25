@@ -23,6 +23,7 @@ import uvicorn
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CACHE_DIR = os.path.join(BASE_DIR, "cache")
 pool = None
+import json
 
 
 class ResponseEncoder(json.JSONEncoder):
@@ -414,8 +415,7 @@ subcommune_query_template1 = Template(
                 4096, 0, false) AS g
         FROM sub_commune_group_count_map as scgc inner join haiti_subcommune AS hsb on  scgc.sub_commune_id = hsb.gid 
     ) AS tile;
-    """
-    
+    """    
 )
 
 query_template2 = Template(
@@ -466,7 +466,7 @@ async def get_temp_res(month_number):
         async with pool.acquire() as conn:
             await conn.execute(query2)   
 
-    return Response("sanjay")       
+    return Response("success")       
 
 
 async def get_subcommune(request):
@@ -478,8 +478,7 @@ async def get_subcommune(request):
     y = request.path_params["y"]
     z = request.path_params["z"]
     month_number = request.path_params['month_number']
-    temp_res = await get_temp_res(month_number)
-    print("rawadata:",temp_res)
+    await get_temp_res(month_number)
     return await get_subcommune_tile(x, y, z, fields,month_number)
 
 async def get_subcommune_tile(x, y, z, fields="gid",month_number=51):
@@ -517,18 +516,112 @@ async def index(request):
         html = await f.read()
     return HTMLResponse(html)
 
+query_template4 = Template(
+    """
+    select ei.pub_month , e.type  as event_type , count(ei.event_info_id) as no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ei.language = '${language}'  group by (ei.pub_month,e.type) ;
+    """
+)
+
+async def articles_per_event(request):
+    print(request.path_params['language'])
+    language = request.path_params['language']
+    query = query_template4.substitute(
+        language=language
+    )
+    #print(query_res)
+    async with pool.acquire() as conn:
+            data_res = await conn.fetch(query)
+            print("tile:",data_res)
+            #data1 = json.loads(tile)
+            #print(data1)
+            data = []
+            for record in iter(data_res):
+                #print(d)
+                obj = dict()
+                obj['pub_month'] = record['pub_month']
+                obj['event_type'] = record['event_type']
+                obj['no_of_articles'] = record['no_of_articles']
+                data.append(obj)
+    return JSONResponse({"success":"true","data":data})
+
+query_template5 = Template(
+    """
+    select ei.pub_month , count(ei.event_info_id) as no_of_articles, avg(ei.tone) as avg_tone from event_info ei left join events e on e.event_id = ei.event_id  where ei.language = '${language}'  group by ei.pub_month ;
+    """
+)
+
+
+async def avg_tone(request):
+    language = request.path_params['language']
+    query = query_template5.substitute(
+        language=language
+    )
+    async with pool.acquire() as conn:
+            data_res = await conn.fetch(query)
+            print("tile:",data_res)
+            #data1 = json.loads(tile)
+            #print(data1)
+            data = []
+            for record in iter(data_res):
+                #print(d)
+                obj = dict()
+                obj['pub_month'] = record['pub_month']
+                obj['no_of_articles'] = record['no_of_articles']
+                obj['avg_tone'] = record['avg_tone']
+                data.append(obj)
+            print("asass",data)
+
+    return JSONResponse({"success":"true","data":data})
+
+
+query_template6 = Template(
+    """
+    select ei.pub_month , ei.commune_id , count(ei.event_info_id) as  no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ei.language = '${language}'  group by (ei.pub_month,ei.commune_id) ;
+    """
+)
+
+async def articles_per_commune(request):
+    language = request.path_params['language']
+    query = query_template6.substitute(
+        language=language
+    )
+    async with pool.acquire() as conn:
+            data_res = await conn.fetch(query)
+            print("tile:",data_res)
+            data = []
+            for record in iter(data_res):
+                #print(d)
+                obj = dict()
+                obj['pub_month'] = record['pub_month']
+                obj['no_of_articles'] = record['no_of_articles']
+                obj['commune_id'] = record['commune_id']
+                data.append(obj)
+            print("asass",data)
+    return JSONResponse({"success":"true","data":data})
+
+async  def test(request):
+    
+    return JSONResponse({"sucess":"true"})
+
+
+
 routes = [
     Route("/", index),
-    Route("/layers/assets/{table:str}/{z:int}/{x:int}/{y:int}", tile),
-    Route("/layers/indices/{data_year:int}/{z:int}/{x:int}/{y:int}", year_tile),
-    Route("/layers/{table:str}/fields", fields),
-    Route("/upload", upload, methods=["POST"]),
-    Route("/data-years", data_years),
-    Route("/{column:str}/{year:int}", get_column),
+    #Route("/layers/assets/{table:str}/{z:int}/{x:int}/{y:int}", tile),
+    #Route("/layers/indices/{data_year:int}/{z:int}/{x:int}/{y:int}", year_tile),
+    #Route("/layers/{table:str}/fields", fields),
+    #Route("/upload", upload, methods=["POST"]),
+    #Route("/data-years", data_years),
+    #Route("/{column:str}/{year:int}", get_column),
+    
     Route("/get-commune/{z:int}/{x:int}/{y:int}",get_commune),
     Route("/get-subcommune/{month_number:int}/{z:int}/{x:int}/{y:int}",get_subcommune),
-    Route("/get-data",get_temp_res)
+    Route("/data/articles-per-event/{language:str}",articles_per_event),
+    Route("/data/avg-tone/{language:str}",avg_tone),
+    Route("/data/articles-per-commune/{language:str}",articles_per_commune),
+    Route("/test",test)
 ]
+
 middleware = [
     Middleware(CORSMiddleware, allow_origins=["*"])
     ]
