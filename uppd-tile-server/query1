@@ -81,5 +81,3 @@ select ei.pub_month , count(ei.event_info_id) as no_of_articles, avg(ei.tone) as
 select ei.pub_month , ei.commune_id , count(ei.event_info_id) as  no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ei.language = 'ENGLISH'  group by (ei.pub_month,ei.commune_id) ;
 
 
-
-
