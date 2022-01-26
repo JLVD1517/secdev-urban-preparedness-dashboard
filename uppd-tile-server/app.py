@@ -25,6 +25,15 @@ CACHE_DIR = os.path.join(BASE_DIR, "cache")
 pool = None
 import json
 
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            # wanted a simple yield str(o) in the next line,
+            # but that would mean a yield on the line with super(...),
+            # which wouldn't work (see my comment below), so...
+            return (str(o) for o in [o])
+        return super(DecimalEncoder, self).default(o)
+
 
 class ResponseEncoder(json.JSONEncoder):
     def default(_, obj):
@@ -386,23 +395,23 @@ async def get_commune_tile(x, y, z, fields="gid"):
 
 
 
-subcommune_query_template = Template(
-    """
-    SELECT ST_AsMVT(tile, 'tile')
-    FROM (
-        SELECT count(gs.group_id) AS no_of_groups,
-            hsb.gid,
-            hsb.adm3_en,
-            ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
-            ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
-                4096, 0, false) AS g
-        FROM groups AS gs inner join group_records AS ga ON gs.group_id = ga.group_id  inner join  sub_commune AS sb on ga.sub_commune_id = sb.sub_commune_id inner join haiti_subcommune AS hsb on  hsb.gid = sb.sub_commune_id 
-            where ga.month_number = ${month_number}
-            GROUP BY hsb.geom ,hsb.adm3_en,hsb.gid
-    ) AS tile;
-    """
+# subcommune_query_template = Template(
+#     """
+#     SELECT ST_AsMVT(tile, 'tile')
+#     FROM (
+#         SELECT count(gs.group_id) AS no_of_groups,
+#             hsb.gid,
+#             hsb.adm3_en,
+#             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
+#             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
+#                 4096, 0, false) AS g
+#         FROM groups AS gs inner join group_records AS ga ON gs.group_id = ga.group_id  inner join  sub_commune AS sb on ga.sub_commune_id = sb.sub_commune_id inner join haiti_subcommune AS hsb on  hsb.gid = sb.sub_commune_id 
+#             where ga.month_number = ${month_number}
+#             GROUP BY hsb.geom ,hsb.adm3_en,hsb.gid
+#     ) AS tile;
+#     """
     
-)
+# )
 subcommune_query_template1 = Template(
     """
     SELECT ST_AsMVT(tile, 'tile')
@@ -410,6 +419,8 @@ subcommune_query_template1 = Template(
         SELECT scgc.group_count AS no_of_groups,
             hsb.gid,
             hsb.adm3_en,
+            scgc.group_list,
+            scgc.group_details,
             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
                 4096, 0, false) AS g
@@ -421,27 +432,27 @@ subcommune_query_template1 = Template(
 query_template2 = Template(
     """
         SELECT * 
-        FROM group_records where month_number = ${month_number} 
+        FROM group_records where month_number = ${month_number} and year = ${year} order by group_record_id asc 
     """
 )
 query_template3 = Template(
     """
-        insert into sub_commune_group_count_map values(${sub_commune_id},${group_count}) on conflict(sub_commune_id) do  update set group_count = ${group_count}
+        insert into sub_commune_group_count_map values(${sub_commune_id},${group_count},ARRAY${group_list}::INT[],'${group_details}') on conflict(sub_commune_id) do  update set group_count = ${group_count},group_list = ARRAY${group_list}::INT[],group_details='${group_details}'
     """   
 )
 
 
 #async def get_temp_res(request):
-async def get_temp_res(month_number):
+async def get_temp_res(month_number,year):
     print("innn")
-    #print(request)
-    month_number = month_number # request.query_params.get('month_number',51)
     month_query = query_template2.substitute(
-        month_number=month_number
+        month_number=month_number,
+        year=year
     )
     print(month_query) 
     dict_new = dict()
     dict_group_count = dict()
+    dict_group_details = dict()
     async with pool.acquire() as conn:
         #print("conn",conn)
         tile12 = await conn.fetch(month_query)
@@ -449,20 +460,36 @@ async def get_temp_res(month_number):
         print(all_sub_commune)
         for i in all_sub_commune:
             l = []
+            final_group_details = {}
             for r in iter(tile12):
                 print(r['group_id'])
                 arr = r['sub_commune_influence'].split('[')[1].split(']')[0]
                 sc_list = list(map(int, arr.split(",")))
+                temp_group_details = {}
+                temp_group_details['name'] = r['name']
+                temp_group_details['type'] = r['type']
+                temp_group_details['leader_name'] = r['leader_name']
+                temp_group_details['key_activities'] = r['key_activities']
+                temp_group_details['group_size'] = int(r['group_size'])
+                temp_group_details['affiliation'] = r['affiliation'] 
+                temp_group_details['alliance_groups'] = r['alliance_groups']
+                temp_group_details['rival_groups'] = r['rival_groups']
                 if sc_list.count(i) > 0:
-                    l.append(r['group_id'])
+                    if l.count(r['group_id']) == 0:
+                        l.append(int(r['group_id']))
+                    final_group_details[int(r['group_id'])] = temp_group_details
             dict_new[i] = l
+            dict_group_details[i] = final_group_details
             dict_group_count[i] = len(dict_new[i])
         print(dict_group_count)
     for s in all_sub_commune:
         query2 = query_template3.substitute(
             sub_commune_id=s,
-            group_count=dict_group_count[s]
+            group_count=dict_group_count[s],
+            group_list = dict_new[s],
+            group_details = json.dumps(dict_group_details[s])
         ) 
+        print("query2",query2)
         async with pool.acquire() as conn:
             await conn.execute(query2)   
 
@@ -478,12 +505,13 @@ async def get_subcommune(request):
     y = request.path_params["y"]
     z = request.path_params["z"]
     month_number = request.path_params['month_number']
-    await get_temp_res(month_number)
-    return await get_subcommune_tile(x, y, z, fields,month_number)
+    year = request.path_params['year']
+    await get_temp_res(month_number,year)
+    return await get_subcommune_tile(x, y, z, fields,month_number,year)
 
-async def get_subcommune_tile(x, y, z, fields="gid",month_number=51):
+async def get_subcommune_tile(x, y, z, fields="gid",month_number=1,year=2021):
     """Retrieve the year tile from the database or cache"""
-    tilepath = f"{CACHE_DIR}/{month_number}/{z}/{x}/{y}.pbf"
+    tilepath = f"{CACHE_DIR}/{month_number}/{year}/{z}/{x}/{y}.pbf"
     if  not os.path.exists(tilepath):
         xmin, xmax, ymin, ymax = tile_extent(x, y, z)
         query = subcommune_query_template1.substitute(
@@ -491,11 +519,10 @@ async def get_subcommune_tile(x, y, z, fields="gid",month_number=51):
             xmax=xmax,
             ymin=ymin,
             ymax=ymax,
-            month_number=month_number,
         )
         async with pool.acquire() as conn:
             
-            tile = await conn.fetchval(query)
+            tile = await conn.fetchval(query)  
             print("tile:",tile)
         if not os.path.exists(os.path.dirname(tilepath)):
             os.makedirs(os.path.dirname(tilepath))
@@ -600,8 +627,21 @@ async def articles_per_commune(request):
     return JSONResponse({"success":"true","data":data})
 
 async  def test(request):
-    
-    return JSONResponse({"sucess":"true"})
+    d  = decimal.Decimal('10')
+    print(type(int(d)))
+    obj = {}
+    obj['a'] = 10
+    obj['b'] = 20
+    print(type(obj))
+    async with pool.acquire() as conn:
+        #print("conn",conn)
+        month_query = 'select * from sub_commune_group_count_map'
+        tile12 = await conn.fetch(month_query)
+        print(type(tile12[33]['group_details']))
+        print(json.loads(tile12[33]['group_details']))
+        jdata =  json.loads(tile12[33]['group_details'])
+        print(jdata['2']['name'])
+    return JSONResponse({"sucess":"true","data":"tile12"})
 
 
 
@@ -615,7 +655,7 @@ routes = [
     #Route("/{column:str}/{year:int}", get_column),
     
     Route("/get-commune/{z:int}/{x:int}/{y:int}",get_commune),
-    Route("/get-subcommune/{month_number:int}/{z:int}/{x:int}/{y:int}",get_subcommune),
+    Route("/get-subcommune/{month_number:int}/{year:int}/{z:int}/{x:int}/{y:int}",get_subcommune),
     Route("/data/articles-per-event/{language:str}",articles_per_event),
     Route("/data/avg-tone/{language:str}",avg_tone),
     Route("/data/articles-per-commune/{language:str}",articles_per_commune),

@@ -81,3 +81,22 @@ select ei.pub_month , count(ei.event_info_id) as no_of_articles, avg(ei.tone) as
 select ei.pub_month , ei.commune_id , count(ei.event_info_id) as  no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ei.language = 'ENGLISH'  group by (ei.pub_month,ei.commune_id) ;
 
 
+group_record_id       | numeric           |           | not null | 
+ group_id              | numeric           |           | not null | 
+ base_sub_commune_id   | numeric           |           | not null | 
+ name                  | character varying |           | not null | 
+ date_of_collection    | character varying |           | not null | 
+ month_number          | numeric           |           | not null | 
+ year                  | numeric           |           | not null | 
+ sub_commune_id        | numeric           |           | not null | 
+ type                  | character varying |           | not null | 
+ leader_name           | character varying |           | not null | 
+ base_commune_id       | numeric           |           | not null | 
+ sub_commune_influence | character varying |           | not null | 
+ key_activities        | character varying |           | not null | 
+ group_size            | numeric           |           | not null | 
+ alliance_groups       | character varying |           | not null | 
+ rival_groups          | character varying |           | not null | 
+ affiliation           | character varying |           | not null | 
+ connection            | character varying |           | not null | 
+ additional_notes      | character varying |           | not null | 
