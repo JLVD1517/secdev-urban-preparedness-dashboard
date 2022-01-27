@@ -1,0 +1,102 @@
+.mapContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  display: flex;
+}
+
+.mapContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  display: flex;
+}
+
+// Choropleth popup style
+.uppd-layer-popup {
+  .mapboxgl-popup-close-button {
+    top: 8px;
+    right: 8px;
+  }
+  .mapboxgl-popup-content {
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+.mapboxgl-popup-anchor-bottom {
+  &.uppd-layer-popup {
+    .mapboxgl-popup-tip {
+      border-top-color: transparent !important;
+    }
+  }
+}
+
+.mapboxgl-popup-anchor-right {
+  &.uppd-layer-popup {
+    .mapboxgl-popup-tip {
+      border-left-color: transparent !important;
+    }
+  }
+}
+
+.mapboxgl-popup-anchor-left {
+  &.uppd-layer-popup {
+    .mapboxgl-popup-tip {
+      border-right-color: transparent !important;
+    }
+  }
+}
+
+.mapboxgl-popup-anchor-top {
+  &.uppd-layer-popup {
+    .mapboxgl-popup-tip {
+      border-bottom-color: transparent !important;
+    }
+  }
+}
+
+.poi-popup {
+  &.light {
+    .mapboxgl-popup-content {
+      color: black;
+    }
+  }
+
+  &.dark {
+    .mapboxgl-popup-close-button {
+      color: white;
+    }
+    .mapboxgl-popup-content {
+      background: black;
+    }
+
+    &.mapboxgl-popup-anchor-bottom {
+      .mapboxgl-popup-tip {
+        border-top-color: black !important;
+      }
+    }
+
+    &.mapboxgl-popup-anchor-right {
+      .mapboxgl-popup-tip {
+        border-left-color: black !important;
+      }
+    }
+
+    &.mapboxgl-popup-anchor-left {
+      .mapboxgl-popup-tip {
+        border-right-color: black !important;
+      }
+    }
+
+    &.mapboxgl-popup-anchor-top {
+      .mapboxgl-popup-tip {
+        border-bottom-color: black !important;
+      }
+    }
+  }
+}
