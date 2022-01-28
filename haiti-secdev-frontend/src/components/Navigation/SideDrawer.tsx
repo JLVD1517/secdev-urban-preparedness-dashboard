@@ -22,7 +22,7 @@ import { AppState } from '../../types';
 import CustomSwitch from '../BaseUIComponents/CustomSwitch';
 import HomeIcon from '../../assets/customIcons/HomeIcon';
 import MapIcon from '../../assets/customIcons/MapIcon';
-import InfoIcon from '../../assets/customIcons/InfoIcon';
+import EventIcon from '@material-ui/icons/Event';
 import NavLogoAndMenu from './NavLogoAndMenu';
 import { sdgLogo, mbLogo, rs21Logo } from '../../configuration/img-config';
 
@@ -67,6 +67,12 @@ const SideDrawer: React.FC = () => {
       route: '/haiti/groups',
       icon: MapIcon,
       name: 'Groups',
+    },
+    {
+      id: 3,
+      route: '/haiti/events',
+      icon: EventIcon,
+      name: 'Events',
     },
   ];
 

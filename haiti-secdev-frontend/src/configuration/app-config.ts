@@ -36,6 +36,8 @@ export const availableMonths: any[] = [
   {label: "JAN", value: 1},
   {label: "MAR", value: 3},
   {label: "MAY", value: 5},
+  {label: "JUL", value: 7},
+  {label: "SEP", value: 9},
   {label: "DEC", value: 12},
 ];
 export const projectedYears: number[] = [];

@@ -1,0 +1,30 @@
+.MuiFormControl-root{
+	width: 35%;
+	.MuiOutlinedInput-input{
+		padding: 10.5px 14px !important;
+	}
+	.MuiInputLabel-outlined{
+		top: -7px;
+	}
+}
+
+.dateRange{
+	text-align: center;
+	z-index: 2;
+	.DateRangePicker__CalendarSelection--is-pending{
+		background-color: #FFE4D6 !important ;
+		color: #333333 !important;
+	}
+	.DateRangePicker__Date--is-selected{
+		background-color: #ffffff !important;
+		color: #333333 !important;
+	}
+	.DateRangePicker__CalendarSelection, .DateRangePicker__CalendarHighlight--single{
+		background-color: #FFE4D6 !important;
+		border: 1px solid #FFE4D6 !important;
+	}
+	.DateRangePicker__DateLabel{
+		color: #ffffff !important;
+		
+	}
+}

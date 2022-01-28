@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Sidebar from './Sidebar/Sidebar';
-import Map from './Map/Map';
+import Map from './Event/Map';
 import Footerbar from './FootBar/FooterBar';
 import MapLegend from './MapLegend/MapLegend';
 import MapLoading from './Map/MapLoading';
@@ -12,7 +12,7 @@ import {
 } from '../configuration/theme-color-config';
 import { AppState } from '../types';
 
-const Groups: React.FC = () => {
+const Events: React.FC = () => {
   const [dimensions, setDimensions] = useState({
     windowWidth: window.innerWidth,
     windowHeight: window.innerHeight,
@@ -64,8 +64,8 @@ const Groups: React.FC = () => {
             selectedMonth = {selectedMonth}
             mapGradient={currentMapGradient}
           />
-          <Sidebar mapGradient={currentMapGradient} />
-          <Footerbar mapGradient={currentMapGradient} elementData={'Number Of Gangs'}/>
+          {/* <Sidebar mapGradient={currentMapGradient} /> */}
+          {/* <Footerbar mapGradient={currentMapGradient} elementData={'Number Of Events'}/> */}
           <MapAttribution />
         </div>
       ) : (
@@ -74,4 +74,4 @@ const Groups: React.FC = () => {
     </>
   );
 };
-export default Groups;
+export default Events;

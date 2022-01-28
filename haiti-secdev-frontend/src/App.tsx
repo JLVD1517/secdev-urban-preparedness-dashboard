@@ -15,6 +15,7 @@ import Loader from './components/BaseUIComponents/Loader';
 
 const About = lazy(() => import('./components/About'));
 const Groups = lazy(() => import('./components/Groups'));
+const Events = lazy(() => import('./components/Events'));
 const Navbar = lazy(() => import('./components/Navigation/Navbar'));
 const SideDrawer = lazy(() => import('./components/Navigation/SideDrawer'));
 
@@ -44,7 +45,7 @@ const App: React.FC = () => {
         <Switch>
           <Route exact path="/" component={About} />
           <Route exact path="/haiti/groups" component={Groups} />
-          <Route exact path="/haiti/events" component={Groups} />
+          <Route exact path="/haiti/events" component={Events} />
         </Switch>
       </div>
     );
