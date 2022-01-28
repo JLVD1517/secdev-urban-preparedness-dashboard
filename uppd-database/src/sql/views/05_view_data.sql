@@ -15,7 +15,7 @@
 -- FROM    events AS e , event_info AS ei , commune AS c, haiti_commune AS hc
 -- WHERE e.event_id = ei.event_id AND ei.commune_id = c.commune_id AND c.commune_id = hc.gid ;
 
-Create table sub_commune_group_count_map (sub_commune_id int primary key,group_count int,column group_list INT[],column group_details jsonb  );
+Create table sub_commune_group_count_map (sub_commune_id int primary key,group_count int,group_list INT[],group_details jsonb  );
 
 -- alter table sub_commune_group_count_map add column group_list INT[] ;
 -- ALTER TABLE sub_commune_group_count_map add column group_details jsonb ;
