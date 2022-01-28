@@ -346,13 +346,12 @@ commune_query_template = Template(
     """
     SELECT ST_AsMVT(tile, 'tile')
     FROM (
-        SELECT ${fields},
+        SELECT count(ei.event_id) as no_of_articles,
+        c.commune_id,
             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hc.geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
                 4096, 0, false) AS gs
-        FROM    events AS e , event_info AS ei , commune AS c, haiti_commune AS hc
-        WHERE e.event_id = ei.event_id AND ei.commune_id = c.commune_id AND c.commune_id = hc.gid AND (geom &&
-            ST_Transform(ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857), 4326))
+        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid group by (c.commune_id,hc.geom)
     ) AS tile;
     """
     
@@ -474,7 +473,9 @@ async def get_temp_res(month_number,year):
                 temp_group_details['affiliation'] = r['affiliation'] 
                 temp_group_details['alliance_groups'] = r['alliance_groups']
                 temp_group_details['rival_groups'] = r['rival_groups']
+                print("influence array:",sc_list,"sub commune id ",i)
                 if sc_list.count(i) > 0:
+                    print("done")
                     if l.count(r['group_id']) == 0:
                         l.append(int(r['group_id']))
                     final_group_details[int(r['group_id'])] = temp_group_details

@@ -100,3 +100,10 @@ group_record_id       | numeric           |           | not null |
  affiliation           | character varying |           | not null | 
  connection            | character varying |           | not null | 
  additional_notes      | character varying |           | not null | 
+
+
+
+ SELECT count(ei.event_id),
+c.commune_id, 
+            
+        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid group by (c.commune_id,hc.geom)
