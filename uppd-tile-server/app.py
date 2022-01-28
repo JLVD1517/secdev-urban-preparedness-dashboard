@@ -346,11 +346,12 @@ commune_query_template = Template(
     """
     SELECT ST_AsMVT(tile, 'tile')
     FROM (
-        SELECT ${fields},
+        SELECT count(ei.event_id) as no_of_articles,
+        c.commune_id,
             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hc.geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
                 4096, 0, false) AS gs
-        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid 
+        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid group by (c.commune_id,hc.geom)
     ) AS tile;
     """
     
