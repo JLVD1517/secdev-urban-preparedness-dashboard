@@ -7,6 +7,8 @@ import {
   CartesianGrid,
   Tooltip,
   Label,
+  LineChart,
+  Line
 } from 'recharts';
 import { useTheme, Theme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
@@ -72,15 +74,15 @@ const AreaChartData: React.FC<AreaChartProps> = ({ darkTheme, mapGradient}) => {
 
   const classes = useStyles();
   return (
-    <AreaChart
+    <LineChart
       width={400}
       height={280}
       data={data}
       margin={{ top: 20, right: 30, left: 20, bottom: 0 }}
     >
       <defs>
-        <linearGradient id="colorUv" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="16%" stopColor={mapGradient.step1} stopOpacity={1} />
+        <linearGradient id="colorUv" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor={mapGradient.step1} stopOpacity={1} />
           <stop offset="32%" stopColor={mapGradient.step2} stopOpacity={0.8} />
           <stop offset="48%" stopColor={mapGradient.step3} stopOpacity={0.65} />
           <stop offset="64%" stopColor={mapGradient.step4} stopOpacity={0.5} />
@@ -94,14 +96,15 @@ const AreaChartData: React.FC<AreaChartProps> = ({ darkTheme, mapGradient}) => {
       <YAxis label={{ value: 'Number of Articles', angle: -90, position: 'center' }}/>
       <CartesianGrid strokeDasharray="3 3" />
       <Tooltip />
-      <Area
+      <Line
         type="monotone"
         dataKey="uv"
-        stroke={mapGradient.step1}
+        stroke="url(#colorUv)"
         fillOpacity={1}
         fill="url(#colorUv)"
+        dot={false}
       />
-    </AreaChart>
+    </LineChart>
   );
 };
 

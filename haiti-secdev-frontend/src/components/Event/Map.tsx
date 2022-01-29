@@ -252,7 +252,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       | undefined = [
       'interpolate',
       ['linear'],
-      ['to-number', ['get', primaryScore]],
+      ['to-number', ['get', "gid"]],
       scaleSteps().step1,
       mapGradient.step1,
       scaleSteps().step2,
@@ -297,9 +297,9 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       tiles: [
         `${
           process.env.REACT_APP_MAP_TILESERVER_URL
-        }get-subcommune/${selectedMonth}/${selectedYear}/{z}/{x}/{y}`,
+        }get-commune/{z}/{x}/{y}`,
       ],
-      promoteId: tractId,
+      promoteId: 'gid',
       minzoom: 0,
       maxzoom: 22,
     },
@@ -481,7 +481,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
           resetLayer();
           clearSelectedItem();
           setMapFills();
-          setFilters();
+          // setFilters();
         }, 200);
       }
     },
@@ -494,7 +494,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       resetLayer();
       clearSelectedItem();
       setMapFills();
-      setFilters();
+      // setFilters();
       dispatch(resetFilterSlider());
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -513,7 +513,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
   // Filtering functions
   useEffect(
     () => {
-      setFilters();
+      // setFilters();
       clearSelectedItem();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

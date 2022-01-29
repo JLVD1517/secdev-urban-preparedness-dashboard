@@ -223,15 +223,6 @@ const SideDrawer: React.FC = () => {
             <p className={classes.logoText}>In partnership with:</p>
           </div>
           <div className={classes.logoDiv}>
-            <a href="https://www.rs21.io/">
-              <img
-                className={classes.logoImage}
-                src={rs21Logo}
-                alt="RS21 logo"
-              />
-            </a>
-          </div>
-          <div className={classes.logoDiv}>
             <a href="https://mapbox.com/community/">
               <img
                 className={classes.logoImage}

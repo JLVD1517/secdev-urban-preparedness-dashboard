@@ -2,13 +2,13 @@ import { createTheme, lighten } from '@material-ui/core';
 import { Overrides } from '@material-ui/core/styles/overrides';
 
 export const mapGradientDark = {
-  step6: '#FEE5D9',
-  step5: '#FCBBA1',
-  step4: '#FC9272',
-  step3: '#FB6A4A',
-  step2: '#DE2D26',
-  step1: '#A50F15',
-};
+  step1: '#FEE5D9',
+  step2: '#FCBBA1',
+  step3: '#FC9272',
+  step4: '#FB6A4A',
+  step5: '#DE2D26',
+  step6: '#A50F15',
+}
 
 export const mapGradientLight = {
   step6: '#EFF3FF',

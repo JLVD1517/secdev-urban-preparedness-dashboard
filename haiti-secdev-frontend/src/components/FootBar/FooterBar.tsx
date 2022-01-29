@@ -26,7 +26,7 @@ const FootBar: React.FC<FootBarProps> = ({ mapGradient, elementData }) => {
     },
     bar: {
       opacity: 1,
-      backgroundImage: `linear-gradient(90deg, ${mapGradient.step6} 0%, ${mapGradient.step6} 18.23%, ${mapGradient.step4} 39.38%, ${mapGradient.step3} 59.23%, ${mapGradient.step2} 79.87%, ${mapGradient.step1} 100%)`,
+      backgroundImage: `linear-gradient(90deg, ${mapGradient.step1} 0%, ${mapGradient.step2} 18.23%, ${mapGradient.step3} 39.38%, ${mapGradient.step4} 59.23%, ${mapGradient.step5} 79.87%, ${mapGradient.step6} 100%)`,
       width: '263px',
       height: '24px',
     },

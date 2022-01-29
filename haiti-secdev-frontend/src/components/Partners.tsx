@@ -57,17 +57,6 @@ const Partners: React.FC = () => {
       <Button
         variant="outlined"
         className={classes.Button}
-        href="https://www.rs21.io/"
-      >
-        <img
-          className={classes.logoImage}
-          src={darkTheme ? rs21Logo : rs21Dark}
-          alt="RS21 logo"
-        />
-      </Button>
-      <Button
-        variant="outlined"
-        className={classes.Button}
         href="https://mapbox.com/community/"
       >
         <img
