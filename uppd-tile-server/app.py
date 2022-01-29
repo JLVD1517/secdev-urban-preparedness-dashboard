@@ -269,8 +269,7 @@ async def get_column(request):
 
 async def on_startup():
     """Operations to perform when application starts up"""
-    variable = 'haha'
-    print("server is started by sanjay",variable)
+    print("Tile server has started")
     await db_connection_pool()
 
 
@@ -510,28 +509,26 @@ async def get_subcommune(request):
     await get_temp_res(month_number,year)
     return await get_subcommune_tile(x, y, z, fields,month_number,year)
 
-async def get_subcommune_tile(x, y, z, fields="gid",month_number=1,year=2021):
+async def get_subcommune_tile(x, y, z, fields="gid",month_number=12,year=2021):
+
     """Retrieve the year tile from the database or cache"""
     tilepath = f"{CACHE_DIR}/{month_number}/{year}/{z}/{x}/{y}.pbf"
-    if  not os.path.exists(tilepath):
-        xmin, xmax, ymin, ymax = tile_extent(x, y, z)
-        query = subcommune_query_template1.substitute(
-            xmin=xmin,
-            xmax=xmax,
-            ymin=ymin,
-            ymax=ymax,
-        )
-        async with pool.acquire() as conn:
-            
-            tile = await conn.fetchval(query)  
-            print("tile:",tile)
+   
+    xmin, xmax, ymin, ymax = tile_extent(x, y, z)
+    query = subcommune_query_template1.substitute(
+        xmin=xmin,
+        xmax=xmax,
+        ymin=ymin,
+        ymax=ymax,
+    )
+    async with pool.acquire() as conn:
+        tile = await conn.fetchval(query)  
+        print("tile:",tile)
         if not os.path.exists(os.path.dirname(tilepath)):
             os.makedirs(os.path.dirname(tilepath))
         async with aiofiles.open(tilepath, mode="wb") as f:
             await f.write(tile)
-        response = Response(tile, media_type="application/x-protobuf")
-    else:
-        response = FileResponse(tilepath, media_type="application/x-protobuf")
+    response = Response(tile, media_type="application/x-protobuf")
     return response
 
 async def index(request):
