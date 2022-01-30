@@ -40,4 +40,18 @@ export interface AppState {
   HistogramData: InitialHistogramDataState;
   MapControl: InitialStateMapControl;
   SidebarControl: InitialSidebarState;
+  EventsPageStore: InitialEventsComponentState
+}
+
+export interface plotData {
+  name: string;
+  value: number;
+  date: string;
+}
+
+export interface InitialEventsComponentState {
+  stateDate: string;
+  endDate: string;
+  noOfArticlesPlotData: plotData[];
+  avgTonePlotData: plotData[];
 }

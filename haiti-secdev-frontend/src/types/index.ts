@@ -20,3 +20,5 @@ export type {
   RacialDistDataType,
   RadarChartDataType,
 } from './modules/dataConfig.type';
+export type { InitialEventsComponentState } from './modules/storeInitialState.type';
+export type { plotData } from './modules/storeInitialState.type';

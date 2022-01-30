@@ -32,6 +32,7 @@ import { scaleSteps } from '../../services/sharedFunctions';
 import './Map.scss';
 import Popup from './MapTooltip/Popup';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import { InitialEventsComponentState, plotData } from '../../types';
 
 const mapboxgl = require('mapbox-gl');
 
@@ -219,6 +220,12 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
   const filterSliderValue: [number, number] = useSelector(
     (state: AppState) => state.SidebarControl.filterSlider,
   );
+
+  const noOfArticlesPlotData: plotData[] = useSelector(
+    (state: AppState) => state.EventsPageStore.noOfArticlesPlotData );
+
+  const avgTonePlotData: plotData[] = useSelector(
+    (state: AppState) => state.EventsPageStore.avgTonePlotData );
 
   const setSelection = (
     e: mapboxgl.MapMouseEvent & {
@@ -540,10 +547,10 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
           </div>
           <Grid container>
             <Grid item md={6} className="containerBox">
-                <AreaChartData darkTheme={darkTheme} mapGradient={mapGradient}/>
+                <AreaChartData darkTheme={darkTheme} mapGradient={mapGradient} data={noOfArticlesPlotData}/>
             </Grid>
             <Grid item md={6} className="containerBox">
-                <AreaChartData darkTheme={darkTheme} mapGradient={mapGradient}/>
+                <AreaChartData darkTheme={darkTheme} mapGradient={mapGradient} data={avgTonePlotData}/>
             </Grid>
           </Grid>
         </Grid>
