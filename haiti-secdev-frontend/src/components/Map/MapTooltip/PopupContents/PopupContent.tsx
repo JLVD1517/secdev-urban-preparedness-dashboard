@@ -74,7 +74,7 @@ const PopupContent: React.FC<PopupContentProps> = ({
         gutterBottom
         className={classes.bigText}
       >
-        Tract {clickedItem[tractId]}
+        {clickedItem.adm3_en}
       </Typography>
 
       <Typography className={classes.title} color="textSecondary" gutterBottom>

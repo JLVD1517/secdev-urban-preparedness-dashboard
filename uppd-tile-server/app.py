@@ -71,7 +71,7 @@ async def db_connection_pool():
         host="localhost", #os.getenv("localhost"),
         port=5432,
     )
-    print("my con:",con)
+    
 
 
 
@@ -100,58 +100,18 @@ async def on_startup():
     print("Tile server has started")
     await db_connection_pool()
 
-
-
-# commune_query_template = Template(
-#     """
-#     SELECT ST_AsMVT(tile, 'tile')
-#     FROM (
-#         SELECT gid,
-#             ST_AsMVTGeom(ST_Transform(ST_SetSRID(geom,4326), 3857),
-#             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
-#                 4096, 0, false) AS g
-#         FROM haiti_commune
-#         WHERE (geom &&
-#             ST_Transform(ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857), 4326))
-#     ) AS tile;
-#     """
-    
-# )
-
-
-
-# subcommune_query_template = Template(
-#     """
-#     SELECT ST_AsMVT(tile, 'tile')
-#     FROM (
-#         SELECT gid,
-#             ST_AsMVTGeom(ST_Transform(ST_SetSRID(geom,4326), 3857),
-#             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
-#                 4096, 0, false) AS g
-#         FROM haiti_subcommune
-#         WHERE (geom &&
-#             ST_Transform(ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857), 4326))
-#     ) AS tile;
-#     """
-    
-# )
-
-
-
-
 commune_query_template = Template(
     """
     SELECT ST_AsMVT(tile, 'tile')
     FROM (
         SELECT count(ei.event_id) as no_of_articles,
-        c.commune_id,
+            c.commune_id,
             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hc.geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
                 4096, 0, false) AS gs
-        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid group by (c.commune_id,hc.geom)
+        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid where ei.tone between  ${start_tone} and ${end_tone} AND ei.publication_date between '${start_date}' and '${end_date}' group by (c.commune_id,hc.geom)
     ) AS tile;
-    """
-    
+    """   
 )
 
 async def get_commune(request):
@@ -161,29 +121,32 @@ async def get_commune(request):
     x = request.path_params["x"]
     y = request.path_params["y"]
     z = request.path_params["z"]
-    return await get_commune_tile(x, y, z, fields)
+    start_tone = request.path_params['start_tone']
+    end_tone = request.path_params['end_tone']
+    start_date = request.path_params['start_date']
+    end_date = request.path_params['end_date']
+    return await get_commune_tile(x, y, z, start_tone,end_tone,start_date,end_date,fields)
 
-async def get_commune_tile(x, y, z, fields="gid"):
+async def get_commune_tile(x, y, z,start_tone,end_tone,start_date,end_date, fields="gid"):
     """Retrieve the year tile from the database or cache"""
     tilepath = f"{CACHE_DIR}/{z}/{x}/{y}.pbf"
-    if not os.path.exists(tilepath):
-        xmin, xmax, ymin, ymax = tile_extent(x, y, z)
-        query = commune_query_template.substitute(
-            xmin=xmin,
-            xmax=xmax,
-            ymin=ymin,
-            ymax=ymax,
-            fields=fields,
-        )
-        async with pool.acquire() as conn:
-            tile = await conn.fetchval(query)
-        if not os.path.exists(os.path.dirname(tilepath)):
-            os.makedirs(os.path.dirname(tilepath))
-        async with aiofiles.open(tilepath, mode="wb") as f:
-            await f.write(tile)
-        response = Response(tile, media_type="application/x-protobuf")
-    else:
-        response = FileResponse(tilepath, media_type="application/x-protobuf")
+  
+    xmin, xmax, ymin, ymax = tile_extent(x, y, z)
+    query = commune_query_template.substitute(
+        xmin=xmin,
+        xmax=xmax,
+        ymin=ymin,
+        ymax=ymax,
+        fields=fields,
+        start_tone=start_tone,
+        end_tone=end_tone,
+        start_date = start_date,
+        end_date=end_date,
+    )
+    print("commun equery",query)
+    async with pool.acquire() as conn:
+        tile = await conn.fetchval(query)
+    response = Response(tile, media_type="application/x-protobuf")
     return response
 
 
@@ -465,7 +428,7 @@ async  def test(request):
 
 routes = [
     Route("/", index),
-    Route("/get-commune/{z:int}/{x:int}/{y:int}",get_commune),
+    Route("/get-commune/{start_tone:int}/{end_tone:int}/{start_date:str}/{end_date:str}/{z:int}/{x:int}/{y:int}",get_commune),
     Route("/get-subcommune/{month_number:int}/{year:int}/{z:int}/{x:int}/{y:int}",get_subcommune),
     Route("/get-articles/{language:str}",get_articles),
     Route("/data/articles-per-event/{language:str}",articles_per_event),

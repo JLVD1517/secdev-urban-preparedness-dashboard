@@ -9,8 +9,8 @@ export const mapAreaConfig = {
   zoomLevel: 10,
   mapCenter: [-72.294076, 18.576421], // [longitude, latitude]
   bounds: [
-    [-73.036426, 18.105569], // Southwest Coordinates (bottom left)
-    [-71.481405, 19.479333], // Northeast Coordinates (top right)
+    [-72.68774831159507, 18.30405923881031], // Southwest Coordinates (bottom left)
+    [-71.88979770150003, 18.6959288130019], // Northeast Coordinates (top right)
   ],
   style: {
     dark: 'mapbox://styles/jharnum/cknsxylu20drd17pbsf07gytm',
