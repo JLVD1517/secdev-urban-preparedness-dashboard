@@ -44,7 +44,7 @@ const PopupContent: React.FC<PopupContentProps> = ({
   const indexValue = () => {
     return parseFloat(clickedItem[selectedLayerId]);
   };
-
+console.log("hghfgfg", clickedItem)
   const useStyles = makeStyles({
     root: {
       borderTop: `12px solid ${getColor(
@@ -88,21 +88,6 @@ const PopupContent: React.FC<PopupContentProps> = ({
         className={classes.bigText}
       >
         {clickedItem[primaryScore]}
-      </Typography>
-
-      <Typography className={classes.title} color="textSecondary" gutterBottom>
-        Overall Index Score
-      </Typography>
-      <Typography
-        variant="h5"
-        component="h2"
-        gutterBottom
-        className={classes.bigText}
-      >
-        {formatDisplayNumber(clickedItem[primaryScore])} <br />
-        {selectedLayerId === primaryScore && (
-          <>{getRating(indexValue())} Risk</>
-        )}
       </Typography>
     </Card>
   );

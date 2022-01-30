@@ -38,6 +38,7 @@ import {
 } from '../../configuration/app-config';
 import { formatDisplayNumber } from '../../services/sharedFunctions';
 import { componentSizing } from '../../services/component-sizing';
+import GangInfo from './GangInfo/GangInfo';
 
 interface SidebarProps {
   mapGradient: MapGradientType;
@@ -138,7 +139,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
   }));
 
   const classes = useStyles();
-
+  console.log("sidebarText---->", sidebarText)
   return (
     <Card
       id="sidebar-container"
@@ -206,7 +207,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
             <FilterSlider mapGradient={mapGradient} />
             <p>{sidebarText}</p>
 
-            <CensusInfo />
+            <GangInfo/>
           </div>
         ) : (
           <Grid
