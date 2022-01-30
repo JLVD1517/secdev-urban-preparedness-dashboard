@@ -31,11 +31,14 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const GangInfo: React.FC = () => {
-const selectedItem: SelectedItemType | null = useSelector(
+  const selectedItem: SelectedItemType | null = useSelector(
     (state: AppState) => state.SidebarControl.selectedItem,
     );  
+
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+
+  const group_details = selectedItem && selectedItem.group_details ? JSON.parse(selectedItem.group_details) : {}
 
   const handleClick = () => {
     setOpen(!open);
@@ -53,14 +56,19 @@ const selectedItem: SelectedItemType | null = useSelector(
         <ListItemText className={classes.text} primary="Gang Details" />
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItem>
-      <Collapse in={open} timeout="auto" unmountOnExit>
-        <Paper elevation={0} className={classes.nested}>
-            <div>
-                <div className={classes.details}>Gang Name</div>
-                <div className={classes.details}>Gang Leader</div>
-            </div>
-        </Paper>  
-      </Collapse>
+      {Object.keys(group_details).map( (key, index) => {
+        return <Collapse in={open} timeout="auto" unmountOnExit>
+                  <Paper elevation={0} className={classes.nested}>
+                      <div>
+                          <div className={classes.details}>Group Name: {group_details[key].name}</div>
+                          <div className={classes.details}>Group Size : {group_details[key].group_size}</div>
+                          <div className={classes.details}>Group Leader Name : {group_details[key].leader_name}</div>
+                          <div className={classes.details}>Group Type : {group_details[key].type}</div>
+                      </div>
+                  </Paper>  
+                </Collapse>
+          })
+       }
     </List>)}
     </>
   );

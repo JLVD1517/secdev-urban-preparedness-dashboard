@@ -44,7 +44,7 @@ const PopupContent: React.FC<PopupContentProps> = ({
   const indexValue = () => {
     return parseFloat(clickedItem[selectedLayerId]);
   };
-console.log("hghfgfg", clickedItem)
+
   const useStyles = makeStyles({
     root: {
       borderTop: `12px solid ${getColor(

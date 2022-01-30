@@ -139,7 +139,6 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
   }));
 
   const classes = useStyles();
-  console.log("sidebarText---->", sidebarText)
   return (
     <Card
       id="sidebar-container"
