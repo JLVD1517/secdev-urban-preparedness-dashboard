@@ -187,27 +187,6 @@ async def get_commune_tile(x, y, z, fields="gid"):
     return response
 
 
-
-
-
-
-# subcommune_query_template = Template(
-#     """
-#     SELECT ST_AsMVT(tile, 'tile')
-#     FROM (
-#         SELECT count(gs.group_id) AS no_of_groups,
-#             hsb.gid,
-#             hsb.adm3_en,
-#             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
-#             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
-#                 4096, 0, false) AS g
-#         FROM groups AS gs inner join group_records AS ga ON gs.group_id = ga.group_id  inner join  sub_commune AS sb on ga.sub_commune_id = sb.sub_commune_id inner join haiti_subcommune AS hsb on  hsb.gid = sb.sub_commune_id 
-#             where ga.month_number = ${month_number}
-#             GROUP BY hsb.geom ,hsb.adm3_en,hsb.gid
-#     ) AS tile;
-#     """
-    
-# )
 subcommune_query_template1 = Template(
     """
     SELECT ST_AsMVT(tile, 'tile')
@@ -216,7 +195,7 @@ subcommune_query_template1 = Template(
             hsb.gid,
             hsb.adm3_en,
             scgc.group_list,
-            scgc.group_details,
+            scgc.group_details::json,
             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
                 4096, 0, false) AS g
