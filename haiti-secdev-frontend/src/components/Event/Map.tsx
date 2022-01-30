@@ -5,7 +5,7 @@ import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import { tileFields } from '../../services/tileFields';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import { Paper } from '@material-ui/core';
+import { Paper, FormControlLabel } from '@material-ui/core';
 import {
   makeStyles,
   createMuiTheme,
@@ -15,6 +15,7 @@ import {
 import Footerbar from '../FootBar/FooterBar';
 import DateRangeFilter from '../DateRangeFilter/DateRangeFilter'
 import AreaChartData from '../Chart/AreaChartData';
+import CustomSwitch from '../BaseUIComponents/CustomSwitch';
 import {
   tractId,
   mapAreaConfig,
@@ -189,6 +190,14 @@ const useStyles = makeStyles(theme => ({
   rightDiv: {
     backgroundColor: theme.palette.background.default,
   },
+  themeSwitch: {
+    marginLeft: '5px',
+  },
+  formLabel:{
+    position: 'relative',
+    top: '-41px',
+    paddingLeft: '34px'
+  }
 }));
 
 interface MapProps {
@@ -204,7 +213,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
     ? createMuiTheme({ palette: { type: 'dark' } })
     : createMuiTheme({ palette: { type: 'light' } });
   const [map, setMap]: any = useState(null);
-
+  const [language, setLangugage]: any = useState(true);
   const mapRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
@@ -527,6 +536,10 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
     [map, filterSliderValue],
   );
 
+  const toggleLanguage=()=>{
+    setLangugage(!language)
+  }
+
   return (
     <div className="divClass">
       <Grid container>
@@ -543,6 +556,18 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
             </h1>
             <div>
               <DateRangeFilter darkTheme={darkTheme}/>
+              <FormControlLabel
+                className={classes.formLabel}
+                label={language ? 'English' : 'French'}
+                control={
+                <CustomSwitch
+                  className={classes.themeSwitch}
+                  checked={language}
+                  onChange={toggleLanguage}
+                  name="toggle theme"
+                />
+            }
+          />
             </div>
           </div>
           <Grid container>
