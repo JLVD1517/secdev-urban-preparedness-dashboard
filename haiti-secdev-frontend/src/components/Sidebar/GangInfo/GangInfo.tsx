@@ -9,6 +9,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
+import './GangInfo.scss';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,8 +22,8 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingLeft: theme.spacing(3),
     },
     text:{
-        fontSize: '30px',
-        fontWeight:900
+        fontWeight:900,
+        fontSize:'14px'
     },
     details:{
         margin:".8rem 0"
@@ -46,30 +47,29 @@ const GangInfo: React.FC = () => {
 
   return (
     <>
-    {selectedItem && (  
-    <List
-      component="nav"
-      aria-labelledby="nested-list-subheader"
-      className={classes.root}
-    >
-      <ListItem button onClick={handleClick}>
-        <ListItemText className={classes.text} primary="Gang Details" />
-        {open ? <ExpandLess /> : <ExpandMore />}
-      </ListItem>
-      {Object.keys(group_details).map( (key, index) => {
-        return <Collapse in={open} timeout="auto" unmountOnExit>
-                  <Paper elevation={0} className={classes.nested}>
-                      <div>
-                          <div className={classes.details}>Group Name: {group_details[key].name}</div>
-                          <div className={classes.details}>Group Size : {group_details[key].group_size}</div>
-                          <div className={classes.details}>Group Leader Name : {group_details[key].leader_name}</div>
-                          <div className={classes.details}>Group Type : {group_details[key].type}</div>
-                      </div>
-                  </Paper>  
-                </Collapse>
-          })
-       }
-    </List>)}
+    {selectedItem && (
+    Object.keys(group_details).map( (key, index) => { 
+        return <List
+        component="nav"
+        aria-labelledby="nested-list-subheader"
+        className={classes.root}
+      >
+        <ListItem button onClick={handleClick}>
+          <ListItemText primary={group_details[key].name} />
+          {open ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+                <Paper elevation={0} className={classes.nested}>
+                    <div>
+                        <div className={classes.details}><span className={classes.text}>Group Name :</span>{group_details[key].name}</div>
+                        <div className={classes.details}><span className={classes.text}>Group Size :</span>{group_details[key].group_size}</div>
+                        <div className={classes.details}><span className={classes.text}>Group Leader Name :</span>{group_details[key].leader_name}</div>
+                        <div className={classes.details}><span className={classes.text}>Group Type :</span>{group_details[key].type}</div>
+                    </div>
+                </Paper>  
+            </Collapse>
+      </List>
+    }))}
     </>
   );
 }
