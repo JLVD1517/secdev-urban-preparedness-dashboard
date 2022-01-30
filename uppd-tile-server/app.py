@@ -56,6 +56,7 @@ class JSONResponse(StarletteJSONResponse):
 async def db_connection_pool():
     """Create a database connection pool"""
     global pool
+    global con
     pool = await asyncpg.create_pool(
         user=os.getenv("DB_USER", "postgres"),
         password=os.getenv("DB_PASSWORD", "changeMe"),
@@ -63,6 +64,15 @@ async def db_connection_pool():
         host="localhost", #os.getenv("localhost"),
         port=5432,
     )
+    con = await asyncpg.connect(
+        user=os.getenv("DB_USER", "postgres"),
+        password=os.getenv("DB_PASSWORD", "changeMe"),
+        database=os.getenv("DATABASE", "uppd_data"),
+        host="localhost", #os.getenv("localhost"),
+        port=5432,
+    )
+    print("my con:",con)
+
 
 
 def tile_extent(x, y, z):
@@ -85,226 +95,13 @@ def tile_extent(x, y, z):
     return xmin, xmax, ymin, ymax
 
 
-async def get_tile(table, x, y, z, fields="gid"):
-    """Retrieve the tile from the database or cache"""
-    tilepath = f"{CACHE_DIR}/{table}/{z}/{x}/{y}.pbf"
-    if not os.path.exists(tilepath):
-        xmin, xmax, ymin, ymax = tile_extent(x, y, z)
-        query = query_template.substitute(
-            table=table, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, fields=fields
-        )
-        async with pool.acquire() as conn:
-            tile = await conn.fetchval(query)
-        if not os.path.exists(os.path.dirname(tilepath)):
-            os.makedirs(os.path.dirname(tilepath))
-        async with aiofiles.open(tilepath, mode="wb") as f:
-            await f.write(tile)
-        response = Response(tile, media_type="application/x-protobuf")
-    else:
-        response = FileResponse(tilepath, media_type="application/x-protobuf")
-    return response
-
-
-async def tile(request):
-    """Parse request parameters and get tile"""
-    fields = request.query_params.get("fields", "gid")
-    fields = ",".join([f'"{field}"' for field in fields.split(",")])
-    table = request.path_params["table"]
-    x = request.path_params["x"]
-    y = request.path_params["y"]
-    z = request.path_params["z"]
-    return await get_tile(table, x, y, z, fields)
-
-
-async def get_year_tile(data_year, x, y, z, fields="gid"):
-    """Retrieve the year tile from the database or cache"""
-    tilepath = f"{CACHE_DIR}/{data_year}/{z}/{x}/{y}.pbf"
-    if not os.path.exists(tilepath):
-        xmin, xmax, ymin, ymax = tile_extent(x, y, z)
-        query = year_query_template.substitute(
-            data_year=data_year,
-            xmin=xmin,
-            xmax=xmax,
-            ymin=ymin,
-            ymax=ymax,
-            fields=fields,
-        )
-        async with pool.acquire() as conn:
-            tile = await conn.fetchval(query)
-        if not os.path.exists(os.path.dirname(tilepath)):
-            os.makedirs(os.path.dirname(tilepath))
-        async with aiofiles.open(tilepath, mode="wb") as f:
-            await f.write(tile)
-        response = Response(tile, media_type="application/x-protobuf")
-    else:
-        response = FileResponse(tilepath, media_type="application/x-protobuf")
-    return response
-
-
-async def year_tile(request):
-    """Parse request parameters and get tile"""
-    fields = request.query_params.get("fields", "gid")
-    fields = ",".join([f'"{field}"' for field in fields.split(",")])
-    data_year = request.path_params["data_year"]
-    x = request.path_params["x"]
-    y = request.path_params["y"]
-    z = request.path_params["z"]
-    return await get_year_tile(data_year, x, y, z, fields)
-
-
-async def insert_geometry(path):
-    """Insert file into PostGIS table"""
-    table_name = os.path.splitext(os.path.basename(path))[0]
-    user = os.getenv("DB_USER", "postgres")
-    password = (os.getenv("DB_PASSWORD", "changeMe"),)
-    database = (os.getenv("DATABASE", "uppd_data"),)
-    host = "0.0.0.0", #os.getenv("DB_HOST", "localhost")
-    port = 5432
-    cmd = f'ogr2ogr \
-            -f "PostgreSQL" PG:"host={host} port={port} dbname={database} user={user} password={password}" \
-            -lco GEOMETRY_NAME=geom \
-            -lco FID=gid \
-            -nlt PROMOTE_TO_MULTI \
-            "{path}"'
-    proc = await asyncio.create_subprocess_shell(
-        cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-    )
-    stdout, stderr = await proc.communicate()
-    if proc.returncode != 0:
-        raise ValueError(f"\n{stderr.decode()}")
-
-
-async def unzip(form, dest):
-    # Hack because SpooledTemporaryFile doesn't implement seekable
-    form["file"].file.seekable = lambda: True
-    z = zipfile.ZipFile(form["file"].file)
-    z.extractall(dest)
-    # Check that all of the necessary files are present
-    required_files = [False, False, False]
-    for f in os.listdir(dest):
-        if f.endswith(".shp"):
-            required_files[0] = True
-            shp_file = os.path.join(dest, f)
-        elif f.endswith(".dbf"):
-            required_files[1] = True
-        elif f.endswith(".prj"):
-            required_files[2] = True
-    if not all(required_files):
-        raise ValueError("Missing required file")
-    return shp_file
-
-
-async def upload(request):
-    """Upload a zipped Shapefile into PostGIS"""
-    form = await request.form()
-    temp_dir = tempfile.mkdtemp()
-    if form["file"].filename.endswith(".zip"):
-        try:
-            path = await unzip(form, temp_dir)
-        except Exception as e:
-            return Response(str(e), status_code=400)
-    else:
-        path = os.path.join(temp_dir, form["file"].filename)
-        with open(path, "wb") as f:
-            f.write(form["file"].file.read())
-    try:
-        await insert_geometry(path)
-        table_name = os.path.splitext(os.path.basename(path))[0]
-        if request.url.port is not None:
-            url = f"{request.url.scheme}://{request.url.hostname}:{request.url.port}/layers/{table_name}"
-        else:
-            url = f"{request.url.scheme}://{request.url.hostname}/layers/{table_name}"
-        return Response(f"Upload successful, layer can be accessed at {url}")
-    except Exception as e:
-        return Response(f"Error inserting geometry: {e}", status_code=500)
-    finally:
-        # Clean up temporary files
-        for f in os.listdir(temp_dir):
-            os.remove(os.path.join(temp_dir, f))
-        os.rmdir(temp_dir)
-
-
-async def fields(request):
-    """List fields for the layer"""
-    table = request.path_params["table"]
-    query = f"SELECT * FROM {table} WHERE true LIMIT 1;"
-    async with pool.acquire() as conn:
-        try:
-            row = await conn.fetchrow(query)
-        except asyncpg.exceptions.UndefinedTableError:
-            return JSONResponse(
-                {"error": f"Table {table} does not exist"}, status_code=404
-            )
-    fields = [k for k in row.keys() if k != "geom"]
-    return JSONResponse({"fields": fields, "error": None})
-
-
-async def data_years(request):
-    """Get the years of data available"""
-    query = "SELECT DISTINCT data_year FROM view_data WHERE data_year IS NOT NULL ORDER BY data_year;"
-    
-    print("arr",[i for i in [1,2,3,4,5]])
-    async with pool.acquire() as conn:
-        rows = await conn.fetch(query)
-        return JSONResponse({"years": [row[0] for row in rows], "error": None})
-
-
-async def get_column(request):
-    """Retrieve column data from a table"""
-    column = request.path_params["column"]
-    year = request.path_params["year"]
-    query = f"SELECT {column} FROM view_data WHERE data_year = {year};"
-    async with pool.acquire() as conn:
-        try:
-            rows = await conn.fetch(query)
-            return JSONResponse({"data": [row[0] for row in rows]})
-        except asyncpg.exceptions.UndefinedColumnError:
-            return JSONResponse(
-                {"error": f"Column {column} in view_data does not exist"},
-                status_code=404,
-            )
-        except Exception as e:
-            return JSONResponse({"error": str(e)}, status_code=500)
-
-
 async def on_startup():
     """Operations to perform when application starts up"""
-    variable = 'haha'
-    print("server is started by sanjay",variable)
+    print("Tile server has started")
     await db_connection_pool()
 
 
-query_template = Template(
-    """
-    SELECT ST_AsMVT(tile, 'tile')
-    FROM (
-        SELECT ${fields},
-            ST_AsMVTGeom(ST_Transform(ST_SetSRID(geom,4326), 3857),
-            ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
-                4096, 0, false) AS g
-        FROM ${table}
-        WHERE (geom &&
-            ST_Transform(ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857), 4326))
-    ) AS tile;
-    """
-)
 
-
-year_query_template = Template(
-    """
-    SELECT ST_AsMVT(tile, 'tile')
-    FROM (
-        SELECT ${fields},
-            ST_AsMVTGeom(ST_Transform(ST_SetSRID(geom,4326), 3857),
-            ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
-                4096, 0, false) AS g
-        FROM view_data
-        WHERE (geom &&
-            ST_Transform(ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857), 4326))
-        AND data_year = ${data_year}
-    ) AS tile;
-    """
-)
 # commune_query_template = Template(
 #     """
 #     SELECT ST_AsMVT(tile, 'tile')
@@ -390,27 +187,6 @@ async def get_commune_tile(x, y, z, fields="gid"):
     return response
 
 
-
-
-
-
-# subcommune_query_template = Template(
-#     """
-#     SELECT ST_AsMVT(tile, 'tile')
-#     FROM (
-#         SELECT count(gs.group_id) AS no_of_groups,
-#             hsb.gid,
-#             hsb.adm3_en,
-#             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
-#             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
-#                 4096, 0, false) AS g
-#         FROM groups AS gs inner join group_records AS ga ON gs.group_id = ga.group_id  inner join  sub_commune AS sb on ga.sub_commune_id = sb.sub_commune_id inner join haiti_subcommune AS hsb on  hsb.gid = sb.sub_commune_id 
-#             where ga.month_number = ${month_number}
-#             GROUP BY hsb.geom ,hsb.adm3_en,hsb.gid
-#     ) AS tile;
-#     """
-    
-# )
 subcommune_query_template1 = Template(
     """
     SELECT ST_AsMVT(tile, 'tile')
@@ -419,7 +195,7 @@ subcommune_query_template1 = Template(
             hsb.gid,
             hsb.adm3_en,
             scgc.group_list,
-            scgc.group_details,
+            scgc.group_details::json,
             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
                 4096, 0, false) AS g
@@ -510,28 +286,26 @@ async def get_subcommune(request):
     await get_temp_res(month_number,year)
     return await get_subcommune_tile(x, y, z, fields,month_number,year)
 
-async def get_subcommune_tile(x, y, z, fields="gid",month_number=1,year=2021):
+async def get_subcommune_tile(x, y, z, fields="gid",month_number=12,year=2021):
+
     """Retrieve the year tile from the database or cache"""
     tilepath = f"{CACHE_DIR}/{month_number}/{year}/{z}/{x}/{y}.pbf"
-    if  not os.path.exists(tilepath):
-        xmin, xmax, ymin, ymax = tile_extent(x, y, z)
-        query = subcommune_query_template1.substitute(
-            xmin=xmin,
-            xmax=xmax,
-            ymin=ymin,
-            ymax=ymax,
-        )
-        async with pool.acquire() as conn:
-            
-            tile = await conn.fetchval(query)  
-            print("tile:",tile)
+   
+    xmin, xmax, ymin, ymax = tile_extent(x, y, z)
+    query = subcommune_query_template1.substitute(
+        xmin=xmin,
+        xmax=xmax,
+        ymin=ymin,
+        ymax=ymax,
+    )
+    async with pool.acquire() as conn:
+        tile = await conn.fetchval(query)  
+        print("tile:",tile)
         if not os.path.exists(os.path.dirname(tilepath)):
             os.makedirs(os.path.dirname(tilepath))
         async with aiofiles.open(tilepath, mode="wb") as f:
             await f.write(tile)
-        response = Response(tile, media_type="application/x-protobuf")
-    else:
-        response = FileResponse(tilepath, media_type="application/x-protobuf")
+    response = Response(tile, media_type="application/x-protobuf")
     return response
 
 async def index(request):
@@ -627,6 +401,43 @@ async def articles_per_commune(request):
             print("asass",data)
     return JSONResponse({"success":"true","data":data})
 
+articles_query = Template (
+    """
+    select * from event_info ei inner join events e on ei.event_id = e.event_id  where ei.language = '${language}' 
+    """
+)
+
+async def get_articles(request):
+    language = request.path_params['language']
+    query = articles_query.substitute(
+        language=language
+    )
+   
+    async with pool.acquire() as conn:
+        print(query)
+        data_res = await conn.fetch(query)
+        print(data_res)
+        data_arr = []
+        for data in iter(data_res):
+            obj = {}
+            obj['event_info_id'] = int(data['event_info_id'])
+            obj['publication_date'] = data['publication_date']
+            obj['source']= data['source'] 
+            obj['title']=data['title'] 
+            obj['url']=data['url'] 
+            obj['summary']=data['summary'] 
+            obj['tone']= int(data['tone']) 
+            obj['compound']= int(data['compound']) 
+            obj['commune_id']=int(data['commune_id'])
+            obj['language']=data['language']
+            obj['category'] = data['category']
+            obj['event_type'] = data['type'] 
+            data_arr.append(obj)
+
+    return JSONResponse({"success":"true","data":data_arr})
+
+
+
 async  def test(request):
     d  = decimal.Decimal('10')
     print(type(int(d)))
@@ -634,10 +445,16 @@ async  def test(request):
     obj['a'] = 10
     obj['b'] = 20
     print(type(obj))
+    await conn.set_type_codec(
+            'json',
+            encoder=json.dumps,
+            decoder=json.loads,
+            schema='pg_catalog'
+        )
     async with pool.acquire() as conn:
         #print("conn",conn)
         month_query = 'select * from sub_commune_group_count_map'
-        tile12 = await conn.fetch(month_query)
+        tile12 = await conn.fetchall(month_query)
         print(type(tile12[33]['group_details']))
         print(json.loads(tile12[33]['group_details']))
         jdata =  json.loads(tile12[33]['group_details'])
@@ -648,15 +465,9 @@ async  def test(request):
 
 routes = [
     Route("/", index),
-    #Route("/layers/assets/{table:str}/{z:int}/{x:int}/{y:int}", tile),
-    #Route("/layers/indices/{data_year:int}/{z:int}/{x:int}/{y:int}", year_tile),
-    #Route("/layers/{table:str}/fields", fields),
-    #Route("/upload", upload, methods=["POST"]),
-    #Route("/data-years", data_years),
-    #Route("/{column:str}/{year:int}", get_column),
-    
     Route("/get-commune/{z:int}/{x:int}/{y:int}",get_commune),
     Route("/get-subcommune/{month_number:int}/{year:int}/{z:int}/{x:int}/{y:int}",get_subcommune),
+    Route("/get-articles/{language:str}",get_articles),
     Route("/data/articles-per-event/{language:str}",articles_per_event),
     Route("/data/avg-tone/{language:str}",avg_tone),
     Route("/data/articles-per-commune/{language:str}",articles_per_commune),
