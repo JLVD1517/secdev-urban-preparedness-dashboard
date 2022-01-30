@@ -8,6 +8,7 @@ import os
 import tempfile
 import zipfile
 from starlette.applications import Starlette
+from starlette.datastructures import URL, QueryParams
 from starlette.responses import (
     FileResponse,
     HTMLResponse,
@@ -100,6 +101,19 @@ async def on_startup():
     print("Tile server has started")
     await db_connection_pool()
 
+# commune_query_template = Template(
+#     """
+#     SELECT ST_AsMVT(tile, 'tile')
+#     FROM (
+#         SELECT count(ei.event_id) as no_of_articles,
+#             c.commune_id,
+#             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hc.geom,4326), 3857),
+#             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
+#                 4096, 0, false) AS gs
+#         FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid where ei.tone between  ${start_tone} and ${end_tone} AND ei.publication_date between '${start_date}' and '${end_date}' and ei.language = '${language}' group by (c.commune_id,hc.geom)
+#     ) AS tile;
+#     """   
+# )
 commune_query_template = Template(
     """
     SELECT ST_AsMVT(tile, 'tile')
@@ -109,39 +123,47 @@ commune_query_template = Template(
             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hc.geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
                 4096, 0, false) AS gs
-        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid where ei.tone between  ${start_tone} and ${end_tone} AND ei.publication_date between '${start_date}' and '${end_date}' group by (c.commune_id,hc.geom)
+        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid where ${cond_str} AND ei.publication_date between '${start_date}' and '${end_date}' and ei.language = '${language}' group by (c.commune_id,hc.geom)
     ) AS tile;
     """   
 )
 
 async def get_commune(request):
     """Parse request parameters and get tile"""
-    fields = request.query_params.get("fields", "gid")
-    fields = ",".join([f'"{field}"' for field in fields.split(",")])
+    #fields = request.query_params.get("fields", "gid")
+    #fields = ",".join([f'"{field}"' for field in fields.split(",")])
     x = request.path_params["x"]
     y = request.path_params["y"]
     z = request.path_params["z"]
-    start_tone = request.path_params['start_tone']
-    end_tone = request.path_params['end_tone']
     start_date = request.path_params['start_date']
     end_date = request.path_params['end_date']
-    return await get_commune_tile(x, y, z, start_tone,end_tone,start_date,end_date,fields)
+    language=request.path_params['language']
+    param_list = ['tone_start_range','source','type']
+    url_str = str(request.query_params)
+    #s1 = str()
+    cond_str = ' 1=1 '
+    for param in param_list:
+        if url_str.find(param) != -1 and param == 'tone_start_range':
+            print('hai')
+            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
+        elif  url_str.find(param) != -1 :
+            cond_str = cond_str + f' and {param} = '+"'"+request.query_params[param]+"'" 
+    print(cond_str)        
+    return await get_commune_tile(x, y, z, start_date,end_date,language,cond_str)
 
-async def get_commune_tile(x, y, z,start_tone,end_tone,start_date,end_date, fields="gid"):
+async def get_commune_tile(x, y, z,start_date,end_date,language, cond_str):
     """Retrieve the year tile from the database or cache"""
-    tilepath = f"{CACHE_DIR}/{z}/{x}/{y}.pbf"
-  
+    #tilepath = f"{CACHE_DIR}/{z}/{x}/{y}.pbf"
     xmin, xmax, ymin, ymax = tile_extent(x, y, z)
     query = commune_query_template.substitute(
         xmin=xmin,
         xmax=xmax,
         ymin=ymin,
         ymax=ymax,
-        fields=fields,
-        start_tone=start_tone,
-        end_tone=end_tone,
+        cond_str =cond_str,
         start_date = start_date,
         end_date=end_date,
+        language=language
     )
     print("commun equery",query)
     async with pool.acquire() as conn:
@@ -252,8 +274,7 @@ async def get_subcommune(request):
 async def get_subcommune_tile(x, y, z, fields="gid",month_number=12,year=2021):
 
     """Retrieve the year tile from the database or cache"""
-    tilepath = f"{CACHE_DIR}/{month_number}/{year}/{z}/{x}/{y}.pbf"
-   
+    #tilepath = f"{CACHE_DIR}/{month_number}/{year}/{z}/{x}/{y}.pbf"
     xmin, xmax, ymin, ymax = tile_extent(x, y, z)
     query = subcommune_query_template1.substitute(
         xmin=xmin,
@@ -264,10 +285,6 @@ async def get_subcommune_tile(x, y, z, fields="gid",month_number=12,year=2021):
     async with pool.acquire() as conn:
         tile = await conn.fetchval(query)  
         print("tile:",tile)
-        if not os.path.exists(os.path.dirname(tilepath)):
-            os.makedirs(os.path.dirname(tilepath))
-        async with aiofiles.open(tilepath, mode="wb") as f:
-            await f.write(tile)
     response = Response(tile, media_type="application/x-protobuf")
     return response
 
@@ -283,15 +300,31 @@ async def index(request):
 
 query_template4 = Template(
     """
-    select ei.pub_month , e.type  as event_type , count(ei.event_info_id) as no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ei.language = '${language}'  group by (ei.pub_month,e.type) ;
+    select ei.pub_month , e.type  as event_type , count(ei.event_info_id) as no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and ei.publication_date between '${start_date}' and '${end_date}' and  ei.language = '${language}'  group by (ei.pub_month,e.type) ;
     """
 )
 
 async def articles_per_event(request):
     print(request.path_params['language'])
     language = request.path_params['language']
+    start_date =request.path_params['start_date']
+    end_date= request.path_params['end_date']
+    param_list = ['tone_start_range','source','type']
+    url_str = str(request.query_params)
+    #s1 = str()
+    cond_str = ' 1=1 '
+    for param in param_list:
+        if url_str.find(param) != -1 and param == 'tone_start_range':
+            print('hai')
+            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
+        elif  url_str.find(param) != -1 :
+            cond_str = cond_str + f' and {param} = '+"'"+request.query_params[param]+"'" 
+    print(cond_str)  
     query = query_template4.substitute(
-        language=language
+        start_date=start_date,
+        end_date=end_date,
+        language=language,
+        cond_str=cond_str
     )
     #print(query_res)
     async with pool.acquire() as conn:
@@ -311,15 +344,31 @@ async def articles_per_event(request):
 
 query_template5 = Template(
     """
-    select ei.pub_month , count(ei.event_info_id) as no_of_articles, avg(ei.tone) as avg_tone from event_info ei left join events e on e.event_id = ei.event_id  where ei.language = '${language}'  group by ei.pub_month ;
+    select ei.pub_month , count(ei.event_info_id) as no_of_articles, avg(ei.tone) as avg_tone from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and ei.publication_date between '${start_date}' and '${end_date}' and  ei.language = '${language}'  group by ei.pub_month ;
     """
 )
 
 
 async def avg_tone(request):
     language = request.path_params['language']
+    start_date =request.path_params['start_date']
+    end_date= request.path_params['end_date']
+    param_list = ['tone_start_range','source','type']
+    url_str = str(request.query_params)
+    #s1 = str()
+    cond_str = ' 1=1 '
+    for param in param_list:
+        if url_str.find(param) != -1 and param == 'tone_start_range':
+            print('hai')
+            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
+        elif  url_str.find(param) != -1 :
+            cond_str = cond_str + f' and {param} = '+"'"+request.query_params[param]+"'" 
+    print(cond_str)  
     query = query_template5.substitute(
-        language=language
+        start_date=start_date,
+        end_date=end_date,
+        language=language,
+        cond_str=cond_str
     )
     async with pool.acquire() as conn:
             data_res = await conn.fetch(query)
@@ -341,14 +390,30 @@ async def avg_tone(request):
 
 query_template6 = Template(
     """
-    select ei.pub_month , ei.commune_id , count(ei.event_info_id) as  no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ei.language = '${language}'  group by (ei.pub_month,ei.commune_id) ;
+    select ei.pub_month , ei.commune_id , count(ei.event_info_id) as  no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and ei.publication_date between '${start_date}' and '${end_date}' and  ei.language = '${language}'  group by (ei.pub_month,ei.commune_id) ;
     """
 )
 
 async def articles_per_commune(request):
     language = request.path_params['language']
+    start_date =request.path_params['start_date']
+    end_date= request.path_params['end_date']
+    param_list = ['tone_start_range','source','type']
+    url_str = str(request.query_params)
+    #s1 = str()
+    cond_str = ' 1=1 '
+    for param in param_list:
+        if url_str.find(param) != -1 and param == 'tone_start_range':
+            print('hai')
+            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
+        elif  url_str.find(param) != -1 :
+            cond_str = cond_str + f' and {param} = '+"'"+request.query_params[param]+"'" 
+    print(cond_str)  
     query = query_template6.substitute(
-        language=language
+        start_date=start_date,
+        end_date=end_date,
+        language=language,
+        cond_str=cond_str
     )
     async with pool.acquire() as conn:
             data_res = await conn.fetch(query)
@@ -366,14 +431,31 @@ async def articles_per_commune(request):
 
 articles_query = Template (
     """
-    select * from event_info ei inner join events e on ei.event_id = e.event_id  where ei.language = '${language}' 
+    select * from event_info ei inner join events e on ei.event_id = e.event_id  where ${cond_str} and ei.publication_date between '${start_date}' and '${end_date}' and   ei.language = '${language}' 
     """
 )
 
 async def get_articles(request):
     language = request.path_params['language']
+    start_date =request.path_params['start_date']
+    end_date= request.path_params['end_date']
+    param_list = ['tone_start_range','source','type']
+    url_str = str(request.query_params)
+    #s1 = str()
+    cond_str = ' 1=1 '
+    for param in param_list:
+        if url_str.find(param) != -1 and param == 'tone_start_range':
+            print('hai')
+            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
+        elif  url_str.find(param) != -1 :
+            cond_str = cond_str + f' and {param} = '+"'"+request.query_params[param]+"'" 
+    print(cond_str)      
+    
     query = articles_query.substitute(
-        language=language
+        start_date=start_date,
+        end_date=end_date,
+        language=language,
+        cond_str=cond_str
     )
    
     async with pool.acquire() as conn:
@@ -399,41 +481,60 @@ async def get_articles(request):
 
     return JSONResponse({"success":"true","data":data_arr})
 
-
+test_query = Template(
+    """
+    select * from event_info where ${condition}
+    """
+)
 
 async  def test(request):
+    #l = request.json()
+    param_list = ['tone_start_range','source','type']
+    url_str = str(request.query_params)
+    #s1 = str()
+    cond_str = ' 1=1 '
+    for param in param_list:
+        if url_str.find(param) != -1 and param == 'tone_start_range':
+            print('hai')
+            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
+        elif  url_str.find(param) != -1 :
+            cond_str = cond_str + f' and {param} = '+"'"+request.query_params[param]+"'"    
+            
+            
+    print(cond_str)        
+
+
+    print("st", )
+    #print(request.url.params)
+    print(request.query_params)
+
     d  = decimal.Decimal('10')
     print(type(int(d)))
     obj = {}
     obj['a'] = 10
     obj['b'] = 20
     print(type(obj))
-    await conn.set_type_codec(
-            'json',
-            encoder=json.dumps,
-            decoder=json.loads,
-            schema='pg_catalog'
-        )
+    
     async with pool.acquire() as conn:
         #print("conn",conn)
         month_query = 'select * from sub_commune_group_count_map'
-        tile12 = await conn.fetchall(month_query)
+        tile12 = await conn.fetch(month_query)
         print(type(tile12[33]['group_details']))
         print(json.loads(tile12[33]['group_details']))
         jdata =  json.loads(tile12[33]['group_details'])
-        print(jdata['2']['name'])
+        #print(jdata['2']['name'])
     return JSONResponse({"sucess":"true","data":"tile12"})
 
 
 
 routes = [
     Route("/", index),
-    Route("/get-commune/{start_tone:int}/{end_tone:int}/{start_date:str}/{end_date:str}/{z:int}/{x:int}/{y:int}",get_commune),
+    Route("/get-commune/{start_date:str}/{end_date:str}/{language:str}/{z:int}/{x:int}/{y:int}",get_commune),
     Route("/get-subcommune/{month_number:int}/{year:int}/{z:int}/{x:int}/{y:int}",get_subcommune),
-    Route("/get-articles/{language:str}",get_articles),
-    Route("/data/articles-per-event/{language:str}",articles_per_event),
-    Route("/data/avg-tone/{language:str}",avg_tone),
-    Route("/data/articles-per-commune/{language:str}",articles_per_commune),
+    Route("/get-articles/{start_date:str}/{end_date:str}/{language:str}",get_articles),
+    Route("/data/articles-per-event/{start_date:str}/{end_date:str}/{language:str}",articles_per_event),
+    Route("/data/avg-tone/{start_date:str}/{end_date:str}/{language:str}",avg_tone),
+    Route("/data/articles-per-commune/{start_date:str}/{end_date:str}/{language:str}",articles_per_commune),
     Route("/test",test)
 ]
 
