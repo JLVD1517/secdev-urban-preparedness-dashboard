@@ -34,6 +34,7 @@ import './Map.scss';
 import Popup from './MapTooltip/Popup';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import { InitialEventsComponentState, plotData } from '../../types';
+import ToneSlider from '../../ToneSlider/ToneSlider';
 
 const mapboxgl = require('mapbox-gl');
 
@@ -568,6 +569,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
                 />
             }
           />
+              <ToneSlider/>
             </div>
           </div>
           <Grid container>
