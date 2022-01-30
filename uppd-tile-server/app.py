@@ -109,7 +109,7 @@ commune_query_template = Template(
             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hc.geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
                 4096, 0, false) AS gs
-        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid where ei.tone between  ${start_tone} and ${end_tone} AND ei.publication_date between '${start_date}' and '${end_date}' group by (c.commune_id,hc.geom)
+        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid where ei.tone between  ${start_tone} and ${end_tone} AND ei.publication_date between '${start_date}' and '${end_date}' and ei.language = '${language}' group by (c.commune_id,hc.geom)
     ) AS tile;
     """   
 )
@@ -125,12 +125,12 @@ async def get_commune(request):
     end_tone = request.path_params['end_tone']
     start_date = request.path_params['start_date']
     end_date = request.path_params['end_date']
-    return await get_commune_tile(x, y, z, start_tone,end_tone,start_date,end_date,fields)
+    language=request.path_params['language']
+    return await get_commune_tile(x, y, z, start_tone,end_tone,start_date,end_date,language,fields)
 
-async def get_commune_tile(x, y, z,start_tone,end_tone,start_date,end_date, fields="gid"):
+async def get_commune_tile(x, y, z,start_tone,end_tone,start_date,end_date,language, fields="gid"):
     """Retrieve the year tile from the database or cache"""
-    tilepath = f"{CACHE_DIR}/{z}/{x}/{y}.pbf"
-  
+    #tilepath = f"{CACHE_DIR}/{z}/{x}/{y}.pbf"
     xmin, xmax, ymin, ymax = tile_extent(x, y, z)
     query = commune_query_template.substitute(
         xmin=xmin,
@@ -142,6 +142,7 @@ async def get_commune_tile(x, y, z,start_tone,end_tone,start_date,end_date, fiel
         end_tone=end_tone,
         start_date = start_date,
         end_date=end_date,
+        language=language
     )
     print("commun equery",query)
     async with pool.acquire() as conn:
@@ -252,8 +253,7 @@ async def get_subcommune(request):
 async def get_subcommune_tile(x, y, z, fields="gid",month_number=12,year=2021):
 
     """Retrieve the year tile from the database or cache"""
-    tilepath = f"{CACHE_DIR}/{month_number}/{year}/{z}/{x}/{y}.pbf"
-   
+    #tilepath = f"{CACHE_DIR}/{month_number}/{year}/{z}/{x}/{y}.pbf"
     xmin, xmax, ymin, ymax = tile_extent(x, y, z)
     query = subcommune_query_template1.substitute(
         xmin=xmin,
@@ -264,10 +264,6 @@ async def get_subcommune_tile(x, y, z, fields="gid",month_number=12,year=2021):
     async with pool.acquire() as conn:
         tile = await conn.fetchval(query)  
         print("tile:",tile)
-        if not os.path.exists(os.path.dirname(tilepath)):
-            os.makedirs(os.path.dirname(tilepath))
-        async with aiofiles.open(tilepath, mode="wb") as f:
-            await f.write(tile)
     response = Response(tile, media_type="application/x-protobuf")
     return response
 
@@ -428,7 +424,7 @@ async  def test(request):
 
 routes = [
     Route("/", index),
-    Route("/get-commune/{start_tone:int}/{end_tone:int}/{start_date:str}/{end_date:str}/{z:int}/{x:int}/{y:int}",get_commune),
+    Route("/get-commune/{start_tone:int}/{end_tone:int}/{start_date:str}/{end_date:str}/{language:str}/{z:int}/{x:int}/{y:int}",get_commune),
     Route("/get-subcommune/{month_number:int}/{year:int}/{z:int}/{x:int}/{y:int}",get_subcommune),
     Route("/get-articles/{language:str}",get_articles),
     Route("/data/articles-per-event/{language:str}",articles_per_event),
