@@ -533,7 +533,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
         <Grid item md={5} className="containerBox">
           <div className="col-5">
             <div className="mapEventContainer" id="map" ref={mapRef} />
-            <Footerbar mapGradient={mapGradient} elementData={'Number Of Events'}/>
+            <Footerbar mapGradient={mapGradient} elementData={'Number Of Events'} event={true}/>
           </div>
         </Grid>
         <Grid item md={7} className={`containerBox ${classes.rightDiv}`}>

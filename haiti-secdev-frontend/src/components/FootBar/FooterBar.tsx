@@ -5,15 +5,16 @@ import { MapGradientType } from '../../types';
 
 interface FootBarProps {
   mapGradient: MapGradientType;
-  elementData: string
+  elementData: string;
+  event:Boolean
 }
 
-const FootBar: React.FC<FootBarProps> = ({ mapGradient, elementData }) => {
+const FootBar: React.FC<FootBarProps> = ({ mapGradient, elementData, event}) => {
   const theme = useTheme();
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
-      position: 'absolute',
-      top: `calc(100vh - 15vh)`,
+      position: 'relative',
+      top: event ? `calc(100vh - 50vh)` : `calc(100vh - 15vh)`,
       left: '30%',
       width: '293px',
       height: '50px',
