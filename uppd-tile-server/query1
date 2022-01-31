@@ -104,6 +104,61 @@ group_record_id       | numeric           |           | not null |
 
 
  SELECT count(ei.event_id),
-c.commune_id, 
+c.commune_id
             
         FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid group by (c.commune_id,hc.geom)
+
+
+        SELECT scgc.group_count AS no_of_groups,
+            hsb.gid,
+            hsb.adm3_en,
+            scgc.group_list,
+            scgc.group_details
+        FROM sub_commune_group_count_map as scgc inner join haiti_subcommune AS hsb on  scgc.sub_commune_id = hsb.gid ;
+
+
+
+
+        SELECT count(ei.event_id) as no_of_articles,
+            c.commune_id
+        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid where  1=1  AND ei.publication_date >= '01-DEC-2020' and  ei.publication_date <= '01-DEC-2022' and ei.language = 'ENGLISH' group by (c.commune_id,hc.geom)
+
+
+
+
+        SELECT count(ei.event_id) as no_of_articles,
+            c.commune_id
+        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid where  1=1  AND ei.language = 'ENGLISH' and TO_DATE(ei.publication_date,'dd-mm-yyyy') >= '01-DEC-2021'::date AND to_date(ei.publication_date,'dd-mm-yyyy') <= '01-DEC-2022'::date  group by (c.commune_id,hc.geom);
+
+
+        SELECT count(ei.event_id) as no_of_articles,
+            c.commune_id
+        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid where  1=1  AND ei.language = 'ENGLISH' and to_date(publication_date_fmt,'dd-mm-yyyy') <= to_date('20-12-2021','dd-mm-yyyy') group by (c.commune_id,hc.geom); 
+
+
+        SELECT count(ei.event_id) as no_of_articles,
+            c.commune_id
+        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid where  1=1  AND ei.language = 'ENGLISH'  group by (c.commune_id,hc.geom); 
+
+
+        final required query:
+        alter table event_info add publication_date_fmt varchar(20); 
+
+        to add data:
+        update event_info set publication_date_fmt = '06-12-2021' where event_info_id = 1 ;
+        update event_info set publication_date_fmt = '12-12-2021' where event_info_id = 2 ;
+         update event_info set publication_date_fmt = '14-12-2021' where event_info_id = 3 ;
+          update event_info set publication_date_fmt = '15-12-2021' where event_info_id = 4 ;
+          update event_info set publication_date_fmt = '18-12-2021' where event_info_id = 5 ;
+
+
+
+
+ SELECT * FROM (
+	            SELECT ST_AsMVTGeom(ST_Transform(ST_SetSRID(geom,4326), 3857),
+ 	            ST_MakeEnvelope(-8061966.247294093, 2113330.9580285475, -8022830.4888120815, 2152466.7165105604, 3857),
+                4096, 0, false) AS g ,
+                 gid FROM haiti_commune  ) AS hc left join  ( 
+       SELECT count(ei.event_id) as no_of_articles,
+            c.commune_id
+        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id  where  1=1  AND TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('01-12-2020','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('01-12-2022','dd-mm-yyyy') and ei.language = 'ENGLISH' group by (c.commune_id)  ) as d on d.commune_id = hc.gid 

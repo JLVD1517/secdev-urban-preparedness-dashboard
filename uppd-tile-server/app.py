@@ -109,24 +109,29 @@ async def on_startup():
 #             c.commune_id,
 #             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hc.geom,4326), 3857),
 #             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
-#                 4096, 0, false) AS gs
-#         FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid where ei.tone between  ${start_tone} and ${end_tone} AND ei.publication_date between '${start_date}' and '${end_date}' and ei.language = '${language}' group by (c.commune_id,hc.geom)
+#                 4096, 0, false) AS g
+#         FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id  where ${cond_str} AND TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and ei.language = '${language}' group by (c.commune_id,hc.geom)
 #     ) AS tile;
 #     """   
 # )
+
+
 commune_query_template = Template(
     """
     SELECT ST_AsMVT(tile, 'tile')
     FROM (
-        SELECT count(ei.event_id) as no_of_articles,
-            c.commune_id,
-            ST_AsMVTGeom(ST_Transform(ST_SetSRID(hc.geom,4326), 3857),
+        SELECT * FROM (
+            SELECT ST_AsMVTGeom(ST_Transform(ST_SetSRID(geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
-                4096, 0, false) AS gs
-        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id inner join  haiti_commune  hc on c.commune_id = hc.gid where ${cond_str} AND ei.publication_date between '${start_date}' and '${end_date}' and ei.language = '${language}' group by (c.commune_id,hc.geom)
+                4096, 0, false) AS g ,
+                 gid FROM haiti_commune  ) AS hc left join  ( 
+        SELECT count(ei.event_id) as no_of_articles,
+            c.commune_id
+        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id  where ${cond_str} AND TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and ei.language = '${language}' group by (c.commune_id)  ) as d on d.commune_id = hc.gid 
     ) AS tile;
     """   
 )
+
 
 async def get_commune(request):
     """Parse request parameters and get tile"""
@@ -300,7 +305,7 @@ async def index(request):
 
 query_template4 = Template(
     """
-    select ei.pub_month , e.type  as event_type , count(ei.event_info_id) as no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and ei.publication_date between '${start_date}' and '${end_date}' and  ei.language = '${language}'  group by (ei.pub_month,e.type) ;
+    select ei.pub_month , e.type  as event_type , count(ei.event_info_id) as no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by (ei.pub_month,e.type) ;
     """
 )
 
@@ -344,7 +349,7 @@ async def articles_per_event(request):
 
 query_template5 = Template(
     """
-    select ei.pub_month , count(ei.event_info_id) as no_of_articles, avg(ei.tone) as avg_tone from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and ei.publication_date between '${start_date}' and '${end_date}' and  ei.language = '${language}'  group by ei.pub_month ;
+    select ei.pub_month , count(ei.event_info_id) as no_of_articles, avg(ei.tone) as avg_tone from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by ei.pub_month ;
     """
 )
 
@@ -390,7 +395,7 @@ async def avg_tone(request):
 
 query_template6 = Template(
     """
-    select ei.pub_month , ei.commune_id , count(ei.event_info_id) as  no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and ei.publication_date between '${start_date}' and '${end_date}' and  ei.language = '${language}'  group by (ei.pub_month,ei.commune_id) ;
+    select ei.pub_month , ei.commune_id , count(ei.event_info_id) as  no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by (ei.pub_month,ei.commune_id) ;
     """
 )
 
@@ -431,7 +436,7 @@ async def articles_per_commune(request):
 
 articles_query = Template (
     """
-    select * from event_info ei inner join events e on ei.event_id = e.event_id  where ${cond_str} and ei.publication_date between '${start_date}' and '${end_date}' and   ei.language = '${language}' 
+    select * from event_info ei inner join events e on ei.event_id = e.event_id  where ${cond_str} and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and   ei.language = '${language}' 
     """
 )
 
