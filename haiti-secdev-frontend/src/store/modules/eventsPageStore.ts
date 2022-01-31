@@ -1,39 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { InitialEventsComponentState, plotData } from '../../types';
+import { InitialEventsComponentState } from '../../types';
 
 const eventsComponentInitialState: InitialEventsComponentState = {
-  stateDate: '01-12-2021',
+  startDate: '01-12-2020',
   endDate:  '01-12-2022',
-  noOfArticlesPlotData: [{
-    value: 0,
-    date: 'MAR-21',
-    name: 'test'
-  },
-  {
-    value: 10,
-    date: 'APR-21',
-    name: 'test'
-  },
-  {
-    value: 20,
-    date: 'JUN-21',
-    name: 'test'
-  }],
-  avgTonePlotData: [{
-    value: 20,
-    date: 'MAR-21',
-    name: 'test'
-  },
-  {
-    value: 10,
-    date: 'APR-21',
-    name: 'test'
-  },
-  {
-    value: 0,
-    date: 'JUN-21',
-    name: 'test'
-  }],
+  language: 'ENGLISH'
 };
 
 const eventsComponentSlice = createSlice({
@@ -44,7 +15,7 @@ const eventsComponentSlice = createSlice({
       state,
       { payload }: PayloadAction<string>,
     ): void => {
-      state.stateDate = payload;
+      state.startDate = payload;
     },
     setEventsEndDate: (
       state,
@@ -52,18 +23,12 @@ const eventsComponentSlice = createSlice({
     ): void => {
       state.endDate = payload;
     },
-    setNoOfArticlesPlot: (
+    setEventsLanguage: (
       state,
-      { payload }: PayloadAction<[plotData]>,
+      { payload }: PayloadAction<string>,
     ): void => {
-      state.noOfArticlesPlotData = payload
+      state.language = payload
     },
-    setAvgTonePlotData: (
-      state,
-      { payload }: PayloadAction<[plotData]>,
-    ): void => {
-      state.avgTonePlotData = payload
-    }
   },
 });
 
@@ -71,8 +36,7 @@ const eventsComponentSlice = createSlice({
 export const {
   setEventsStartDate,
   setEventsEndDate,
-  setNoOfArticlesPlot,
-  setAvgTonePlotData
+  setEventsLanguage
 } = eventsComponentSlice.actions;
 
 export default eventsComponentSlice.reducer;

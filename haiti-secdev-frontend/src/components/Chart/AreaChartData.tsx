@@ -12,12 +12,12 @@ import {
 } from 'recharts';
 import { useTheme, Theme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import {  MapGradientType, plotData } from '../../types';
+import {  MapGradientType, PlotData } from '../../types';
 
 interface AreaChartProps {
   darkTheme: boolean;
   mapGradient: MapGradientType;
-  data: plotData[]
+  data: PlotData[] | []
 }
 
 // const data = [

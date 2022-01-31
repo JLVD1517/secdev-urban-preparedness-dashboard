@@ -5,6 +5,9 @@ import histogramDataReducer from './modules/histogramDataStore';
 import mapControlReducer from './modules/mapControlStore';
 import sidebarControlStore from './modules/sidebarControlStore';
 import eventsPageStore from './modules/eventsPageStore';
+import articlesStore from './modules/articlesStore';
+import avgArticleToneStore from './modules/avgArticleTonePlotStore';
+import noOfArticleStore from './modules/noOfArticlePlotStore';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +17,9 @@ export const store = configureStore({
     MapControl: mapControlReducer,
     SidebarControl: sidebarControlStore,
     EventsPageStore: eventsPageStore,
+    ArticlesStore: articlesStore,
+    AverageArticleToneStore: avgArticleToneStore,
+    NoOfArticleStore: noOfArticleStore,
   },
   devTools: true,
 });

@@ -6,7 +6,8 @@ export type {
   InitialHistogramDataState,
   InitialAvailableYearsState,
   InitialStateMapControl,
-  InitialSidebarState
+  InitialSidebarState,
+  InitialEventsComponentState
 } from './modules/storeInitialState.type';
 export type {
   CensusDetailedType,
@@ -20,5 +21,5 @@ export type {
   RacialDistDataType,
   RadarChartDataType,
 } from './modules/dataConfig.type';
-export type { InitialEventsComponentState } from './modules/storeInitialState.type';
-export type { plotData } from './modules/storeInitialState.type';
+export type { ArticlesInitialState, ArticleData } from './modules/article.type';
+export type { PlotData, PlotInitialState} from './modules/eventsPlots.type'

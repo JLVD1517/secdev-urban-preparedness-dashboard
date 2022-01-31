@@ -24,6 +24,9 @@ import {
 import {
   MapGradientType,
   AppState,
+  PlotInitialState,
+  ArticleData,
+  ArticlesInitialState,
 } from '../../types';
 import {
   resetFilterSlider,
@@ -33,135 +36,17 @@ import { scaleSteps } from '../../services/sharedFunctions';
 import './Map.scss';
 import Popup from './MapTooltip/Popup';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-import { InitialEventsComponentState, plotData } from '../../types';
+import { InitialEventsComponentState, PlotData } from '../../types';
 import ToneSlider from '../../ToneSlider/ToneSlider';
+import { fetchArticles } from '../../store/modules/articlesStore';
+import { EventsFilters } from '../../types/modules/eventsFilters.type';
+import { fetchAvgArticlesTonePlot } from '../../store/modules/avgArticleTonePlotStore';
+import { fetchNoOfArticlesPlot } from '../../store/modules/noOfArticlePlotStore';
+import { setEventsLanguage } from '../../store/modules/eventsPageStore';
 
 const mapboxgl = require('mapbox-gl');
 
 mapboxgl.accessToken = `${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`;
-
-const articlesData = [
-  {
-    source: {
-      id: null,
-      name: 'Gizmodo Australia',
-    },
-    author: 'Bradley Brownell',
-    title: 'Winnebago Is Prepping Itself For The Electric Future',
-    description:
-      'Winnebago, yes that Winnebago, is jumping onboard the electric vehicle bandwagon in a big way. This week at the RV...\nThe post Winnebago Is Prepping Itself For The Electric Future appeared first on Gizmodo Australia.\n  Related Stories\r\n<ul><li>This “Land Yach…',
-    url:
-      'https://www.gizmodo.com.au/2022/01/winnebago-is-prepping-itself-for-the-electric-future/',
-    urlToImage:
-      'https://imgix.gizmodo.com.au/content/uploads/sites/2/2022/01/20/0f817614a360dd9c12f213b6c3930759-scaled.jpg?ar=16%3A9&auto=format&fit=crop&q=65&w=1200',
-    publishedAt: '2022-01-20T00:00:49Z',
-    content:
-      'Winnebago, yes that Winnebago, is jumping onboard the electric vehicle bandwagon in a big way. This week at the RV Super Show in Tampa, Fla. the company unveiled the e-RV, what it is calling the firs… [+3243 chars]',
-  },
-  {
-    source: {
-      id: null,
-      name: 'Bitcoinist',
-    },
-    author: 'Anifowoshe Ibrahim',
-    title:
-      'European Markets Regulator Urges The EU To Ban Proof-of-Work Bitcoin Mining',
-    description:
-      'Proof-of-work bitcoin mining should be banned, according to the vice chair of the European Securities and Markets Authority. Erik Thedéen suggested that European authorities explore prohibiting proof-of-work mining in favor of proof-of-stake mining. Thedeen A…',
-    url:
-      'https://bitcoinist.com/european-markets-regulator-urges-ban-bitcoin-minig/',
-    urlToImage:
-      'https://bitcoinist.com/wp-content/uploads/2022/01/gold-3080552_1280.jpg',
-    publishedAt: '2022-01-20T00:00:28Z',
-    content:
-      'Proof-of-work bitcoin mining should be banned, according to the vice chair of the European Securities and Markets Authority.\r\nErik Thedéen suggested that European authorities explore prohibiting proo… [+3859 chars]',
-  },
-  {
-    source: {
-      id: null,
-      name: 'Ozbargain.com.au',
-    },
-    author: 'allmightyg',
-    title:
-      '[VIC] Tesla Model 3 RWD (Previously SR+) $62,193 Delivered after $3000 VIC ZEV Subsidy (Was $65,193) @ Tesla',
-    description:
-      'Just noticed a significant price drop for the RWD model\n\nThis is for white color only and with black interior and no other upgrades/changes\n\nHope it helps someone :)',
-    url: 'https://www.ozbargain.com.au/node/678531',
-    urlToImage: 'https://files.ozbargain.com.au/n/31/678531x.jpg?h=8d38bdcc',
-    publishedAt: '2022-01-19T23:49:12Z',
-    content:
-      'All trademarks are owned by their respective owners.OzBargain is an independent community website which has no association with nor endorsement by the respective trademark owners.\r\nCopyright © 2006-2… [+32 chars]',
-  },
-  {
-    source: {
-      id: null,
-      name: 'Sky.com',
-    },
-    author: 'Samuel Osborne',
-    title: 'Novak Djokovic owns majority stake of COVID cure company',
-    description:
-      "Novak Djokovic won't be able to play in the Australian Open but it appears he has high hopes of curing COVID.",
-    url:
-      'https://news.sky.com/story/novak-djokovic-owns-majority-stake-of-covid-cure-company-12520442',
-    urlToImage:
-      'https://e3.365dm.com/22/01/1600x900/skynews-novak-djokovic-australia_5643734.jpg?20220117064607',
-    publishedAt: '2022-01-19T23:39:00Z',
-    content:
-      "Novak Djokovic won't be able to play in the Australian Open but it appears he has high hopes of curing COVID.\r\nIt has emerged the Serbian tennis player and his wife hold a majority stake in a Danish … [+2107 chars]",
-  },
-  {
-    source: {
-      id: null,
-      name: 'iPhone in Canada',
-    },
-    author: 'iPhoneinCanada.ca',
-    title: 'Tesla Model S Plaid Reviewed in Canada [VIDEO]',
-    description:
-      "Tesla's Model S Plaid has been reviewed by Canadian YouTube channel 'Unbox Therapy'.\nContinue reading Tesla Model S Plaid Reviewed in Canada [VIDEO] at iPhone in Canada Blog.",
-    url:
-      'https://www.iphoneincanada.ca/tesla/tesla-model-s-plaid-reviewed-in-canada-video/',
-    urlToImage:
-      'https://cdn.iphoneincanada.ca/wp-content/uploads/2022/01/model-s-plaid.jpeg',
-    publishedAt: '2022-01-19T23:35:42Z',
-    content:
-      'Image credit: Unbox Therapy\r\nToronto-based YouTube channel, Unbox Therapy, recently shared a review of Teslas newest Model S Plaid electric sedan (via Tesla North).\r\nThe Model S Plaid is the newest v… [+1106 chars]',
-  },
-  {
-    source: {
-      id: null,
-      name: 'CarScoops',
-    },
-    author: 'Brad Anderson',
-    title: 'Jet-Powered Tesla Model S P85D Leaves A Plaid In Its Dust',
-    description:
-      'Who needs a Tesla Model S Plaid when you can fit a P85D with jet engines?',
-    url:
-      'https://www.carscoops.com/2022/01/jet-powered-tesla-model-s-p85d-leaves-a-plaid-in-its-dust/',
-    urlToImage:
-      'https://www.carscoops.com/wp-content/uploads/2022/01/Tesla-Model-S.jpg',
-    publishedAt: '2022-01-19T23:30:27Z',
-    content:
-      'Last month, the owner of a Tesla Model S P85D decided he wasnt going to wait around for the Tesla Roadsters long-promised SpaceX package and fitted his EV with a trio of small jet engines to make it … [+1647 chars]',
-  },
-  {
-    source: {
-      id: null,
-      name: "Investor's Business Daily",
-    },
-    author: "Investor's Business Daily",
-    title:
-      'Dow Jones Futures: Market Correction Extends Losses; Four Stocks In Beat-Up Sector Worth Watching',
-    description:
-      'Strong open, weak close is classic bad market action. More leaders are cracking.',
-    url:
-      'https://www.investors.com/market-trend/stock-market-today/dow-jones-futures-market-correction-extends-losses-four-stocks-in-beat-up-sector-worth-watching/',
-    urlToImage:
-      'https://www.investors.com/wp-content/uploads/2018/04/Stock-BearVista-01-adobe.jpg',
-    publishedAt: '2022-01-19T23:13:40Z',
-    content:
-      'Dow Jones futures were little changed overnight, along with S&amp;P 500 futures and Nasdaq futures. The stock market extended losses Wednesday even as the 10-year Treasury yield retreated modestly.\r\n… [+9313 chars]',
-  },
-];
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -214,10 +99,35 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
     ? createMuiTheme({ palette: { type: 'dark' } })
     : createMuiTheme({ palette: { type: 'light' } });
   const [map, setMap]: any = useState(null);
-  const [language, setLangugage]: any = useState(true);
+  // const [language, setLangugage]: any = useState(true);
   const mapRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
+
+  const startDate: string = useSelector (
+    (state: AppState) => state.EventsPageStore.startDate
+  )
+
+  const endDate: string = useSelector (
+    (state: AppState) => state.EventsPageStore.endDate
+  )
+
+
+  const language: string = useSelector (
+    (state: AppState) => state.EventsPageStore.language
+  )
+
+  const eventsFilter: EventsFilters = {
+    start_date: startDate,
+    end_date: endDate,
+    tone_end_range: 0,
+    tone_start_range: 0,
+    language: language
+  }
+
+  
+  // dispatch(fetchAvgArticlesTonePlot(eventsFilter));
+  // dispatch(fetchNoOfArticlesPlot(eventsFilter));
 
   const selectedLayerId: string = useSelector(
     (state: AppState) => state.SidebarControl.selectedLayerId,
@@ -231,12 +141,18 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
     (state: AppState) => state.SidebarControl.filterSlider,
   );
 
-  const noOfArticlesPlotData: plotData[] = useSelector(
-    (state: AppState) => state.EventsPageStore.noOfArticlesPlotData );
+  const noOfArticlesPlotData: PlotData[] | [] = useSelector(
+    (state: PlotInitialState ) => state.noOfArticlesPlotData
+  );
 
-  const avgTonePlotData: plotData[] = useSelector(
-    (state: AppState) => state.EventsPageStore.avgTonePlotData );
+  const avgTonePlotData: PlotData[] = useSelector(
+    (state: PlotInitialState) => state.avgTonePlotData
+  );
 
+  const articlesData: ArticleData[] | [] = useSelector (
+    (state: AppState) => state.ArticlesStore.articles
+  );
+  
   const setSelection = (
     e: mapboxgl.MapMouseEvent & {
       features?: mapboxgl.MapboxGeoJSONFeature[] | undefined;
@@ -269,7 +185,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       | undefined = [
       'interpolate',
       ['linear'],
-      ['to-number', ['get', "gid"]],
+      ['to-number', ['get', "no_of_articles"]],
       scaleSteps().step1,
       mapGradient.step1,
       scaleSteps().step2,
@@ -314,7 +230,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       tiles: [
         `${
           process.env.REACT_APP_MAP_TILESERVER_URL
-        }get-commune/{z}/{x}/{y}`,
+        }get-commune/${startDate}/${endDate}/${language}/{z}/{x}/{y}`,
       ],
       promoteId: 'gid',
       minzoom: 0,
@@ -346,7 +262,8 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
     // clear selected map items
     dispatch(setSelectedItem(null));
     dispatch(resetFilterSlider());
-
+    dispatch(fetchArticles(eventsFilter));
+    
     if (!mapRef.current) {
       return;
     }
@@ -513,9 +430,10 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       setMapFills();
       // setFilters();
       dispatch(resetFilterSlider());
+      dispatch(fetchArticles(eventsFilter));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedYear],
+    [language],
   );
 
   useEffect(
@@ -538,7 +456,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
   );
 
   const toggleLanguage=()=>{
-    setLangugage(!language)
+    dispatch(setEventsLanguage( language === "ENGLISH" ? "FRENCH": "ENGLISH"))
   }
 
   return (
@@ -559,11 +477,11 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
               <DateRangeFilter darkTheme={darkTheme}/>
               <FormControlLabel
                 className={classes.formLabel}
-                label={language ? 'English' : 'French'}
+                label={language}
                 control={
                 <CustomSwitch
                   className={classes.themeSwitch}
-                  checked={language}
+                  checked={language === "ENGLISH"}
                   onChange={toggleLanguage}
                   name="toggle theme"
                 />
@@ -584,7 +502,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
         <Grid item md={12}>
           <ThemeProvider theme={tableTheme}>
             <Box className={classes.root}>
-              {articlesData.map(article => (
+              {articlesData && (articlesData as any[]).map((article: ArticleData) => (
                 <Paper
                   className={classes.listSection}
                   key={article.title}
@@ -594,10 +512,10 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
                     <div className={classes.headlines}>{article.title}</div>
                     <Grid container>
                       <Grid item md={2} className={classes.datePubline}>
-                        Date: {article.publishedAt}
+                        Date: {article.publicationDate}
                       </Grid>
                       <Grid item md={3} className={classes.datePubline}>
-                        {article?.source?.name ?? ''}
+                        {article.source}
                       </Grid>
                     </Grid>
                     <Grid container>
