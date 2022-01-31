@@ -15,10 +15,9 @@ export const fetchArticles = createAsyncThunk(
   async (data: EventsFilters) => {
     const {start_date, end_date, language} = data;
     const apiUrl = `http://localhost:8000/get-articles/${start_date}/${end_date}/${language}`
-    const response = await axios.get(apiUrl);
-    console.log("response ==>> ",response);
-    
+    const response = await axios.get(apiUrl);    
     const result = transformArticlesResult(response.data.data);
+    
     return result;
   },
 );

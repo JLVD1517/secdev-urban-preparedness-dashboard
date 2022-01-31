@@ -4,10 +4,15 @@ export interface PlotData {
   date: string;
 }
 
-export interface PlotInitialState {
+export interface AvgTonePlotInitialState {
   status: string;
   error: boolean;
   loaded: boolean;
-  avgTonePlotData: [PlotData] | []; 
-  noOfArticlesPlotData: [PlotData] | [];
+  avgTonePlotData: PlotData[] | [];
+}
+export interface NoOfArticlesPlotInitialState {
+  status: string;
+  error: boolean;
+  loaded: boolean;
+  noOfArticlesPlotData: PlotData[] | [];
 }

@@ -24,9 +24,7 @@ import {
 import {
   MapGradientType,
   AppState,
-  PlotInitialState,
   ArticleData,
-  ArticlesInitialState,
 } from '../../types';
 import {
   resetFilterSlider,
@@ -112,7 +110,6 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
     (state: AppState) => state.EventsPageStore.endDate
   )
 
-
   const language: string = useSelector (
     (state: AppState) => state.EventsPageStore.language
   )
@@ -124,10 +121,6 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
     tone_start_range: 0,
     language: language
   }
-
-  
-  // dispatch(fetchAvgArticlesTonePlot(eventsFilter));
-  // dispatch(fetchNoOfArticlesPlot(eventsFilter));
 
   const selectedLayerId: string = useSelector(
     (state: AppState) => state.SidebarControl.selectedLayerId,
@@ -142,13 +135,17 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
   );
 
   const noOfArticlesPlotData: PlotData[] | [] = useSelector(
-    (state: PlotInitialState ) => state.noOfArticlesPlotData
+    (state: AppState ) => state.NoOfArticleStore.noOfArticlesPlotData
   );
 
   const avgTonePlotData: PlotData[] = useSelector(
-    (state: PlotInitialState) => state.avgTonePlotData
+    (state: AppState) => state.AverageArticleToneStore.avgTonePlotData
   );
 
+  // console.log("noOfArticlesPlotData ===>>> ", noOfArticlesPlotData);
+
+  // console.log("avgTonePlotData ===>>> ", avgTonePlotData);
+  
   const articlesData: ArticleData[] | [] = useSelector (
     (state: AppState) => state.ArticlesStore.articles
   );
@@ -263,7 +260,9 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
     dispatch(setSelectedItem(null));
     dispatch(resetFilterSlider());
     dispatch(fetchArticles(eventsFilter));
-    
+    dispatch(fetchAvgArticlesTonePlot(eventsFilter));
+    // dispatch(fetchNoOfArticlesPlot(eventsFilter));
+
     if (!mapRef.current) {
       return;
     }
@@ -431,6 +430,8 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       // setFilters();
       dispatch(resetFilterSlider());
       dispatch(fetchArticles(eventsFilter));
+      dispatch(fetchAvgArticlesTonePlot(eventsFilter));
+      // dispatch(fetchNoOfArticlesPlot(eventsFilter));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [language],
@@ -487,7 +488,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
                 />
             }
           />
-              <ToneSlider/>
+              {/* <ToneSlider/> */}
             </div>
           </div>
           <Grid container>

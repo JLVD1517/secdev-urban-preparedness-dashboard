@@ -1,4 +1,4 @@
-import { ArticlesInitialState } from '..';
+import { ArticlesInitialState, AvgTonePlotInitialState, NoOfArticlesPlotInitialState } from '..';
 import { SelectedItemType } from './selectedItem.type';
 
 export interface InitialStateAppControl {
@@ -46,6 +46,8 @@ export interface AppState {
   HistogramData: InitialHistogramDataState;
   MapControl: InitialStateMapControl;
   SidebarControl: InitialSidebarState;
-  EventsPageStore: InitialEventsComponentState,
-  ArticlesStore: ArticlesInitialState
+  EventsPageStore: InitialEventsComponentState;
+  ArticlesStore: ArticlesInitialState;
+  AverageArticleToneStore: AvgTonePlotInitialState;
+  NoOfArticleStore: NoOfArticlesPlotInitialState;
 }
