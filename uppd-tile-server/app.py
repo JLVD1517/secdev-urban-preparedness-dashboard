@@ -126,6 +126,7 @@ commune_query_template = Template(
                 4096, 0, false) AS g ,
                  gid FROM haiti_commune  ) AS hc left join  ( 
         SELECT count(ei.event_id) as no_of_articles,
+            avg(ei.tone) as avg_tone,
             c.commune_id
         FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id  where ${cond_str} AND TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and ei.language = '${language}' group by (c.commune_id)  ) as d on d.commune_id = hc.gid 
     ) AS tile;
@@ -305,7 +306,7 @@ async def index(request):
 
 query_template4 = Template(
     """
-    select ei.pub_month , e.type  as event_type , count(ei.event_info_id) as no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by (ei.pub_month,e.type) ;
+    select  e.type  as event_type , count(ei.event_info_id) as no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by (e.type) ;
     """
 )
 
@@ -341,7 +342,6 @@ async def articles_per_event(request):
             for record in iter(data_res):
                 #print(d)
                 obj = dict()
-                obj['pub_month'] = record['pub_month']
                 obj['event_type'] = record['event_type']
                 obj['no_of_articles'] = record['no_of_articles']
                 data.append(obj)
@@ -436,7 +436,7 @@ async def articles_per_commune(request):
 
 articles_query = Template (
     """
-    select * from event_info ei inner join events e on ei.event_id = e.event_id  where ${cond_str} and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and   ei.language = '${language}' 
+    select * from event_info ei inner join events e on ei.event_id = e.event_id  where ${cond_str} and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and   ei.language = '${language}' and ei.commune_id = ${commune_id}
     """
 )
 
@@ -444,6 +444,7 @@ async def get_articles(request):
     language = request.path_params['language']
     start_date =request.path_params['start_date']
     end_date= request.path_params['end_date']
+    commune_id = request.path_params['commune_id']
     param_list = ['tone_start_range','source','type']
     url_str = str(request.query_params)
     #s1 = str()
@@ -460,6 +461,7 @@ async def get_articles(request):
         start_date=start_date,
         end_date=end_date,
         language=language,
+        commune_id=commune_id,
         cond_str=cond_str
     )
    
@@ -491,6 +493,19 @@ test_query = Template(
     select * from event_info where ${condition}
     """
 )
+
+
+async def get_event_type(request):
+    query = 'select distinct(type) from events '
+    async with pool.acquire() as conn:
+        data_res = await conn.fetch(query)
+        data = []
+        for val in iter(data_res):
+            data.append(val['type'])
+
+    return JSONResponse({"success":"true","data":data})
+
+
 
 async  def test(request):
     #l = request.json()
@@ -536,10 +551,11 @@ routes = [
     Route("/", index),
     Route("/get-commune/{start_date:str}/{end_date:str}/{language:str}/{z:int}/{x:int}/{y:int}",get_commune),
     Route("/get-subcommune/{month_number:int}/{year:int}/{z:int}/{x:int}/{y:int}",get_subcommune),
-    Route("/get-articles/{start_date:str}/{end_date:str}/{language:str}",get_articles),
+    Route("/get-articles/{start_date:str}/{end_date:str}/{language:str}/{commune_id:int}",get_articles),
     Route("/data/articles-per-event/{start_date:str}/{end_date:str}/{language:str}",articles_per_event),
     Route("/data/avg-tone/{start_date:str}/{end_date:str}/{language:str}",avg_tone),
     Route("/data/articles-per-commune/{start_date:str}/{end_date:str}/{language:str}",articles_per_commune),
+    Route("/get-event-type",get_event_type),
     Route("/test",test)
 ]
 
