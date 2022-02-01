@@ -103,7 +103,7 @@ commune_query_template = Template(
         SELECT count(ei.event_id) as no_of_articles,
             avg(ei.tone) as avg_tone,
             c.commune_id
-        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id  where ${cond_str} AND TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and ei.language = '${language}' group by (c.commune_id)  ) as d on d.commune_id = hc.gid 
+        FROM    events e inner join event_info ei on e.event_id = ei.event_id inner join  commune  c on ei.commune_id = c.commune_id  where ${cond_str} AND TO_DATE(ei.publication_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and ei.language = '${language}' group by (c.commune_id)  ) as d on d.commune_id = hc.gid 
     ) AS tile;
     """   
 )
@@ -262,7 +262,7 @@ async def index(request):
 
 query_template4 = Template(
     """
-    select  e.type  as event_type , count(ei.event_info_id) as no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by (e.type) ;
+    select  e.type  as event_type , count(ei.event_info_id) as no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by (e.type) ;
     """
 )
 
@@ -298,7 +298,7 @@ async def articles_per_event(request):
 
 query_template5 = Template(
     """
-    select ei.pub_month , count(ei.event_info_id) as no_of_articles, avg(ei.tone) as avg_tone from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by ei.pub_month ;
+    select ei.pub_month , count(ei.event_info_id) as no_of_articles, avg(ei.tone) as avg_tone from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by ei.pub_month ;
     """
 )
 
@@ -322,21 +322,23 @@ async def avg_tone(request):
         language=language,
         cond_str=cond_str
     )
+    pub_month_query = "update event_info set pub_month =  split_part(publication_date,'-',2)||'-'||split_part(publication_date,'-',3) "
     async with pool.acquire() as conn:
-            data_res = await conn.fetch(query)
-            data = []
-            for record in iter(data_res):
-                obj = dict()
-                obj['pub_month'] = record['pub_month']
-                obj['no_of_articles'] = record['no_of_articles']
-                obj['avg_tone'] = record['avg_tone']
-                data.append(obj)
+        await conn.fetch(pub_month_query)
+        data_res = await conn.fetch(query)
+        data = []
+        for record in iter(data_res):
+            obj = dict()
+            obj['pub_month'] = record['pub_month']
+            obj['no_of_articles'] = record['no_of_articles']
+            obj['avg_tone'] = record['avg_tone']
+            data.append(obj)
     return JSONResponse({"success":"true","data":data})
 
 
 query_template6 = Template(
     """
-    select ei.pub_month , ei.commune_id , count(ei.event_info_id) as  no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by (ei.pub_month,ei.commune_id) ;
+    select ei.pub_month , ei.commune_id , count(ei.event_info_id) as  no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by (ei.pub_month,ei.commune_id) ;
     """
 )
 
@@ -358,7 +360,9 @@ async def articles_per_commune(request):
         language=language,
         cond_str=cond_str
     )
+    pub_month_query = "update event_info set pub_month =  split_part(publication_date,'-',2)||'-'||split_part(publication_date,'-',3) "
     async with pool.acquire() as conn:
+            await conn.fetch(pub_month_query)
             data_res = await conn.fetch(query)
             data = []
             for record in iter(data_res):
@@ -371,7 +375,7 @@ async def articles_per_commune(request):
 
 articles_query = Template (
     """
-    select * from event_info ei inner join events e on ei.event_id = e.event_id  where ${cond_str} and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date_fmt,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and   ei.language = '${language}' and ei.commune_id = ${commune_id}
+    select * from event_info ei inner join events e on ei.event_id = e.event_id  where ${cond_str} and TO_DATE(ei.publication_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and   ei.language = '${language}' and ei.commune_id = ${commune_id}
     """
 )
 

@@ -1,6 +1,6 @@
 event_info_id,event_id,publication_date,source,title,category,summary,tone,url,compound,language,commune_id
-1,1,06-DEC-2021,https://fcnhaiti.com,Assassinat - FCN,general,"summariess",11,https://fcnhaiti.com/category/assassinat/,10,ENGLISH,1
-2,2,12-DEC-2021,https://www.haitilibre.com,Haïti - FLASH : 2 journalistes haïtiens tombent sous les,general,"summariess",11,https://www.haitilibre.com/article-35656-haiti-flash-2-journalistes-haitiens-tombent-sous-les-balles-des-gangs.html,11,ENGLISH,2
-3,3,14-DEC-2021,https://www.haitilibre.com,Haïti - Actualité : Zapping... - HaitiLibre.com : Toutes les,general,"summariess",11,https://www.haitilibre.com/article-35663-haiti-actualite-zapping%E2%80%A6.html,8,ENGLISH,3
-4,4,15-DEC-2021,https://www.haitilibre.com,Haïti - Politique : Le Sénat dénonce une campagne d,general,"summariess",11,https://www.haitilibre.com/article-35650-haiti-politique-le-senat-denonce-une-campagne-d-intoxication.html,6,FRENCH,4
-5,5,18-DEC-2021,https://www.haitilibre.com,Haïti - Insécurité : Le Père Charles François blessé,general,"summariess",11,https://www.haitilibre.com/article-35648-haiti-insecurite-le-pere-charles-francois-blesse-grievement-par-balles.html,10,FRENCH,5
+1,1,06-12-2021,https://fcnhaiti.com,Assassinat - FCN,general,"summariess",11,https://fcnhaiti.com/category/assassinat/,10,ENGLISH,1
+2,2,12-12-2021,https://www.haitilibre.com,Haïti - FLASH : 2 journalistes haïtiens tombent sous les,general,"summariess",11,https://www.haitilibre.com/article-35656-haiti-flash-2-journalistes-haitiens-tombent-sous-les-balles-des-gangs.html,11,ENGLISH,2
+3,3,14-12-2021,https://www.haitilibre.com,Haïti - Actualité : Zapping... - HaitiLibre.com : Toutes les,general,"summariess",11,https://www.haitilibre.com/article-35663-haiti-actualite-zapping%E2%80%A6.html,8,ENGLISH,3
+4,4,15-12-2021,https://www.haitilibre.com,Haïti - Politique : Le Sénat dénonce une campagne d,general,"summariess",11,https://www.haitilibre.com/article-35650-haiti-politique-le-senat-denonce-une-campagne-d-intoxication.html,6,FRENCH,4
+5,5,18-12-2021,https://www.haitilibre.com,Haïti - Insécurité : Le Père Charles François blessé,general,"summariess",11,https://www.haitilibre.com/article-35648-haiti-insecurite-le-pere-charles-francois-blesse-grievement-par-balles.html,10,FRENCH,5
