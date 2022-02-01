@@ -24,10 +24,8 @@ import {
 import {
   MapGradientType,
   AppState,
-  PlotInitialState,
   ArticleData,
-  ArticlesInitialState,
-} from "../../types";
+} from '../../types';
 import {
   resetFilterSlider,
   setSelectedItem,
@@ -110,9 +108,9 @@ const Map: React.FC<MapProps> = ({
 
   const endDate: string = useSelector(
     (state: AppState) => state.EventsPageStore.endDate
-  );
+  )
 
-  const language: string = useSelector(
+  const language: string = useSelector (
     (state: AppState) => state.EventsPageStore.language
   );
 
@@ -123,9 +121,6 @@ const Map: React.FC<MapProps> = ({
     tone_start_range: 0,
     language: language,
   };
-
-  // dispatch(fetchAvgArticlesTonePlot(eventsFilter));
-  // dispatch(fetchNoOfArticlesPlot(eventsFilter));
 
   const selectedLayerId: string = useSelector(
     (state: AppState) => state.SidebarControl.selectedLayerId
@@ -140,14 +135,18 @@ const Map: React.FC<MapProps> = ({
   );
 
   const noOfArticlesPlotData: PlotData[] | [] = useSelector(
-    (state: PlotInitialState) => state.noOfArticlesPlotData
+    (state: AppState ) => state.NoOfArticleStore.noOfArticlesPlotData
   );
 
   const avgTonePlotData: PlotData[] = useSelector(
-    (state: PlotInitialState) => state.avgTonePlotData
+    (state: AppState) => state.AverageArticleToneStore.avgTonePlotData
   );
 
-  const articlesData: ArticleData[] | [] = useSelector(
+  // console.log("noOfArticlesPlotData ===>>> ", noOfArticlesPlotData);
+
+  // console.log("avgTonePlotData ===>>> ", avgTonePlotData);
+  
+  const articlesData: ArticleData[] | [] = useSelector (
     (state: AppState) => state.ArticlesStore.articles
   );
 
@@ -259,6 +258,8 @@ const Map: React.FC<MapProps> = ({
     dispatch(setSelectedItem(null));
     dispatch(resetFilterSlider());
     dispatch(fetchArticles(eventsFilter));
+    dispatch(fetchAvgArticlesTonePlot(eventsFilter));
+    // dispatch(fetchNoOfArticlesPlot(eventsFilter));
 
     if (!mapRef.current) {
       return;
@@ -427,6 +428,8 @@ const Map: React.FC<MapProps> = ({
       // setFilters();
       dispatch(resetFilterSlider());
       dispatch(fetchArticles(eventsFilter));
+      dispatch(fetchAvgArticlesTonePlot(eventsFilter));
+      // dispatch(fetchNoOfArticlesPlot(eventsFilter));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [language]

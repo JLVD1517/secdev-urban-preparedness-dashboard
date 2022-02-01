@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { axios } from '../../services/axios';
 import { EventsFilters } from '../../types/modules/eventsFilters.type';
-import { PlotInitialState } from '../../types/modules/eventsPlots.type';
+import { NoOfArticlesPlotInitialState } from '../../types/modules/eventsPlots.type';
+import { PlotData } from '../../types';
 
-const noOfArticlesPlotInitialData: PlotInitialState = {
+const noOfArticlesPlotInitialData: NoOfArticlesPlotInitialState = {
   status: 'idle',
   error: false,
   loaded: false,
-  avgTonePlotData: [],
   noOfArticlesPlotData: []
 }
 
@@ -15,20 +15,36 @@ export const fetchNoOfArticlesPlot = createAsyncThunk(
   'avg-tone',
   async (data: EventsFilters) => {
     const {start_date, end_date, language, tone_start_range, tone_end_range} = data;
-    const apiUrl = `http://localhost:8000/data/articles-per-event/${language}/${start_date}/${end_date}`
+    const apiUrl = `http://localhost:8000/data/articles-per-event/${start_date}/${end_date}/${language}`
     const response = await axios.get(apiUrl, {
-        params: {
-            tone_end_range: tone_end_range ? tone_end_range : undefined,
-            tone_start_range: tone_start_range ? tone_start_range : undefined
-        }
-    });
-
-    return response;
+      params: {
+          tone_end_range: tone_end_range ? tone_end_range : undefined,
+          tone_start_range: tone_start_range ? tone_start_range : undefined
+      }
+  });
+  const result = transformPlotData(response.data.data);
+  
+  return result;
   },
 );
 
-const articlesSlice = createSlice({
-  name: 'avg-tone',
+const transformPlotData = (plotData: any) => {
+  const transformedPlotData: PlotData[] = [];
+  plotData.map( (item: any) => {
+    const transformedArticle: PlotData = {
+      name: item.event_type,
+      value: item.no_of_articles,
+      date: item.event_type
+    };
+
+    transformedPlotData.push(transformedArticle);
+  })
+
+  return transformedPlotData;
+}
+
+const noOfEventsSlice = createSlice({
+  name: 'no-of-events',
   initialState: noOfArticlesPlotInitialData,
   reducers: {},
   extraReducers: builder => {
@@ -40,7 +56,7 @@ const articlesSlice = createSlice({
     builder.addCase(fetchNoOfArticlesPlot.fulfilled, (state, { payload }) => {
       state.status = 'Loaded';
       state.error = false;
-      state.noOfArticlesPlotData = payload.data;
+      state.noOfArticlesPlotData = payload;
       state.loaded = true;
     });
     builder.addCase(fetchNoOfArticlesPlot.rejected, state => {
@@ -51,4 +67,4 @@ const articlesSlice = createSlice({
   },
 });
 
-export default articlesSlice.reducer;
+export default noOfEventsSlice.reducer;
