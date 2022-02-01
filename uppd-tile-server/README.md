@@ -1,6 +1,6 @@
 # uppd-tile-server
 
-Tile server for the UPPD project.
+Tile server for the Haiti Community Violence Monitor project.
 
 ## requests
 ```
@@ -12,38 +12,48 @@ NOTE: A valid mapbox API key is required for the index.html to work properly. Si
 
 ---
 ```
-/layers/{table:str}/fields
+/get-commune/{start_date:str}/{end_date:str}/{language:str}/{z:int}/{x:int}/{y:int}
 ```
-Shows all available fields for the given table.
+Returns commune tiles filtered by a range of date and language 
 
 ---
 ```
-/upload
+/get-subcommune/{month_number:int}/{year:int}/{z:int}/{x:int}/{y:int}
 ```
-Allows for a shapefile to be uploaded to the database the tile server is connected to. Example usage:
-`curl -X POST -F "file=@my-shapefile.zip" http://localhost:8000/upload`.
+Returns sub commune tiles filtered by month number and year 
+---
+```
+/get-articles/{start_date:str}/{end_date:str}/{language:str}/{commune_id:int}
+```
+Returns the articles filtered by a range of dates and language
 
 ---
 ```
-/{column:str}/{year:int}
+/data/articles-per-event/{start_date:str}/{end_date:str}/{language:str}
 ```
-Returns an array of values for the given column and year from the view_data view.
+Returns the articles for every event type filtered by a range of dates and language
 
 ---
 ```
-/data-years
+/data/avg-tone/{start_date:str}/{end_date:str}/{language:str}
 ```
-Returns the available years of data from the view_data view.
+Returns the average tone of articles filtered by a range of dates and language
 
 ---
-### NOTE: For the remainder of the endpoints, `?fields=` can be appended to the end of the request and include additional required fields. By default, only `gid` is included.
+
 ```
-/layers/assets/{table:str}/{z:int}/{x:int}/{y:int}
+/data/articles-per-commune/{start_date:str}/{end_date:str}/{language:str}
 ```
-provides the specified asset table in tile format.
+Returns the  articles for every commune filtered by a range of dates and language
 
 ---
+
 ```
-/layers/indices/{data_year:int}/{z:int}/{x:int}/{y:int}
+/get-event-type
 ```
-Returns the indices data for a specified year.
+Returns the distinct event types.
+
+----
+
+
+
