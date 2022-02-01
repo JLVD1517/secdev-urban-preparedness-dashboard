@@ -49,7 +49,7 @@ const DateRangeFilter: React.FC<DateRangeFilterProps> = ({ darkTheme }) => {
               onSelect(value);
               setModal(!modal);
             }}
-            numberOfCalendars={2}
+            numberOfCalendars={1}
           />
         </div>
       )}

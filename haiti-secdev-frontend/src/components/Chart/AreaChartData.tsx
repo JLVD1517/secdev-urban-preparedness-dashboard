@@ -77,9 +77,9 @@ const AreaChartData: React.FC<AreaChartProps> = ({ darkTheme, mapGradient, data}
   return (
     <LineChart
       width={400}
-      height={280}
+      height={270}
       data={data}
-      margin={{ top: 20, right: 30, left: 20, bottom: 0 }}
+      margin={{ top: 20, right: 30, left: 20, bottom: 12 }}
     >
       <defs>
         <linearGradient id="events-plot" x1="0%" y1="0%" x2="100%" y2="0%">

@@ -6,6 +6,7 @@ import { tileFields } from "../../services/tileFields";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import { Paper, FormControlLabel } from "@material-ui/core";
+import EventNoteIcon from '@material-ui/icons/EventNote';
 import {
   makeStyles,
   createMuiTheme,
@@ -63,6 +64,9 @@ const useStyles = makeStyles((theme) => ({
   headlines: {
     fontWeight: 700,
     fontSize: "18px",
+    cursor:"pointer",
+    textDecoration:'none',
+    color:'inherit'
   },
   datePubline: {
     fontWeight: 700,
@@ -75,6 +79,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.default,
   },
   container2:{
+    height: 'calc(100vh - 493px)',
+    overflow: 'auto',
     backgroundColor: theme.palette.background.default,
   }
 }));
@@ -459,7 +465,7 @@ const Map: React.FC<MapProps> = ({
   };
 
   return (
-    <div className="divClass">
+    <div>
       <Grid container className="containerBox">
         <Grid item md={5}>
           <div>
@@ -472,7 +478,7 @@ const Map: React.FC<MapProps> = ({
           </div>
         </Grid>
         <Grid item md={7} className={`${classes.rightDiv}`}>
-          <div style={{ paddingTop: "6vh" }}>
+          <div style={{ paddingTop: "3rem" }}>
             <div className="row">
               <h1 className={classes.mainHeader}>
                 UN Haiti Port Au Prince Event Monitor
@@ -517,29 +523,38 @@ const Map: React.FC<MapProps> = ({
           </Grid>
         </Grid>
       </Grid>
-      <Grid item md={12}>
+      <Grid item md={12} className={classes.container2}>
           <ThemeProvider theme={tableTheme}>
             <Box className={classes.root}>
-              {articlesData &&
+              {articlesData && articlesData.length ?
                 (articlesData as any[]).map((article: ArticleData) => (
                   <Paper
                     className={classes.listSection}
                     key={article.title}
-                    elevation={2}
+                    elevation={5}
                   >
                     <div>
-                      <div className={classes.headlines}>{article.title}</div>
+                    <a href={article.url} target="_blank" className={classes.headlines} rel="noreferrer"><div>{article.title}</div></a>
                       <Grid container>
                         <Grid item md={2} className={classes.datePubline}>
-                          Date: {article.publicationDate}
+                          {article.publicationDate}
                         </Grid>
                         <Grid item md={3} className={classes.datePubline}>
                           {article.source}
                         </Grid>
                       </Grid>
+                      <Grid container>
+                        <Grid item md={2} className={classes.datePubline}>
+                          Event Type: {article?.eventType.charAt(0).toUpperCase() + article?.eventType.slice(1)}
+                        </Grid>
+                        <Grid item md={3} className={classes.datePubline}>
+                          Tone: {article.tone}
+                        </Grid>
+                      </Grid>
                     </div>
                   </Paper>
-                ))}
+                )): <div className="noDataAvail"><EventNoteIcon/> <span style={{paddingLeft:'1rem'}}>No News Headlines Available</span></div>
+                }
             </Box>
           </ThemeProvider>
         </Grid>
