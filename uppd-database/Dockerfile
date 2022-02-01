@@ -30,7 +30,7 @@ FROM postgres:13
 ARG POSTGIS_MAJOR=3
 
 # Set environment variables to be available to container
-ENV SCHEMA=uppd
+ENV SCHEMA=secdev
 
 # Update the package list and install PostGIS
 RUN apt-get update \
