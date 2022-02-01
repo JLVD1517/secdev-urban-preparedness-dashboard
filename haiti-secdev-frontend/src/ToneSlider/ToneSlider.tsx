@@ -1,11 +1,7 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Box, Slider } from '@material-ui/core';
-import {
-  createTheme,
-  ThemeProvider,
-  useTheme,
-} from '@material-ui/core/styles';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Box, Slider } from "@material-ui/core";
+import { createTheme, ThemeProvider, useTheme } from "@material-ui/core/styles";
 
 interface MarksType {
   value: number;
@@ -13,31 +9,32 @@ interface MarksType {
 }
 
 const ToneSlider: React.FC = () => {
-
   const [value, setValue] = React.useState<number | number[]>();
-  const [marks, setMarks] = React.useState<MarksType[]>([{
-    value: 0,
-    label: 0,
-  },
-  {
-    value: 50,
-    label: 50,
-  },
-  {
-    value: 100,
-    label: 100,
-  }]);
+  const [marks, setMarks] = React.useState<MarksType[]>([
+    {
+      value: 0,
+      label: 0,
+    },
+    {
+      value: 50,
+      label: 50,
+    },
+    {
+      value: 100,
+      label: 100,
+    },
+  ]);
 
   const handleChange = (
     event: React.ChangeEvent<{}>,
-    newValue: number | number[],
+    newValue: number | number[]
   ) => {
     setValue(newValue);
   };
 
   const commitChange = (
     event: React.ChangeEvent<{}>,
-    newValue: number | number[],
+    newValue: number | number[]
   ) => {
     //call apis
   };
@@ -51,7 +48,7 @@ const ToneSlider: React.FC = () => {
     overrides: {
       MuiSlider: {
         mark: {
-          display: 'none',
+          display: "none",
         },
         track: {
           color: theme.palette.primary.main,
@@ -64,7 +61,7 @@ const ToneSlider: React.FC = () => {
         },
         markLabel: {
           color: theme.palette.text.secondary,
-          marginTop: '-40px',
+          marginTop: "-40px",
         },
         markLabelActive: {
           color: theme.palette.text.primary,
@@ -74,23 +71,24 @@ const ToneSlider: React.FC = () => {
   });
 
   return (
-    <div>
-      <Box px={3} mb={-3} style={{width:'50%', textAlign:'center'}}>
+    <div style={{width:'18vw'}}> 
+      <Box>
         <ThemeProvider theme={muiTheme}>
-            <Slider
-              id="DateSlider"
-              value={value}
-              track={false}
-              getAriaValueText={valuetext}
-              onChange={handleChange}
-              onChangeCommitted={commitChange}
-              aria-labelledby="discrete-slider-custom"
-              step={1}
-              max={100}
-              min={0}
-              valueLabelDisplay="auto"
-              marks={marks}
-            />
+          <Slider
+            style={{marginBottom:'-32px'}}
+            id="DateSlider"
+            value={value}
+            track={false}
+            getAriaValueText={valuetext}
+            onChange={handleChange}
+            onChangeCommitted={commitChange}
+            aria-labelledby="discrete-slider-custom"
+            step={1}
+            max={100}
+            min={0}
+            valueLabelDisplay="auto"
+            marks={marks}
+          />
         </ThemeProvider>
       </Box>
     </div>

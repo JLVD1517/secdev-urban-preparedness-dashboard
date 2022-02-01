@@ -6,7 +6,7 @@
   bottom: 0;
   display: flex;
   width: 41.6%;
-  height: 60vh;
+  height: 493px;
 }
 
 .divClass {
@@ -14,8 +14,24 @@
 }
 
 .containerBox {
-  width: 40vw;
-  height: 60vh;
+  width: 100%;
+  height: 60%;
+}
+.cusSwitch{
+  width: 35%;
+}
+.dateRangeFormat{
+  width: 40%;
+}
+.cusSwitch{
+  width: 15%;
+}
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  justify-content: space-evenly;
 }
 
 // Choropleth popup style

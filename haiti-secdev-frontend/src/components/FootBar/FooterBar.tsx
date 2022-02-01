@@ -14,7 +14,7 @@ const FootBar: React.FC<FootBarProps> = ({ mapGradient, elementData, event}) => 
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
       position: 'relative',
-      top: event ? `calc(100vh - 50vh)` : `calc(100vh - 15vh)`,
+      top: event ? `calc(100vh - 75vh)` : `calc(100vh - 15vh)`,
       left: '30%',
       width: '293px',
       height: '50px',
