@@ -7,13 +7,16 @@ import moment from 'moment';
 import DateRangePicker from 'react-daterange-picker';
 import 'react-daterange-picker/dist/css/react-calendar.css';
 import './DateRangeFilter.scss';
-// import { MapGradientType } from '../../types';
+import { useDispatch, useSelector } from "react-redux";
+import { AppState } from '../../types';
+import { setEventsEndDate, setEventsStartDate } from '../../store/modules/eventsPageStore';
 
 interface DateRangeFilterProps {
   darkTheme: boolean;
 }
 
 const DateRangeFilter: React.FC<DateRangeFilterProps> = ({ darkTheme }) => {
+  const dispatch = useDispatch();
   const theme = useTheme();
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -22,6 +25,20 @@ const DateRangeFilter: React.FC<DateRangeFilterProps> = ({ darkTheme }) => {
   }));
   const [value, onSelect]: any = useState(null);
   const [modal, setModal]: any = useState<Boolean>(false);
+  
+  const startDate: string = useSelector(
+    (state: AppState) => state.EventsPageStore.startDate
+  );
+
+  const endDate: string = useSelector(
+    (state: AppState) => state.EventsPageStore.endDate
+  )
+
+  const onDateSelect = (value: any) => {
+    dispatch(setEventsStartDate(moment(value.start).format('DD-MM-YYYY')));
+    dispatch(setEventsEndDate(moment(value.end).format('DD-MM-YYYY')));
+    onSelect(value);
+  }
 
   const classes = useStyles();
   return (
@@ -35,9 +52,7 @@ const DateRangeFilter: React.FC<DateRangeFilterProps> = ({ darkTheme }) => {
         }}
         variant="outlined"
         placeholder="Date Range"
-        value={value && value.start ? `${moment(value?.start).format('DD MMM YYYY')} - ${moment(
-          value?.end,
-        ).format('DD MMM YYYY')}`:''}
+        value={`${moment(startDate, 'DD-MM-YYYY').format('DD MMM YYYY')} - ${moment(endDate, 'DD-MM-YYYY').format('DD MMM YYYY')}`}
         onClick={() => setModal(!modal)}
       />
       {modal && (
@@ -46,7 +61,7 @@ const DateRangeFilter: React.FC<DateRangeFilterProps> = ({ darkTheme }) => {
             selectionType="range"
             value={value}
             onSelect={(value: any) => {
-              onSelect(value);
+              onDateSelect(value);
               setModal(!modal);
             }}
             numberOfCalendars={1}

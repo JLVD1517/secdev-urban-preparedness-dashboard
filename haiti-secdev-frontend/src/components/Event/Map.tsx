@@ -450,7 +450,7 @@ const Map: React.FC<MapProps> = ({
       // dispatch(fetchNoOfArticlesPlot(eventsFilter));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [language]
+    [language, startDate]
   );
 
   useEffect(
