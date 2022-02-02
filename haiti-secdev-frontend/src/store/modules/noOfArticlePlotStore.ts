@@ -12,7 +12,7 @@ const noOfArticlesPlotInitialData: NoOfArticlesPlotInitialState = {
 }
 
 export const fetchNoOfArticlesPlot = createAsyncThunk(
-  'avg-tone',
+  'no-of-articles',
   async (data: EventsFilters) => {
     const {start_date, end_date, language, tone_start_range, tone_end_range} = data;
     const apiUrl = `http://localhost:8000/data/articles-per-event/${start_date}/${end_date}/${language}`

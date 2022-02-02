@@ -44,6 +44,7 @@ import { EventsFilters } from "../../types/modules/eventsFilters.type";
 import { fetchAvgArticlesTonePlot } from "../../store/modules/avgArticleTonePlotStore";
 import { fetchNoOfArticlesPlot } from "../../store/modules/noOfArticlePlotStore";
 import { setEventsLanguage } from "../../store/modules/eventsPageStore";
+import moment from "moment";
 
 const mapboxgl = require("mapbox-gl");
 
@@ -158,10 +159,6 @@ const Map: React.FC<MapProps> = ({
     (state: AppState) => state.AverageArticleToneStore.avgTonePlotData
   );
 
-  // console.log("noOfArticlesPlotData ===>>> ", noOfArticlesPlotData);
-
-  // console.log("avgTonePlotData ===>>> ", avgTonePlotData);
-  
   const articlesData: ArticleData[] | [] = useSelector (
     (state: AppState) => state.ArticlesStore.articles
   );
@@ -277,7 +274,7 @@ const Map: React.FC<MapProps> = ({
     dispatch(resetFilterSlider());
     dispatch(fetchArticles(eventsFilter));
     dispatch(fetchAvgArticlesTonePlot(eventsFilter));
-    // dispatch(fetchNoOfArticlesPlot(eventsFilter));
+    dispatch(fetchNoOfArticlesPlot(eventsFilter));
 
     if (!mapRef.current) {
       return;
@@ -447,7 +444,7 @@ const Map: React.FC<MapProps> = ({
       dispatch(resetFilterSlider());
       dispatch(fetchArticles(eventsFilter));
       dispatch(fetchAvgArticlesTonePlot(eventsFilter));
-      // dispatch(fetchNoOfArticlesPlot(eventsFilter));
+      dispatch(fetchNoOfArticlesPlot(eventsFilter));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [language, startDate]
@@ -542,7 +539,7 @@ const Map: React.FC<MapProps> = ({
               elevation={5}
             >
               <Grid container className={classes.headlines}>
-                  Summary of Filters Selected - eg. Articles from (date range) with (event types) in (languages) by (publications)
+                  {`Summary of Filters Selected - Articles from ${moment(startDate).format('DD MMM YYYY')} to ${moment(endDate).format('DD MMM YYYY')} with (event types) in ${language}`}
               </Grid> 
             </Paper>
             <Box className={classes.root}>

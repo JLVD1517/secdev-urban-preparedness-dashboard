@@ -95,7 +95,6 @@ const AreaChartData: React.FC<AreaChartProps> = ({ darkTheme, mapGradient, data}
           <Label value="Pages of my website" offset={0} position="insideBottom" />
       </XAxis>
       <YAxis label={{ value: 'Number of Articles', angle: -90, position: 'center' }}/>
-      <CartesianGrid strokeDasharray="3 3" />
       <Tooltip />
       <Line
         type="monotone"
