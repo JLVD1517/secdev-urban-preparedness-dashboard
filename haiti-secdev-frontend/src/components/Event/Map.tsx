@@ -68,7 +68,10 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "18px",
     cursor:"pointer",
     textDecoration:'none',
-    color:'inherit'
+    color:'inherit',
+    '&:hover': {
+      textDecoration: 'underline'
+    }
   },
   datePubline: {
     fontWeight: 700,
@@ -560,7 +563,7 @@ const Map: React.FC<MapProps> = ({
                     elevation={5}
                   >
                     <div>
-                    <a href={article.url} target="_blank" className={classes.headlines} rel="noreferrer"><div>{article.title}</div></a>
+                    <a href={article.url} target="_blank" className={classes.headlines} rel="noreferrer"><span>{article.title}</span></a>
                       <Grid container>
                         <Grid item md={2} className={classes.datePubline}>
                           {article.publicationDate}

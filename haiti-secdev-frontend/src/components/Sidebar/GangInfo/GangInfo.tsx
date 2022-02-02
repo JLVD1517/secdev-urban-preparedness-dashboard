@@ -65,7 +65,7 @@ const GangInfo: React.FC = () => {
         </ListItem>
         <Collapse in={index === selectedIndex} timeout="auto" unmountOnExit>
             <Paper elevation={0} className={classes.nested}>
-                <div>
+                <div style={{marginBottom:'10px'}}>
                     <div className={classes.details}><span className={classes.text}>Group Name :</span>{group_details[key].name}</div>
                     <div className={classes.details}><span className={classes.text}>Group Size :</span>{group_details[key].group_size}</div>
                     <div className={classes.details}><span className={classes.text}>Group Leader Name :</span>{group_details[key].leader_name}</div>
