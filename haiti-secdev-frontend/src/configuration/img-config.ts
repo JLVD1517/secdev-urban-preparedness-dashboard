@@ -1,5 +1,5 @@
 // main logo used at the top left corner
-import navLogo from '../assets/appBranding/Seal_of_Los_Angeles.svg';
+import navLogo from '../assets/appBranding/UN_emblem_blue.svg';
 
 // Background images
 import backgroundImageOne from '../assets/img/background-image.jpg';
