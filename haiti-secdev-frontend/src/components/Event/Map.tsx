@@ -44,6 +44,7 @@ import { EventsFilters } from "../../types/modules/eventsFilters.type";
 import { fetchAvgArticlesTonePlot } from "../../store/modules/avgArticleTonePlotStore";
 import { fetchNoOfArticlesPlot } from "../../store/modules/noOfArticlePlotStore";
 import { setEventsLanguage } from "../../store/modules/eventsPageStore";
+import SelectEvent from "../SelectBox/SelectEvent";
 
 const mapboxgl = require("mapbox-gl");
 
@@ -520,7 +521,7 @@ const Map: React.FC<MapProps> = ({
               <DateRangeFilter darkTheme={darkTheme} />
             </div>
             <div className="toneSlider">
-              <ToneSlider />
+              <SelectEvent/>
             </div>
           </div>
           <Grid container style={{ paddingBottom: "35px" }}>
