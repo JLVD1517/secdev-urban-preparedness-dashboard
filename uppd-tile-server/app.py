@@ -375,7 +375,7 @@ async def articles_per_commune(request):
 
 articles_query = Template (
     """
-    select * from event_info ei inner join events e on ei.event_id = e.event_id  where ${cond_str} and TO_DATE(ei.publication_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and   ei.language = '${language}' and ei.commune_id = ${commune_id}
+    select * from event_info ei inner join events e on ei.event_id = e.event_id  where ${cond_str} and TO_DATE(ei.publication_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and   ei.language = '${language}'
     """
 )
 
@@ -383,8 +383,7 @@ async def get_articles(request):
     language = request.path_params['language']
     start_date =request.path_params['start_date']
     end_date= request.path_params['end_date']
-    commune_id = request.path_params['commune_id']
-    param_list = ['tone_start_range','source','type']
+    param_list = ['tone_start_range','source','type',"commune_id"]
     url_str = str(request.query_params)
     cond_str = ' 1=1 '
     for param in param_list:
@@ -397,7 +396,6 @@ async def get_articles(request):
         start_date=start_date,
         end_date=end_date,
         language=language,
-        commune_id=commune_id,
         cond_str=cond_str
     )
    
@@ -435,7 +433,7 @@ routes = [
     Route("/", index),
     Route("/get-commune/{start_date:str}/{end_date:str}/{language:str}/{z:int}/{x:int}/{y:int}",get_commune),
     Route("/get-subcommune/{month_number:int}/{year:int}/{z:int}/{x:int}/{y:int}",get_subcommune),
-    Route("/get-articles/{start_date:str}/{end_date:str}/{language:str}/{commune_id:int}",get_articles),
+    Route("/get-articles/{start_date:str}/{end_date:str}/{language:str}",get_articles),
     Route("/data/articles-per-event/{start_date:str}/{end_date:str}/{language:str}",articles_per_event),
     Route("/data/avg-tone/{start_date:str}/{end_date:str}/{language:str}",avg_tone),
     Route("/data/articles-per-commune/{start_date:str}/{end_date:str}/{language:str}",articles_per_commune),
