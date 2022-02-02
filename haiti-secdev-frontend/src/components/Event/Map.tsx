@@ -82,6 +82,13 @@ const useStyles = makeStyles((theme) => ({
     height: 'calc(100vh - 493px)',
     overflow: 'auto',
     backgroundColor: theme.palette.background.default,
+    border: "3px solid rgba(255, 255, 255, 0.12)",
+  },
+  summarySection:{
+    backgroundColor: "inherit",
+    height: 50,
+    padding: "5px 15px",
+    margin: "10px",
   }
 }));
 
@@ -525,6 +532,14 @@ const Map: React.FC<MapProps> = ({
       </Grid>
       <Grid item md={12} className={classes.container2}>
           <ThemeProvider theme={tableTheme}>
+            <Paper
+              className={classes.summarySection}
+              elevation={5}
+            >
+              <Grid container className={classes.headlines}>
+                  Summary of Filters Selected - eg. Articles from (date range) with (event types) in (languages) by (publications)
+              </Grid> 
+            </Paper>
             <Box className={classes.root}>
               {articlesData && articlesData.length ?
                 (articlesData as any[]).map((article: ArticleData) => (
