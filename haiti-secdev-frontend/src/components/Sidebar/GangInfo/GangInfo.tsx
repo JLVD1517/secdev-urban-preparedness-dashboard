@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       maxWidth: 360,
       backgroundColor: theme.palette.background.paper,
+      boxShadow:`0 0 5px 2px ${theme.palette.background.default}`
     },
     nested: {
       paddingLeft: theme.spacing(3),
@@ -46,7 +47,7 @@ const GangInfo: React.FC = () => {
   };
 
   return (
-    <>
+    <Paper className={Object.keys(group_details).length ? 'main-paper-list' : ''}>
     {selectedItem && (
     Object.keys(group_details).map( (key, index) => { 
         return <List
@@ -70,7 +71,7 @@ const GangInfo: React.FC = () => {
             </Collapse>
       </List>
     }))}
-    </>
+    </Paper>
   );
 }
 

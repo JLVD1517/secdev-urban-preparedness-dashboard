@@ -1,5 +1,5 @@
 .MuiFormControl-root{
-	width: 35%;
+	width: 20vw;
 	.MuiOutlinedInput-input{
 		padding: 10.5px 14px !important;
 	}
@@ -10,7 +10,6 @@
 
 .dateRange{
 	text-align: center;
-	z-index: 2;
 	.DateRangePicker__CalendarSelection--is-pending{
 		background-color: #FFE4D6 !important ;
 		color: #333333 !important;
@@ -27,4 +26,11 @@
 		color: #ffffff !important;
 		
 	}
+}
+
+.DateRangePicker{
+	position: absolute !important;
+	background-color: black;
+	z-index: 4;
+	display: flex;
 }

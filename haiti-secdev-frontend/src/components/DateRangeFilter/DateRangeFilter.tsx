@@ -41,15 +41,17 @@ const DateRangeFilter: React.FC<DateRangeFilterProps> = ({ darkTheme }) => {
         onClick={() => setModal(!modal)}
       />
       {modal && (
-        <DateRangePicker
-          selectionType="range"
-          value={value}
-          onSelect={(value: any) => {
-            onSelect(value);
-            setModal(!modal);
-          }}
-          numberOfCalendars={2}
-        />
+        <div>
+          <DateRangePicker
+            selectionType="range"
+            value={value}
+            onSelect={(value: any) => {
+              onSelect(value);
+              setModal(!modal);
+            }}
+            numberOfCalendars={1}
+          />
+        </div>
       )}
     </div>
   );

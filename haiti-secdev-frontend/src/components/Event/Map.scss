@@ -6,16 +6,35 @@
   bottom: 0;
   display: flex;
   width: 41.6%;
-  height: 60vh;
-}
-
-.divClass {
-  flex-grow: 1;
+  height: 493px;
 }
 
 .containerBox {
-  width: 40vw;
-  height: 60vh;
+  width: 100%;
+  height: 493px;
+  overflow: hidden;
+}
+.cusSwitch{
+  width: 35%;
+}
+.dateRangeFormat{
+  width: 40%;
+}
+.cusSwitch{
+  width: 15%;
+}
+.noDataAvail{
+  display: flex;
+  justify-content: center;
+  padding-top: 10rem;
+  font-size: 16px;
+}
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  justify-content: space-evenly;
 }
 
 // Choropleth popup style
