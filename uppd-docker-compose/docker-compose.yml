@@ -29,6 +29,6 @@ services:
     image: database:la
     environment:
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: uppd_data
+      POSTGRES_DB: secdev_data
     ports:
       - '5432:5432'

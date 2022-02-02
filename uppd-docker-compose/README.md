@@ -1,7 +1,7 @@
 # uppd-docker-compose
-Docker-compose file for the UPPD project.
+Docker-compose file for the Haiti violence monitor  project.
 ## usage
-In order for this docker-compose file to successfully build the uppd projects, several requirements must be met:
+In order for this docker-compose file to successfully build the HVM projects, several requirements must be met:
 1. Your docker must have access to 4gb of ram in order to build the application.
 2. The project must be arranged in the following file structure. Each repo should be contained within the folders specified below. It doesn't matter where these folders are located as long as they are on the same level and named properly. This docker-compose should be located at uppd-docker-compose/docker-compose.yml. The Dockerfile for the DB should be located at uppd-database/Dockerfile, the tile server at uppd-tile-server/Dockerfile, and the application at uppd-application/Dockerfile.
     - uppd-docker-compose
