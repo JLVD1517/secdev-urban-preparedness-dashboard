@@ -99,7 +99,9 @@ commune_query_template = Template(
             SELECT ST_AsMVTGeom(ST_Transform(ST_SetSRID(geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
                 4096, 0, false) AS g ,
-                 gid FROM haiti_commune  ) AS hc left join  ( 
+                 gid,
+                 ${commune_name}
+                  FROM haiti_commune  ) AS hc left join  ( 
         SELECT count(ei.event_id) as no_of_articles,
             avg(ei.tone) as avg_tone,
             c.commune_id
@@ -117,6 +119,9 @@ async def get_commune(request):
     start_date = request.path_params['start_date']
     end_date = request.path_params['end_date']
     language=request.path_params['language']
+    commune_name = 'adm2_en'
+    if language == 'FRENCH':
+        commune_name = 'adm2_fr'
     param_list = ['tone_start_range','source','type']
     url_str = str(request.query_params)
     cond_str = ' 1=1 '
@@ -125,9 +130,9 @@ async def get_commune(request):
             cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
         elif  url_str.find(param) != -1 :
             cond_str = cond_str + f' and {param} = '+"'"+request.query_params[param]+"'" 
-    return await get_commune_tile(x, y, z, start_date,end_date,language,cond_str)
+    return await get_commune_tile(x, y, z, start_date,end_date,language,cond_str,commune_name)
 
-async def get_commune_tile(x, y, z,start_date,end_date,language, cond_str):
+async def get_commune_tile(x, y, z,start_date,end_date,language, cond_str,commune_name):
     """Retrieve the year tile from the database or cache"""
     xmin, xmax, ymin, ymax = tile_extent(x, y, z)
     query = commune_query_template.substitute(
@@ -138,7 +143,8 @@ async def get_commune_tile(x, y, z,start_date,end_date,language, cond_str):
         cond_str =cond_str,
         start_date = start_date,
         end_date=end_date,
-        language=language
+        language=language,
+        commune_name=commune_name
     )
     async with pool.acquire() as conn:
         tile = await conn.fetchval(query)
