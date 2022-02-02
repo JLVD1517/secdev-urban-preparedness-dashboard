@@ -60,7 +60,7 @@ async def db_connection_pool():
         user=os.getenv("DB_USER", "postgres"),
         password=os.getenv("DB_PASSWORD", "changeMe"),
         database=os.getenv("DATABASE", "secdev_data"),
-        host="localhost", #os.getenv("localhost"),
+        host=os.getenv("DB_HOST", "localhost"),
         port=5432,
     )
     
@@ -446,6 +446,3 @@ middleware = [
     Middleware(CORSMiddleware, allow_origins=["*"])
     ]
 app = Starlette(routes=routes, middleware=middleware, on_startup=[on_startup])
-
-if __name__ == "__main__":
-    uvicorn.run(app, host='localhost', port=8000)

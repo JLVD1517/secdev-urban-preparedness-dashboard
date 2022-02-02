@@ -8,20 +8,8 @@ RUN apk add build-base \
 	&& pip install csvkit
 
 # Create directory structure
-RUN mkdir -p /usr/local/data/csv/done
 RUN mkdir -p /usr/local/data/scripts
 
-# Move csvs for area of interest into working directory
-#COPY ./docker/data/csv/indices/current_indices.csv /usr/local/data/csv/city_metrics.csv
-COPY ./docker/data/csv/assets/*.csv                /usr/local/data/csv/
-
-# Move load script and make it executable
-COPY ./docker/pyscripts/load-csv.sh /usr/local/data/scripts/
-
-RUN chmod +x /usr/local/data/scripts/load-csv.sh
-
-# Run load script
-RUN ./usr/local/data/scripts/load-csv.sh
 
 # Start with the PostgreSQL image version we want
 FROM postgres:13
@@ -45,10 +33,7 @@ RUN apt-get update \
 RUN mkdir -p /docker-entrypoint-initdb.d
 RUN mkdir -p /usr/local/data/dbdata
 RUN mkdir -p /usr/local/data/dbschema
-RUN mkdir -p /usr/local/data/dbviews
 RUN mkdir -p /usr/local/data/shapefile
-RUN mkdir -p /usr/local/data/csv
-#RUN mkdir -p /usr/local/data/csv-indices
 RUN mkdir -p /usr/local/log
 
 RUN chown postgres /usr/local/log
@@ -59,16 +44,11 @@ COPY ./docker/dbscripts/*.sh /docker-entrypoint-initdb.d/
 COPY ./docker/pgscripts/     /usr/local/bin/
 COPY ./docker/dbscripts/     /usr/local/bin/
 
-# Copy csv tables from python to postgres container
-COPY --from=csvkit /usr/local/data/csv/done/*.sql /usr/local/data/dbschema/
 
 # Copy database schema, functions, and data files
 COPY ./src/sql/*.sql                          /usr/local/data/dbschema/
-COPY ./src/sql/views/*.sql                    /usr/local/data/dbviews/
 COPY ./docker/data/shapefile/haiti_commune.* /usr/local/data/shapefile/
 COPY ./docker/data/shapefile/haiti_subcommune.* /usr/local/data/shapefile/
-COPY ./docker/data/csv/assets/*.csv           /usr/local/data/csv-assets/
-#COPY ./docker/data/csv/indices/*.csv          /usr/local/data/csv-indices/
 
 # Copy the version script and make it executable
 COPY ./docker/misc/version.sh /usr/local/bin/
