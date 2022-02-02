@@ -167,6 +167,8 @@ const Map: React.FC<MapProps> = ({
     if (e.features !== undefined && e.features.length > 0) {
       const newSelection = e.features[0];
       if (newSelection.properties !== null) {
+        eventsFilter.commune_id = newSelection.properties.gid; 
+        dispatch(fetchArticles(eventsFilter));
         dispatch(setSelectedItem(newSelection.properties));
       }
     }
