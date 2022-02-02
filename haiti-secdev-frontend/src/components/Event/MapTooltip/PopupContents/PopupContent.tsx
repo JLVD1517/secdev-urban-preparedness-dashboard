@@ -11,7 +11,7 @@ import {
   primaryScore,
   tractId,
   mapLayers,
-  totalPopCol,
+  avgTone,
 } from '../../../../configuration/app-config';
 import { AppState, SelectedItemType } from '../../../../types';
 import {
@@ -78,7 +78,7 @@ const PopupContent: React.FC<PopupContentProps> = ({
       </Typography>
 
       <Typography className={classes.title} color="textSecondary" gutterBottom>
-        No of events
+        No of events:
       </Typography>
 
       <Typography
@@ -87,11 +87,11 @@ const PopupContent: React.FC<PopupContentProps> = ({
         gutterBottom
         className={classes.bigText}
       >
-        {clickedItem.no_of_articles}
+        {clickedItem.no_of_articles as any as number > 0 ? clickedItem.no_of_articles : '-' }
       </Typography>
 
       <Typography className={classes.title} color="textSecondary" gutterBottom>
-        Overall Index Score
+        Average Tone:
       </Typography>
       <Typography
         variant="h5"
@@ -99,7 +99,7 @@ const PopupContent: React.FC<PopupContentProps> = ({
         gutterBottom
         className={classes.bigText}
       >
-        {formatDisplayNumber(clickedItem[primaryScore])} <br />
+        {formatDisplayNumber(clickedItem[avgTone])} <br />
         {selectedLayerId === primaryScore && (
           <>{getRating(indexValue())} Risk</>
         )}

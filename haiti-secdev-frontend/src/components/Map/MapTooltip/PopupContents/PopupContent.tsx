@@ -78,7 +78,7 @@ const PopupContent: React.FC<PopupContentProps> = ({
       </Typography>
 
       <Typography className={classes.title} color="textSecondary" gutterBottom>
-        No of groups
+        No of groups:
       </Typography>
 
       <Typography
@@ -87,7 +87,7 @@ const PopupContent: React.FC<PopupContentProps> = ({
         gutterBottom
         className={classes.bigText}
       >
-        {clickedItem[primaryScore]}
+        {clickedItem[primaryScore] as any as number > 0 ? clickedItem[primaryScore] : '-'}
       </Typography>
     </Card>
   );

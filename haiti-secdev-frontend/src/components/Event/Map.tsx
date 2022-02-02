@@ -21,6 +21,8 @@ import {
   tractId,
   mapAreaConfig,
   primaryScore,
+  eventMapAreaConfig,
+  eventsPrimaryScore,
 } from "../../configuration/app-config";
 import {
   MapGradientType,
@@ -126,6 +128,7 @@ const Map: React.FC<MapProps> = ({
     tone_end_range: 0,
     tone_start_range: 0,
     language: language,
+    commune_id: -1
   };
 
   const selectedLayerId: string = useSelector(
@@ -188,7 +191,7 @@ const Map: React.FC<MapProps> = ({
       | undefined = [
       "interpolate",
       ["linear"],
-      ["to-number", ["get", "no_of_articles"]],
+      ["to-number", ["get", eventsPrimaryScore]],
       scaleSteps().step1,
       mapGradient.step1,
       scaleSteps().step2,
@@ -274,13 +277,13 @@ const Map: React.FC<MapProps> = ({
     const map = new mapboxgl.Map({
       container: mapRef.current,
       style: satelliteView
-        ? mapAreaConfig.style.satellite
+        ? eventMapAreaConfig.style.satellite
         : darkTheme
-        ? mapAreaConfig.style.dark
-        : mapAreaConfig.style.light,
-      center: mapAreaConfig.mapCenter,
-      zoom: mapAreaConfig.zoomLevel,
-      maxBounds: mapAreaConfig.bounds,
+        ? eventMapAreaConfig.style.dark
+        : eventMapAreaConfig.style.light,
+      center: eventMapAreaConfig.mapCenter,
+      zoom: eventMapAreaConfig.zoomLevel,
+      maxBounds: eventMapAreaConfig.bounds,
     });
 
     // geocoder/search bar

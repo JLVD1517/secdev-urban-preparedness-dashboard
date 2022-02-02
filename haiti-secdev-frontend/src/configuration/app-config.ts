@@ -19,15 +19,31 @@ export const mapAreaConfig = {
   },
 };
 
+export const eventMapAreaConfig = {
+  zoomLevel: 10,
+  mapCenter: [-72.32259241031323, 18.507533968422422], // [longitude, latitude]
+  bounds: [
+    [-72.61416269166003, 18.32447004051508], // Southwest Coordinates (bottom left)
+    [-72.03102212896603, 18.69040231476103], // Northeast Coordinates (top right)
+  ],
+  style: {
+    dark: 'mapbox://styles/jharnum/cknsxylu20drd17pbsf07gytm',
+    light: 'mapbox://styles/jharnum/cknsy11dh0q3h18ql5qeh7f41',
+    satellite: 'mapbox://styles/jharnum/cknsxxxqq0q1j17qohk46xz4l',
+  },
+};
+
 export const filterScale = {
   lowBound: 0,
-  highBound: 20,
+  highBound: 10,
   step: 1,
 };
 
 export const tractId = 'gid';
 export const primaryScore = 'no_of_groups';
 export const totalPopCol = 'gid';
+export const avgTone = 'avg_tone';
+export const eventsPrimaryScore = 'no_of_articles';
 
 export const currentYear = 2021;
 export const currentMonth = 12;

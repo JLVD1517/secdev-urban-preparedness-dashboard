@@ -38,40 +38,44 @@ const GangInfo: React.FC = () => {
     );  
 
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
+  const [selectedIndex, setSelectedIndex] = React.useState(-1);
 
   const group_details = selectedItem && selectedItem.group_details ? JSON.parse(selectedItem.group_details) : {}
 
-  const handleClick = () => {
-    setOpen(!open);
-  };
+  const handleClick = (index: number) => {
+    if (selectedIndex === index) {
+      setSelectedIndex(-1)
+    } else {
+      setSelectedIndex(index)
+    }
+  }
 
   return (
     <Paper className={Object.keys(group_details).length ? 'main-paper-list' : ''}>
     {selectedItem && (
-    Object.keys(group_details).map( (key, index) => { 
+      Object.keys(group_details).map( (key, index) => { 
         return <List
-        component="nav"
-        aria-labelledby="nested-list-subheader"
-        className={classes.root}
-      >
-        <ListItem button onClick={handleClick}>
+          component="nav"
+          aria-labelledby="nested-list-subheader"
+          className={classes.root}
+        >
+        <ListItem button onClick={() => handleClick(index)}>
           <ListItemText primary={group_details[key].name} />
-          {open ? <ExpandLess /> : <ExpandMore />}
+          {index === selectedIndex ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-                <Paper elevation={0} className={classes.nested}>
-                    <div>
-                        <div className={classes.details}><span className={classes.text}>Group Name :</span>{group_details[key].name}</div>
-                        <div className={classes.details}><span className={classes.text}>Group Size :</span>{group_details[key].group_size}</div>
-                        <div className={classes.details}><span className={classes.text}>Group Leader Name :</span>{group_details[key].leader_name}</div>
-                        <div className={classes.details}><span className={classes.text}>Group Type :</span>{group_details[key].type}</div>
-                    </div>
-                </Paper>  
-            </Collapse>
+        <Collapse in={index === selectedIndex} timeout="auto" unmountOnExit>
+            <Paper elevation={0} className={classes.nested}>
+                <div>
+                    <div className={classes.details}><span className={classes.text}>Group Name :</span>{group_details[key].name}</div>
+                    <div className={classes.details}><span className={classes.text}>Group Size :</span>{group_details[key].group_size}</div>
+                    <div className={classes.details}><span className={classes.text}>Group Leader Name :</span>{group_details[key].leader_name}</div>
+                    <div className={classes.details}><span className={classes.text}>Group Type :</span>{group_details[key].type}</div>
+                </div>
+            </Paper>  
+        </Collapse>
       </List>
     }))}
-    </Paper>
+  </Paper>
   );
 }
 

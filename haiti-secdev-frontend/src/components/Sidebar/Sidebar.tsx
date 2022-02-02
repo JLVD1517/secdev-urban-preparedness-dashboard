@@ -205,7 +205,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
             <DateSlider />
             <FilterSlider mapGradient={mapGradient} />
             <p>{sidebarText}</p>
-
+            {selectedItem && <h2 className="main-header">Groups Details</h2>}
             <GangInfo/>
           </div>
         ) : (
