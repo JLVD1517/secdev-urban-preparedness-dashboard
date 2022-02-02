@@ -14,9 +14,9 @@ const FootBar: React.FC<FootBarProps> = ({ mapGradient, elementData, event}) => 
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
       position: 'relative',
-      top: event ? `calc(100vh - 88vh)` : `calc(100vh - 15vh)`,
-      left: '30%',
-      width: '293px',
+      top: event ? `calc(100vh - 90vh)` : `calc(100vh - 15vh)`,
+      left: '10%',
+      width: event ? '210px' : '293px',
       height: '50px',
       background: theme.palette.background.paper,
       borderRadius: '.5rem',
@@ -28,8 +28,8 @@ const FootBar: React.FC<FootBarProps> = ({ mapGradient, elementData, event}) => 
     bar: {
       opacity: 1,
       backgroundImage: `linear-gradient(90deg, ${mapGradient.step1} 0%, ${mapGradient.step2} 18.23%, ${mapGradient.step3} 39.38%, ${mapGradient.step4} 59.23%, ${mapGradient.step5} 79.87%, ${mapGradient.step6} 100%)`,
-      width: '263px',
-      height: '24px',
+      width: event ? '190': '263px',
+      height: event ? '18px' : '24px',
     },
     text: {
       display: 'flex',

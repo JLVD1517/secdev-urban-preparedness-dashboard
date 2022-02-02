@@ -91,7 +91,13 @@ const useStyles = makeStyles((theme) => ({
     height: 50,
     padding: "5px 15px",
     margin: "10px",
-  }
+  },
+  headlinesSummary: {
+    fontWeight: 300,
+    fontSize: "18px",
+    textDecoration:'none',
+    color:'inherit'
+  },
 }));
 
 interface MapProps {
@@ -541,7 +547,7 @@ const Map: React.FC<MapProps> = ({
               className={classes.summarySection}
               elevation={5}
             >
-              <Grid container className={classes.headlines}>
+              <Grid container className={classes.headlinesSummary}>
                   Summary of Filters Selected - eg. Articles from (date range) with (event types) in (languages) by (publications)
               </Grid> 
             </Paper>
