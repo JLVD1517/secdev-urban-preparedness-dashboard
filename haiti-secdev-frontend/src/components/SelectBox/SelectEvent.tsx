@@ -37,9 +37,10 @@ const SelectEvent: React.FC = () => {
         id="IndexSelect"
         label="Urban Resiliency Index"
         native
-        value={selectedEvent.event_id > 0 ? selectedEvent.event_id : null}
+        value={selectedEvent.event_id > 0 ? selectedEvent.event_id : ''}
         onChange={handleYearSelection}
       >
+        <option aria-label="None" value="" />
         {(eventsList as Event[]).map((item: Event, index: number) => {
           return (
             <option key={item.event_id} value={item.event_id}>

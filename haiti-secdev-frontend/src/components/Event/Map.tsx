@@ -528,8 +528,9 @@ const Map: React.FC<MapProps> = ({
               <SelectEvent/>
             </div>
           </div>
-          <Grid container style={{ paddingBottom: "35px" }}>
+          <Grid container style={{ paddingBottom: "15px" }}>
             <Grid item md={6} className="containerBox">
+              <h3 style={{textAlign:'center'}}>Event Types by Article over Time</h3>
               <AreaChartData
                 darkTheme={darkTheme}
                 mapGradient={mapGradient}
@@ -537,6 +538,7 @@ const Map: React.FC<MapProps> = ({
               />
             </Grid>
             <Grid item md={6} className="containerBox">
+              <h3 style={{textAlign:'center'}}>Tone - Avg over Time</h3>
               <AreaChartData
                 darkTheme={darkTheme}
                 mapGradient={mapGradient}
@@ -552,7 +554,7 @@ const Map: React.FC<MapProps> = ({
               className={classes.summarySection}
               elevation={5}
             >
-              <Grid container className={classes.headlines}>
+              <Grid container className={classes.headlinesSummary}>
                   {`Summary of Filters Selected - Articles from ${moment(startDate).format('DD MMM YYYY')} to ${moment(endDate).format('DD MMM YYYY')} ${selectedEvent.event_id> 0 ? `for ${selectedEvent.name} events`: '' } in ${language}`}
               </Grid> 
             </Paper>

@@ -75,7 +75,7 @@ const AreaChartData: React.FC<AreaChartProps> = ({ darkTheme, mapGradient, data}
   return (
     <LineChart
       width={400}
-      height={270}
+      height={250}
       data={data}
       margin={{ top: 20, right: 30, left: 20, bottom: 12 }}
     >

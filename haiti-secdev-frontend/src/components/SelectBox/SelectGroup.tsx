@@ -10,7 +10,7 @@ const SelectGroup: React.FC = () => {
     },
   }));
 
-  const [selectOption, setSelectedOption] = useState(1);
+  const [selectOption, setSelectedOption] = useState('');
 
   const Options: any[] = [
     { label: "Aditya", value: 1 },
@@ -22,7 +22,7 @@ const SelectGroup: React.FC = () => {
   const handleYearSelection = (
     event: React.ChangeEvent<{ value: unknown }>
   ) => {
-    setSelectedOption(event.target.value as number);
+    setSelectedOption(event.target.value as any);
   };
 
   const classes = useStyles();
@@ -43,6 +43,7 @@ const SelectGroup: React.FC = () => {
           value={selectOption}
           onChange={handleYearSelection}
         >
+            <option aria-label="None" value="" />
           {Options.map((item) => {
             return (
               <option key={item.value} value={item.value}>
