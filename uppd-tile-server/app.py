@@ -527,6 +527,19 @@ async def get_event_type(request):
             data.append(val['type'])
     return JSONResponse({"success":"true","data":data})
 
+async def get_groups(request):
+    query = 'select group_id ,name from groups '
+    async with pool.acquire() as conn:
+        data_res = await conn.fetch(query)
+        data = []
+        for val in iter(data_res):
+            temp_obj = {}
+            temp_obj['group_id'] = int(val['group_id'])
+            temp_obj['name'] = val['name']
+            data.append(temp_obj)
+    return JSONResponse({"success":"true","data":data})
+
+
 
 routes = [
     Route("/", index),
@@ -536,7 +549,8 @@ routes = [
     Route("/data/articles-per-event/{start_date:str}/{end_date:str}/{language:str}",articles_per_event),
     Route("/data/avg-tone/{start_date:str}/{end_date:str}/{language:str}",avg_tone),
     Route("/data/articles-per-commune/{start_date:str}/{end_date:str}/{language:str}",articles_per_commune),
-    Route("/get-event-type",get_event_type)
+    Route("/get-event-type",get_event_type),
+    Route("/get-groups",get_groups)
 ]
 
 middleware = [
