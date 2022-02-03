@@ -569,18 +569,20 @@ async def articles_per_event_per_month(request):
         language=language,
         cond_str=cond_str
     )
+    pub_month_query = "update event_info set pub_month =  split_part(publication_date,'-',2)||'-'||split_part(publication_date,'-',3) "
     async with pool.acquire() as conn:
-            data_res = await conn.fetch(query)
-            data = []
-            for record in iter(data_res):
-                limit = len(record['events'])
-                obj = {}
-                obj['pub_month'] = record['pub_month']
-                events = record['events']
-                articles_count = record['articles_count']
-                for index in range(0,limit):
-                    obj[events[index]] = articles_count[index]
-                data.append(obj)
+        await conn.fetch(pub_month_query)
+        data_res = await conn.fetch(query)
+        data = []
+        for record in iter(data_res):
+            limit = len(record['events'])
+            obj = {}
+            obj['pub_month'] = record['pub_month']
+            events = record['events']
+            articles_count = record['articles_count']
+            for index in range(0,limit):
+                obj[events[index]] = articles_count[index]
+            data.append(obj)
     return JSONResponse({"success":"true","data":data})
 
 
