@@ -44,6 +44,8 @@ export const primaryScore = 'no_of_groups';
 export const totalPopCol = 'gid';
 export const avgTone = 'avg_tone';
 export const eventsPrimaryScore = 'no_of_articles';
+export const subCommuneNameKey = 'adm2_en';
+export const communeNameKey = 'adm3_en'
 
 export const currentYear = 2021;
 export const currentMonth = 12;

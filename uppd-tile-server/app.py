@@ -122,7 +122,7 @@ async def get_commune(request):
     commune_name = 'adm2_en'
     if language == 'FRENCH':
         commune_name = 'adm2_fr'
-    param_list = ['tone_start_range','source','type']
+    param_list = ['tone_start_range','source','type', 'event_id']
     url_str = str(request.query_params)
     cond_str = ' 1=1 '
     for param in param_list:
@@ -277,7 +277,7 @@ async def articles_per_event(request):
     language = request.path_params['language']
     start_date =request.path_params['start_date']
     end_date= request.path_params['end_date']
-    param_list = ['tone_start_range','source','type']
+    param_list = ['tone_start_range','source','type', 'event_id']
     url_str = str(request.query_params)
     cond_str = ' 1=1 '
     for param in param_list:
@@ -313,7 +313,7 @@ async def avg_tone(request):
     language = request.path_params['language']
     start_date =request.path_params['start_date']
     end_date= request.path_params['end_date']
-    param_list = ['tone_start_range','source','type']
+    param_list = ['tone_start_range','source','type', 'event_id']
     url_str = str(request.query_params)
     cond_str = ' 1=1 '
     for param in param_list:
@@ -389,7 +389,7 @@ async def get_articles(request):
     language = request.path_params['language']
     start_date =request.path_params['start_date']
     end_date= request.path_params['end_date']
-    param_list = ['tone_start_range','source','type', "commune_id"]
+    param_list = ['tone_start_range','source','type', "commune_id", "event_id"]
     url_str = str(request.query_params)
     cond_str = ' 1=1 '
     for param in param_list:
@@ -426,12 +426,12 @@ async def get_articles(request):
     return JSONResponse({"success":"true","data":data_arr})
 
 async def get_event_type(request):
-    query = 'select distinct(type) from events '
+    query = 'select distinct(type), event_id from events '
     async with pool.acquire() as conn:
         data_res = await conn.fetch(query)
         data = []
         for val in iter(data_res):
-            data.append(val['type'])
+            data.append({"event_id": int(val['event_id']), "name": val['type']})
     return JSONResponse({"success":"true","data":data})
 
 
@@ -443,7 +443,7 @@ routes = [
     Route("/data/articles-per-event/{start_date:str}/{end_date:str}/{language:str}",articles_per_event),
     Route("/data/avg-tone/{start_date:str}/{end_date:str}/{language:str}",avg_tone),
     Route("/data/articles-per-commune/{start_date:str}/{end_date:str}/{language:str}",articles_per_commune),
-    Route("/get-event-type",get_event_type)
+    Route("/events",get_event_type)
 ]
 
 middleware = [

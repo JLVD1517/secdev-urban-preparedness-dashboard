@@ -40,7 +40,7 @@ import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { InitialEventsComponentState, PlotData } from "../../types";
 import ToneSlider from "../../ToneSlider/ToneSlider";
 import { fetchArticles } from "../../store/modules/articlesStore";
-import { EventsFilters } from "../../types/modules/eventsFilters.type";
+import { Event, EventsFilters } from "../../types/modules/eventsFilters.type";
 import { fetchAvgArticlesTonePlot } from "../../store/modules/avgArticleTonePlotStore";
 import { fetchNoOfArticlesPlot } from "../../store/modules/noOfArticlePlotStore";
 import { setEventsLanguage } from "../../store/modules/eventsPageStore";
@@ -145,7 +145,8 @@ const Map: React.FC<MapProps> = ({
     tone_end_range: 0,
     tone_start_range: 0,
     language: language,
-    commune_id: -1
+    commune_id: -1,
+    event_id: -1,
   };
 
   const selectedLayerId: string = useSelector(
@@ -170,6 +171,10 @@ const Map: React.FC<MapProps> = ({
 
   const articlesData: ArticleData[] | [] = useSelector (
     (state: AppState) => state.ArticlesStore.articles
+  );
+
+  const eventsList: Event[] | [] = useSelector (
+    (state: AppState) => state.EventsListStore.events
   );
 
   const setSelection = (

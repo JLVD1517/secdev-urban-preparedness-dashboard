@@ -12,6 +12,7 @@ import {
   tractId,
   mapLayers,
   avgTone,
+  subCommuneNameKey,
 } from '../../../../configuration/app-config';
 import { AppState, SelectedItemType } from '../../../../types';
 import {
@@ -74,7 +75,7 @@ const PopupContent: React.FC<PopupContentProps> = ({
         gutterBottom
         className={classes.bigText}
       >
-        Tract {clickedItem[tractId]}
+        Tract {clickedItem[subCommuneNameKey]}
       </Typography>
 
       <Typography className={classes.title} color="textSecondary" gutterBottom>
