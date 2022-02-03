@@ -69,7 +69,10 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "18px",
     cursor:"pointer",
     textDecoration:'none',
-    color:'inherit'
+    color:'inherit',
+    '&:hover': {
+      textDecoration: 'underline'
+    }
   },
   datePubline: {
     fontWeight: 700,
@@ -92,7 +95,13 @@ const useStyles = makeStyles((theme) => ({
     height: 50,
     padding: "5px 15px",
     margin: "10px",
-  }
+  },
+  headlinesSummary: {
+    fontWeight: 300,
+    fontSize: "18px",
+    textDecoration:'none',
+    color:'inherit'
+  },
 }));
 
 interface MapProps {
@@ -487,7 +496,7 @@ const Map: React.FC<MapProps> = ({
           </div>
         </Grid>
         <Grid item md={7} className={`${classes.rightDiv}`}>
-          <div style={{ paddingTop: "3rem" }}>
+          <div style={{ paddingTop: "4rem" }}>
             <div className="row">
               <h1 className={classes.mainHeader}>
                 UN Haiti Port Au Prince Event Monitor
@@ -551,7 +560,7 @@ const Map: React.FC<MapProps> = ({
                     elevation={5}
                   >
                     <div>
-                    <a href={article.url} target="_blank" className={classes.headlines} rel="noreferrer"><div>{article.title}</div></a>
+                    <a href={article.url} target="_blank" className={classes.headlines} rel="noreferrer"><span>{article.title}</span></a>
                       <Grid container>
                         <Grid item md={2} className={classes.datePubline}>
                           {article.publicationDate}
