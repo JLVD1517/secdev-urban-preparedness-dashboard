@@ -499,7 +499,7 @@ const Map: React.FC<MapProps> = ({
           </div>
         </Grid>
         <Grid item md={7} className={`${classes.rightDiv}`}>
-          <div style={{ paddingTop: "3rem" }}>
+          <div style={{ paddingTop: "4rem" }}>
             <div className="row">
               <h1 className={classes.mainHeader}>
                 UN Haiti Port Au Prince Event Monitor

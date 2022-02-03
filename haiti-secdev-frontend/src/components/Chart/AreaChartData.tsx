@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import {
-  AreaChart,
-  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -92,15 +90,15 @@ const AreaChartData: React.FC<AreaChartProps> = ({ darkTheme, mapGradient, data}
         </linearGradient>
       </defs>
       <XAxis dataKey="date">
-          <Label value="Pages of my website" offset={0} position="insideBottom" />
+          <Label value="Pages of my website" stroke={darkTheme ? "#fff" : "#000"} offset={0} position="insideBottom" />
       </XAxis>
-      <YAxis label={{ value: 'Number of Articles', angle: -90, position: 'center' }}/>
+      <YAxis label={{ value: 'Number of Articles',stroke:darkTheme ? "#fff" : "#000", angle: -90, position: 'center' }}/>
       <CartesianGrid strokeDasharray="3 3" />
-      <Tooltip />
+      <Tooltip/>
       <Line
         type="monotone"
         dataKey="value"
-        stroke="url(#events-plot)"
+        stroke="#000"
         fillOpacity={1}
         fill="url(#events-plot)"
         dot={false}
