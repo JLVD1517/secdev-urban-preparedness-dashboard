@@ -31,24 +31,33 @@ const SelectGroup: React.FC = () => {
 
   const classes = useStyles();
   return (
-    <FormControl className={classes.formControl} variant="outlined">
-      <InputLabel htmlFor="IndexSelect">Select Group</InputLabel>
-      <Select
-        id="IndexSelect"
-        label="Urban Resiliency Index"
-        native
-        value={selectedGroup.group_id > 0 ? selectedGroup.group_id : null}
-        onChange={handleSelect}
-      >
-        {(groupsList as Group[]).map((item: Group, index: number) => {
+    <Box
+      my={3}
+      mx="auto"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <FormControl className={classes.formControl} variant="outlined">
+        <InputLabel htmlFor="IndexSelect">Select Data</InputLabel>
+        <Select
+          id="IndexSelect"
+          label="Urban Resiliency Index"
+          native
+          value={selectedGroup.group_id > 0 ? selectedGroup.group_id : ''}
+          onChange={handleSelect}
+        >
+            <option aria-label="None" value="" />
+            {(groupsList as Group[]).map((item: Group, index: number) => {
           return (
             <option key={item.group_id} value={item.group_id}>
               {item?.name.charAt(0).toUpperCase() + item?.name.slice(1)}
             </option>
           );
         })}
-      </Select>
-    </FormControl>
+        </Select>
+      </FormControl>
+    </Box>
   );
 };
 export default SelectGroup;

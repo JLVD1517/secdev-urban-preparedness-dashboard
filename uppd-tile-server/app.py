@@ -169,7 +169,7 @@ subcommune_query_template1 = Template(
             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
                 4096, 0, false) AS g
-        FROM sub_commune_group_count_map as scgc inner join haiti_subcommune AS hsb on  scgc.sub_commune_id = hsb.gid 
+        FROM sub_commune_group_count_map as scgc inner join haiti_subcommune AS hsb on  scgc.sub_commune_id = hsb.gid
     ) AS tile;
     """    
 )
@@ -241,6 +241,7 @@ subcommune_group_query_template = Template(
         SELECT 
             hsb.gid,
             hsb.adm3_en,
+            1 as no_of_groups,
             gscm.group_details::json,
             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
@@ -327,7 +328,6 @@ async def get_subcommune(request):
     month_number = request.path_params['month_number']
     year = request.path_params['year']
     group_id = int(request.path_params['group_id'])
-    # url_str = str(request.query_params)
     if group_id > 0:
         await get_temp_group_res(month_number,year,group_id)
         return await get_subcommune_group_tile(x, y, z, fields)
