@@ -174,6 +174,7 @@ subcommune_query_template1 = Template(
     """    
 )
 
+
 query_template2 = Template(
     """
         SELECT * 
@@ -231,7 +232,93 @@ async def get_temp_res(month_number,year):
         async with pool.acquire() as conn:
             await conn.execute(query2)   
 
-    return Response("success")       
+    return Response("success")     
+
+subcommune_group_query_template = Template(
+    """
+    SELECT ST_AsMVT(tile, 'tile')
+    FROM (
+        SELECT 
+            hsb.gid,
+            hsb.adm3_en,
+            gscm.group_details::json,
+            ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
+            ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
+                4096, 0, false) AS g
+        FROM group_sub_commune_map as gscm inner join haiti_subcommune AS hsb on  gscm.sub_commune_id = hsb.gid 
+    ) AS tile;
+    """    
+)
+
+
+group_template = Template(
+    """
+        SELECT * 
+        FROM group_records where month_number = ${month_number} and year = ${year} and group_id = ${group_id} order by group_record_id asc 
+    """
+)
+group_query_template = Template(
+    """
+        insert into group_sub_commune_map values(${sub_commune_id},${group_id},'${group_details}') on conflict(sub_commune_id) do  update set group_id = ${group_id}, group_details='${group_details}'
+    """ 
+)
+
+async def get_temp_group_res(month_number,year,group_id):
+    group_query = group_template.substitute(
+        month_number=month_number,
+        year=year,
+        group_id=group_id,
+    )
+    async with pool.acquire() as conn:
+        group_res = await conn.fetch(group_query)
+        print(group_res)
+        sub_commune_list = []
+        group_details = {}
+        for record in iter(group_res):
+            print("innnnnnnn")
+            arr = record['sub_commune_influence'].split('[')[1].split(']')[0]
+            sc_list = list(map(int, arr.split(",")))
+            temp_group_details = {}
+            temp_group_details['name'] = record['name']
+            temp_group_details['type'] = record['type']
+            temp_group_details['leader_name'] = record['leader_name']
+            temp_group_details['key_activities'] = record['key_activities']
+            temp_group_details['group_size'] = int(record['group_size'])
+            temp_group_details['affiliation'] = record['affiliation'] 
+            temp_group_details['alliance_groups'] = record['alliance_groups']
+            temp_group_details['rival_groups'] = record['rival_groups']
+            for sid in sc_list:
+                print("sid",sid)
+                if sub_commune_list.count(sid) == 0:
+                    sub_commune_list.append(sid)
+                group_details[group_id] = temp_group_details
+    for sid in sub_commune_list:
+        group_table_query = group_query_template.substitute(
+            sub_commune_id=sid,
+            group_id=group_id,
+            group_details = json.dumps({group_id:group_details[group_id]})
+        ) 
+        print(group_table_query)
+        async with pool.acquire() as conn:
+            await conn.execute(group_table_query)            
+    return Response("success")        
+
+
+
+async def get_subcommune_group_tile(x,y,z,fields='gid'):
+    """Retrieve the year tile from the database or cache"""
+    xmin, xmax, ymin, ymax = tile_extent(x, y, z)
+    query = subcommune_group_query_template.substitute(
+        xmin=xmin,
+        xmax=xmax,
+        ymin=ymin,
+        ymax=ymax,
+    )
+    async with pool.acquire() as conn:
+        tile = await conn.fetchval(query)  
+    response = Response(tile, media_type="application/x-protobuf")
+    return response
+
 
 
 async def get_subcommune(request):
@@ -243,10 +330,16 @@ async def get_subcommune(request):
     z = request.path_params["z"]
     month_number = request.path_params['month_number']
     year = request.path_params['year']
-    await get_temp_res(month_number,year)
-    return await get_subcommune_tile(x, y, z, fields,month_number,year)
+    url_str = str(request.query_params)
+    if url_str.find('group_id') != -1:
+        group_id = request.query_params['group_id']
+        await get_temp_group_res(month_number,year,group_id)
+        return await get_subcommune_group_tile(x, y, z, fields)
+    else:     
+        await get_temp_res(month_number,year)
+        return await get_subcommune_tile(x, y, z, fields)
 
-async def get_subcommune_tile(x, y, z, fields="gid",month_number=12,year=2021):
+async def get_subcommune_tile(x, y, z, fields="gid"):
 
     """Retrieve the year tile from the database or cache"""
     xmin, xmax, ymin, ymax = tile_extent(x, y, z)
@@ -439,6 +532,19 @@ async def get_event_type(request):
             data.append({"event_id": int(val['event_id']), "name": val['type']})
     return JSONResponse({"success":"true","data":data})
 
+async def get_groups(request):
+    query = 'select group_id ,name from groups '
+    async with pool.acquire() as conn:
+        data_res = await conn.fetch(query)
+        data = []
+        for val in iter(data_res):
+            temp_obj = {}
+            temp_obj['group_id'] = int(val['group_id'])
+            temp_obj['name'] = val['name']
+            data.append(temp_obj)
+    return JSONResponse({"success":"true","data":data})
+
+
 
 routes = [
     Route("/", index),
@@ -448,7 +554,8 @@ routes = [
     Route("/data/articles-per-event/{start_date:str}/{end_date:str}/{language:str}",articles_per_event),
     Route("/data/avg-tone/{start_date:str}/{end_date:str}/{language:str}",avg_tone),
     Route("/data/articles-per-commune/{start_date:str}/{end_date:str}/{language:str}",articles_per_commune),
-    Route("/events",get_event_type)
+    Route("/get-event-type",get_event_type),
+    Route("/get-groups",get_groups)
 ]
 
 middleware = [
