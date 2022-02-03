@@ -268,7 +268,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       map.on('mouseenter', 'uppd-layer', () => {
         map.getCanvas().style.cursor = 'pointer';
       });
-
+        
       // add layers and set map
       map.addLayer(layer);
       setMap(map);

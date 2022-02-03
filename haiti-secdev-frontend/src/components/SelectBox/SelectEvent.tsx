@@ -25,7 +25,8 @@ const SelectEvent: React.FC = () => {
   const handleYearSelection = (
     event: React.ChangeEvent<{ value: unknown }>
   ) => {
-    dispatch(setSelectedEventId(eventsList[event.target.value as number]))
+    const selectedItem = eventsList.find(item => item.event_id == event.target.value);
+    dispatch(setSelectedEventId(selectedItem as any as Event));
   };
 
   const classes = useStyles();
@@ -36,12 +37,12 @@ const SelectEvent: React.FC = () => {
         id="IndexSelect"
         label="Urban Resiliency Index"
         native
-        value={selectedEvent.event_id > 0 ? selectedEvent.name : null}
+        value={selectedEvent.event_id > 0 ? selectedEvent.event_id : null}
         onChange={handleYearSelection}
       >
         {(eventsList as Event[]).map((item: Event, index: number) => {
           return (
-            <option key={item.event_id} value={index}>
+            <option key={item.event_id} value={item.event_id}>
               {item?.name.charAt(0).toUpperCase() + item?.name.slice(1)}
             </option>
           );

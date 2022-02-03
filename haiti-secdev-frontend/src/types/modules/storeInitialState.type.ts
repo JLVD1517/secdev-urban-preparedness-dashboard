@@ -1,5 +1,5 @@
 import { ArticlesInitialState, AvgTonePlotInitialState, NoOfArticlesPlotInitialState } from '..';
-import { EventsInitialState } from './eventsFilters.type';
+import { Event, EventsInitialState } from './eventsFilters.type';
 import { SelectedItemType } from './selectedItem.type';
 
 export interface InitialStateAppControl {
@@ -39,6 +39,7 @@ export interface InitialEventsComponentState {
   startDate: string;
   endDate: string;
   language: string;
+  selectedEvent: Event
 }
 
 export interface AppState {

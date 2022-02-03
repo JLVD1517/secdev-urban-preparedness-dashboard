@@ -548,7 +548,7 @@ routes = [
     Route("/data/articles-per-event/{start_date:str}/{end_date:str}/{language:str}",articles_per_event),
     Route("/data/avg-tone/{start_date:str}/{end_date:str}/{language:str}",avg_tone),
     Route("/data/articles-per-commune/{start_date:str}/{end_date:str}/{language:str}",articles_per_commune),
-    Route("/get-event-type",get_event_type),
+    Route("/events",get_event_type),
     Route("/get-groups",get_groups)
 ]
 

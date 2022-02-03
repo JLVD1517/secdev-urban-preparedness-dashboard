@@ -553,7 +553,7 @@ const Map: React.FC<MapProps> = ({
               elevation={5}
             >
               <Grid container className={classes.headlines}>
-                  {`Summary of Filters Selected - Articles from ${moment(startDate).format('DD MMM YYYY')} to ${moment(endDate).format('DD MMM YYYY')} with (event types) in ${language}`}
+                  {`Summary of Filters Selected - Articles from ${moment(startDate).format('DD MMM YYYY')} to ${moment(endDate).format('DD MMM YYYY')} ${selectedEvent.event_id> 0 ? `for ${selectedEvent.name} events`: '' } in ${language}`}
               </Grid> 
             </Paper>
             <Box className={classes.root}>
