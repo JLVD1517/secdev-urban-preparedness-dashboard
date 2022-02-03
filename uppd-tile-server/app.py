@@ -542,6 +542,46 @@ async def get_groups(request):
             data.append(temp_obj)
     return JSONResponse({"success":"true","data":data})
 
+article_query_template = Template(
+    """
+    select pub_month, array_agg(event_type) as events, array_agg(no_of_articles) as articles_count from (
+    select  ei.pub_month,e.type  as event_type , count(ei.event_info_id) as no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by (ei.pub_month,e.type)  ) as temp group by (pub_month) ;
+    """
+)
+
+
+async def articles_per_event_per_month(request):
+    print(request.path_params['language'])
+    language = request.path_params['language']
+    start_date =request.path_params['start_date']
+    end_date= request.path_params['end_date']
+    param_list = ['tone_start_range','source','type', 'event_id']
+    url_str = str(request.query_params)
+    cond_str = ' 1=1 '
+    for param in param_list:
+        if url_str.find(param) != -1 and param == 'tone_start_range':
+            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
+        elif  url_str.find(param) != -1 :
+            cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'" 
+    query = article_query_template.substitute(
+        start_date=start_date,
+        end_date=end_date,
+        language=language,
+        cond_str=cond_str
+    )
+    async with pool.acquire() as conn:
+            data_res = await conn.fetch(query)
+            data = []
+            for record in iter(data_res):
+                limit = len(record['events'])
+                obj = {}
+                obj['pub_month'] = record['pub_month']
+                events = record['events']
+                articles_count = record['articles_count']
+                for index in range(0,limit):
+                    obj[events[index]] = articles_count[index]
+                data.append(obj)
+    return JSONResponse({"success":"true","data":data})
 
 
 routes = [
@@ -550,6 +590,7 @@ routes = [
     Route("/get-subcommune/{month_number:int}/{year:int}/{group_id:str}/{z:int}/{x:int}/{y:int}",get_subcommune),
     Route("/get-articles/{start_date:str}/{end_date:str}/{language:str}",get_articles),
     Route("/data/articles-per-event/{start_date:str}/{end_date:str}/{language:str}",articles_per_event),
+    Route("/articles-per-event/{start_date:str}/{end_date:str}/{language:str}",articles_per_event_per_month),
     Route("/data/avg-tone/{start_date:str}/{end_date:str}/{language:str}",avg_tone),
     Route("/data/articles-per-commune/{start_date:str}/{end_date:str}/{language:str}",articles_per_commune),
     Route("/events",get_event_type),
