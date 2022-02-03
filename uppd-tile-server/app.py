@@ -326,9 +326,9 @@ async def get_subcommune(request):
     z = request.path_params["z"]
     month_number = request.path_params['month_number']
     year = request.path_params['year']
-    url_str = str(request.query_params)
-    if url_str.find('group_id') != -1:
-        group_id = request.query_params['group_id']
+    group_id = int(request.path_params['group_id'])
+    # url_str = str(request.query_params)
+    if group_id > 0:
         await get_temp_group_res(month_number,year,group_id)
         return await get_subcommune_group_tile(x, y, z, fields)
     else:     
@@ -543,13 +543,13 @@ async def get_groups(request):
 routes = [
     Route("/", index),
     Route("/get-commune/{start_date:str}/{end_date:str}/{language:str}/{event_id:str}/{z:int}/{x:int}/{y:int}",get_commune),
-    Route("/get-subcommune/{month_number:int}/{year:int}/{z:int}/{x:int}/{y:int}",get_subcommune),
+    Route("/get-subcommune/{month_number:int}/{year:int}/{group_id:str}/{z:int}/{x:int}/{y:int}",get_subcommune),
     Route("/get-articles/{start_date:str}/{end_date:str}/{language:str}",get_articles),
     Route("/data/articles-per-event/{start_date:str}/{end_date:str}/{language:str}",articles_per_event),
     Route("/data/avg-tone/{start_date:str}/{end_date:str}/{language:str}",avg_tone),
     Route("/data/articles-per-commune/{start_date:str}/{end_date:str}/{language:str}",articles_per_commune),
     Route("/events",get_event_type),
-    Route("/get-groups",get_groups)
+    Route("/groups",get_groups)
 ]
 
 middleware = [

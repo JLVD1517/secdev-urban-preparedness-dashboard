@@ -13,16 +13,14 @@ const SelectEvent: React.FC = () => {
     },
   }));
   const dispatch = useDispatch();
-
   const eventsList: Event[] | [] = useSelector (
     (state: AppState) => state.EventsListStore.events
   );
-
   const selectedEvent: Event = useSelector (
     (state: AppState) => state.EventsPageStore.selectedEvent
   );
-
-  const handleYearSelection = (
+  
+  const handleSelect = (
     event: React.ChangeEvent<{ value: unknown }>
   ) => {
     const selectedItem = eventsList.find(item => item.event_id == event.target.value);
@@ -38,7 +36,7 @@ const SelectEvent: React.FC = () => {
         label="Urban Resiliency Index"
         native
         value={selectedEvent.event_id > 0 ? selectedEvent.event_id : null}
-        onChange={handleYearSelection}
+        onChange={handleSelect}
       >
         {(eventsList as Event[]).map((item: Event, index: number) => {
           return (

@@ -1,5 +1,6 @@
 import { ArticlesInitialState, AvgTonePlotInitialState, NoOfArticlesPlotInitialState } from '..';
 import { Event, EventsInitialState } from './eventsFilters.type';
+import { Group, GroupsInitialState } from './groups.type';
 import { SelectedItemType } from './selectedItem.type';
 
 export interface InitialStateAppControl {
@@ -42,6 +43,10 @@ export interface InitialEventsComponentState {
   selectedEvent: Event
 }
 
+export interface InitialGroupsComponentState {
+  selectedGroup: Group
+}
+
 export interface AppState {
   AppControl: InitialStateAppControl;
   AvailableYears: InitialAvailableYearsState;
@@ -53,4 +58,6 @@ export interface AppState {
   AverageArticleToneStore: AvgTonePlotInitialState;
   NoOfArticleStore: NoOfArticlesPlotInitialState;
   EventsListStore: EventsInitialState;
+  GroupsListStore: GroupsInitialState;
+  GroupsPageStore: InitialGroupsComponentState
 }

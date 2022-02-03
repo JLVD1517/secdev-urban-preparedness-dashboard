@@ -13,6 +13,7 @@ import ThemeContainer from './ThemeContainer';
 import { AppState } from './types';
 import Loader from './components/BaseUIComponents/Loader';
 import { fetchEvents } from './store/modules/eventsListStore';
+import { fetchGroups } from './store/modules/groupsListStore';
 
 const About = lazy(() => import('./components/About'));
 const Groups = lazy(() => import('./components/Groups'));
@@ -34,6 +35,7 @@ const App: React.FC = () => {
   // dispatching data that should set to our store on load
   dispatch(fetchAvailableYears('data-years'));
   dispatch(fetchEvents());
+  dispatch(fetchGroups());
 
   const darkTheme: boolean = useSelector(
     (state: AppState) => state.AppControl.darkTheme,
