@@ -194,7 +194,7 @@ async def get_temp_res(month_number,year):
     dict_group_details = dict()
     async with pool.acquire() as conn:
         tile_res = await conn.fetch(month_query)
-        all_sub_commune = [i for i in range(1,35)]
+        all_sub_commune = [i for i in range(1,60)]
         for i in all_sub_commune:
             group_list_arr = []
             final_group_details = {}
