@@ -18,7 +18,6 @@ import DateRangeFilter from "../DateRangeFilter/DateRangeFilter";
 import AreaChartData from "../Chart/AreaChartData";
 import CustomSwitch from "../BaseUIComponents/CustomSwitch";
 import {
-  tractId,
   mapAreaConfig,
   primaryScore,
   eventMapAreaConfig,
@@ -37,7 +36,7 @@ import { scaleSteps } from "../../services/sharedFunctions";
 import "./Map.scss";
 import Popup from "./MapTooltip/Popup";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { InitialEventsComponentState, PlotData } from "../../types";
+import { PlotData } from "../../types";
 import ToneSlider from "../../ToneSlider/ToneSlider";
 import { fetchArticles } from "../../store/modules/articlesStore";
 import { Event, EventsFilters } from "../../types/modules/eventsFilters.type";
@@ -45,6 +44,7 @@ import { fetchAvgArticlesTonePlot } from "../../store/modules/avgArticleTonePlot
 import { fetchNoOfArticlesPlot } from "../../store/modules/noOfArticlePlotStore";
 import { setEventsLanguage } from "../../store/modules/eventsPageStore";
 import moment from "moment";
+import SelectEvent from "../SelectBox/SelectEvent";
 
 const mapboxgl = require("mapbox-gl");
 
@@ -139,6 +139,10 @@ const Map: React.FC<MapProps> = ({
     (state: AppState) => state.EventsPageStore.language
   );
 
+  const selectedEvent: Event = useSelector (
+    (state: AppState) => state.EventsPageStore.selectedEvent
+  );
+
   const eventsFilter: EventsFilters = {
     start_date: startDate,
     end_date: endDate,
@@ -146,7 +150,7 @@ const Map: React.FC<MapProps> = ({
     tone_start_range: 0,
     language: language,
     commune_id: -1,
-    event_id: -1,
+    event_id: selectedEvent.event_id,
   };
 
   const selectedLayerId: string = useSelector(
@@ -171,10 +175,6 @@ const Map: React.FC<MapProps> = ({
 
   const articlesData: ArticleData[] | [] = useSelector (
     (state: AppState) => state.ArticlesStore.articles
-  );
-
-  const eventsList: Event[] | [] = useSelector (
-    (state: AppState) => state.EventsListStore.events
   );
 
   const setSelection = (
@@ -254,7 +254,7 @@ const Map: React.FC<MapProps> = ({
     source: {
       type: "vector",
       tiles: [
-        `${process.env.REACT_APP_MAP_TILESERVER_URL}get-commune/${startDate}/${endDate}/${language}/{z}/{x}/{y}`,
+        `${process.env.REACT_APP_MAP_TILESERVER_URL}get-commune/${startDate}/${endDate}/${language}/${selectedEvent.event_id}/{z}/{x}/{y}`,
       ],
       promoteId: "gid",
       minzoom: 0,
@@ -461,7 +461,7 @@ const Map: React.FC<MapProps> = ({
       dispatch(fetchNoOfArticlesPlot(eventsFilter));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [language, startDate]
+    [language, startDate, selectedEvent]
   );
 
   useEffect(
@@ -525,7 +525,7 @@ const Map: React.FC<MapProps> = ({
               <DateRangeFilter darkTheme={darkTheme} />
             </div>
             <div className="toneSlider">
-              <ToneSlider />
+              <SelectEvent/>
             </div>
           </div>
           <Grid container style={{ paddingBottom: "35px" }}>

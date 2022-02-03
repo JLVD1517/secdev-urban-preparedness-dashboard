@@ -20,7 +20,7 @@ export const fetchAvgArticlesTonePlot = createAsyncThunk(
         params: {
             tone_end_range: tone_end_range ? tone_end_range : undefined,
             tone_start_range: tone_start_range ? tone_start_range : undefined,
-            event_id: event_id && event_id > -1 ? event_id : 0,
+            event_id: event_id && event_id > -1 ? event_id : undefined,
         }
     });
     const result = transformPlotData(response.data.data);
