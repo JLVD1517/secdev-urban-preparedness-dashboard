@@ -222,7 +222,7 @@ async def get_temp_res(month_number,year):
             dict_new[i] = group_list_arr
             dict_group_details[i] = final_group_details
             dict_group_count[i] = len(dict_new[i])
-    final_query = ''        
+    final_query = 'truncate table sub_commune_group_count_map ;'        
     for sid in all_sub_commune:
         query2 = query_template3.substitute(
             sub_commune_id=sid,
@@ -291,14 +291,14 @@ async def get_temp_group_res(month_number,year,group_id):
                 if sub_commune_list.count(sid) == 0:
                     sub_commune_list.append(sid)
                 group_details[group_id] = temp_group_details
-    final_query = ''
+    final_query = 'truncate table group_sub_commune_map ;'
     for sid in sub_commune_list:
         group_table_query = group_query_template.substitute(
             sub_commune_id=sid,
             group_id=group_id,
             group_details = json.dumps({group_id:group_details[group_id]})
         ) 
-        final_query = final_query + group_table_query
+        final_query = final_query + group_table_query 
     async with pool.acquire() as conn:
         await conn.execute(final_query)            
     return Response("success")        
