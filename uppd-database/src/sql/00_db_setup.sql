@@ -35,13 +35,13 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA secdev
 
 
 CREATE TABLE secdev.commune (
-    commune_id numeric NOT NULL,
+    commune_id numeric PRIMARY KEY,
     name character varying NOT NULL
 );
 
 
 CREATE TABLE secdev.event_info (
-    event_info_id numeric NOT NULL,
+    event_info_id numeric PRIMARY KEY,
     event_id numeric NOT NULL,
     publication_date character varying NOT NULL,
     source character varying NOT NULL,
@@ -58,13 +58,13 @@ CREATE TABLE secdev.event_info (
 
 
 CREATE TABLE secdev.events (
-    event_id numeric NOT NULL,
+    event_id numeric PRIMARY KEY,
     type character varying NOT NULL
 );
 
 
 CREATE TABLE secdev.group_records (
-    group_record_id numeric NOT NULL,
+    group_record_id numeric PRIMARY KEY,
     group_id numeric NOT NULL,
     base_sub_commune_id numeric NOT NULL,
     name character varying NOT NULL,
@@ -87,22 +87,27 @@ CREATE TABLE secdev.group_records (
 
 
 CREATE TABLE secdev.groups (
-    group_id numeric NOT NULL,
+    group_id numeric PRIMARY KEY,
     name character varying NOT NULL
 );
 
 
 CREATE TABLE secdev.sub_commune (
-    sub_commune_id numeric NOT NULL,
+    sub_commune_id numeric PRIMARY KEY,
     name character varying NOT NULL,
     commune_id numeric NOT NULL
 );
 
 
 CREATE TABLE secdev.sub_commune_group_count_map (
-    sub_commune_id integer NOT NULL,
+    sub_commune_id integer PRIMARY KEY,
     group_count integer,
     group_list integer[],
     group_details jsonb
 );
 
+CREATE TABLE secdev.group_sub_commune_map (
+    sub_commune_id integer PRIMARY KEY,
+    group_id integer,
+    group_details jsonb
+);
