@@ -119,17 +119,22 @@ async def get_commune(request):
     start_date = request.path_params['start_date']
     end_date = request.path_params['end_date']
     language=request.path_params['language']
+    event_id=int(request.path_params['event_id'])
     commune_name = 'adm2_en'
     if language == 'FRENCH':
         commune_name = 'adm2_fr'
-    param_list = ['tone_start_range','source','type', 'event_id']
+    param_list = ['tone_start_range','source','type']
     url_str = str(request.query_params)
     cond_str = ' 1=1 '
+    
+    if (event_id and event_id > 0):
+        cond_str =  cond_str + f" and ei.event_id = {event_id}"
+    
     for param in param_list:
         if url_str.find(param) != -1 and param == 'tone_start_range':
             cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
         elif  url_str.find(param) != -1 :
-            cond_str = cond_str + f' and {param} = '+"'"+request.query_params[param]+"'" 
+            cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'" 
     return await get_commune_tile(x, y, z, start_date,end_date,language,cond_str,commune_name)
 
 async def get_commune_tile(x, y, z,start_date,end_date,language, cond_str,commune_name):
@@ -284,7 +289,7 @@ async def articles_per_event(request):
         if url_str.find(param) != -1 and param == 'tone_start_range':
             cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
         elif  url_str.find(param) != -1 :
-            cond_str = cond_str + f' and {param} = '+"'"+request.query_params[param]+"'" 
+            cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'" 
     print(cond_str)  
     query = query_template4.substitute(
         start_date=start_date,
@@ -320,7 +325,7 @@ async def avg_tone(request):
         if url_str.find(param) != -1 and param == 'tone_start_range':
             cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
         elif  url_str.find(param) != -1 :
-            cond_str = cond_str + f' and {param} = '+"'"+request.query_params[param]+"'" 
+            cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'" 
     print(cond_str)  
     query = query_template5.substitute(
         start_date=start_date,
@@ -396,7 +401,7 @@ async def get_articles(request):
         if url_str.find(param) != -1 and param == 'tone_start_range':
             cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
         elif  url_str.find(param) != -1 :
-            cond_str = cond_str + f' and {param} = '+"'"+request.query_params[param]+"'"       
+            cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'"       
     
     query = articles_query.substitute(
         start_date=start_date,
@@ -437,7 +442,7 @@ async def get_event_type(request):
 
 routes = [
     Route("/", index),
-    Route("/get-commune/{start_date:str}/{end_date:str}/{language:str}/{z:int}/{x:int}/{y:int}",get_commune),
+    Route("/get-commune/{start_date:str}/{end_date:str}/{language:str}/{event_id:str}/{z:int}/{x:int}/{y:int}",get_commune),
     Route("/get-subcommune/{month_number:int}/{year:int}/{z:int}/{x:int}/{y:int}",get_subcommune),
     Route("/get-articles/{start_date:str}/{end_date:str}/{language:str}",get_articles),
     Route("/data/articles-per-event/{start_date:str}/{end_date:str}/{language:str}",articles_per_event),

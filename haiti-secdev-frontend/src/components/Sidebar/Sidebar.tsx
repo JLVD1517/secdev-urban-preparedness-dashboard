@@ -39,6 +39,7 @@ import {
 import { formatDisplayNumber } from '../../services/sharedFunctions';
 import { componentSizing } from '../../services/component-sizing';
 import GangInfo from './GangInfo/GangInfo';
+import SelectGroup from '../SelectBox/SelectGroup';
 
 interface SidebarProps {
   mapGradient: MapGradientType;
@@ -201,7 +202,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
                 </Select>
               </FormControl>
             </Box>
-
+            <SelectGroup/>      
             <DateSlider />
             <FilterSlider mapGradient={mapGradient} />
             <p>{sidebarText}</p>

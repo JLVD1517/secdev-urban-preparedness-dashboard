@@ -4,7 +4,11 @@ import { InitialEventsComponentState } from '../../types';
 const eventsComponentInitialState: InitialEventsComponentState = {
   startDate: '01-12-2020',
   endDate:  '01-12-2022',
-  language: 'ENGLISH'
+  language: 'ENGLISH',
+  selectedEvent: {
+    event_id: -1,
+    name: ''
+  }
 };
 
 const eventsComponentSlice = createSlice({
@@ -29,6 +33,12 @@ const eventsComponentSlice = createSlice({
     ): void => {
       state.language = payload
     },
+    setSelectedEventId: (
+      state,
+      { payload }: PayloadAction<{event_id: number, name: string}>,
+    ): void => {
+      state.selectedEvent = payload
+    },
   },
 });
 
@@ -36,7 +46,8 @@ const eventsComponentSlice = createSlice({
 export const {
   setEventsStartDate,
   setEventsEndDate,
-  setEventsLanguage
+  setEventsLanguage,
+  setSelectedEventId
 } = eventsComponentSlice.actions;
 
 export default eventsComponentSlice.reducer;
