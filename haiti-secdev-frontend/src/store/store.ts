@@ -8,6 +8,7 @@ import eventsPageStore from './modules/eventsPageStore';
 import articlesStore from './modules/articlesStore';
 import avgArticleToneStore from './modules/avgArticleTonePlotStore';
 import noOfArticleStore from './modules/noOfArticlePlotStore';
+import eventsListStore from './modules/eventsListStore';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     ArticlesStore: articlesStore,
     AverageArticleToneStore: avgArticleToneStore,
     NoOfArticleStore: noOfArticleStore,
+    EventsListStore: eventsListStore,
   },
   devTools: true,
 });

@@ -40,7 +40,7 @@ import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { InitialEventsComponentState, PlotData } from "../../types";
 import ToneSlider from "../../ToneSlider/ToneSlider";
 import { fetchArticles } from "../../store/modules/articlesStore";
-import { EventsFilters } from "../../types/modules/eventsFilters.type";
+import { Event, EventsFilters } from "../../types/modules/eventsFilters.type";
 import { fetchAvgArticlesTonePlot } from "../../store/modules/avgArticleTonePlotStore";
 import { fetchNoOfArticlesPlot } from "../../store/modules/noOfArticlePlotStore";
 import { setEventsLanguage } from "../../store/modules/eventsPageStore";
@@ -69,7 +69,10 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "18px",
     cursor:"pointer",
     textDecoration:'none',
-    color:'inherit'
+    color:'inherit',
+    '&:hover': {
+      textDecoration: 'underline'
+    }
   },
   datePubline: {
     fontWeight: 700,
@@ -92,7 +95,13 @@ const useStyles = makeStyles((theme) => ({
     height: 50,
     padding: "5px 15px",
     margin: "10px",
-  }
+  },
+  headlinesSummary: {
+    fontWeight: 300,
+    fontSize: "18px",
+    textDecoration:'none',
+    color:'inherit'
+  },
 }));
 
 interface MapProps {
@@ -136,7 +145,8 @@ const Map: React.FC<MapProps> = ({
     tone_end_range: 0,
     tone_start_range: 0,
     language: language,
-    commune_id: -1
+    commune_id: -1,
+    event_id: -1,
   };
 
   const selectedLayerId: string = useSelector(
@@ -161,6 +171,10 @@ const Map: React.FC<MapProps> = ({
 
   const articlesData: ArticleData[] | [] = useSelector (
     (state: AppState) => state.ArticlesStore.articles
+  );
+
+  const eventsList: Event[] | [] = useSelector (
+    (state: AppState) => state.EventsListStore.events
   );
 
   const setSelection = (
@@ -487,7 +501,7 @@ const Map: React.FC<MapProps> = ({
           </div>
         </Grid>
         <Grid item md={7} className={`${classes.rightDiv}`}>
-          <div style={{ paddingTop: "3rem" }}>
+          <div style={{ paddingTop: "4rem" }}>
             <div className="row">
               <h1 className={classes.mainHeader}>
                 UN Haiti Port Au Prince Event Monitor
@@ -551,7 +565,7 @@ const Map: React.FC<MapProps> = ({
                     elevation={5}
                   >
                     <div>
-                    <a href={article.url} target="_blank" className={classes.headlines} rel="noreferrer"><div>{article.title}</div></a>
+                    <a href={article.url} target="_blank" className={classes.headlines} rel="noreferrer"><span>{article.title}</span></a>
                       <Grid container>
                         <Grid item md={2} className={classes.datePubline}>
                           {article.publicationDate}

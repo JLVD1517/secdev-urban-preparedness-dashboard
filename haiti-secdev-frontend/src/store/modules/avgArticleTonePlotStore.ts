@@ -14,12 +14,13 @@ const avgArticleTonePlotInitialState: AvgTonePlotInitialState = {
 export const fetchAvgArticlesTonePlot = createAsyncThunk(
   'avg-tone',
   async (data: EventsFilters) => {
-    const {start_date, end_date, language, tone_start_range, tone_end_range} = data;
+    const {start_date, end_date, language, tone_start_range, tone_end_range, event_id} = data;
     const apiUrl = `http://localhost:8000/data/avg-tone/${start_date}/${end_date}/${language}`
     const response = await axios.get(apiUrl, {
         params: {
             tone_end_range: tone_end_range ? tone_end_range : undefined,
-            tone_start_range: tone_start_range ? tone_start_range : undefined
+            tone_start_range: tone_start_range ? tone_start_range : undefined,
+            event_id: event_id && event_id > -1 ? event_id : 0,
         }
     });
     const result = transformPlotData(response.data.data);

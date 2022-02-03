@@ -17,7 +17,8 @@ export const fetchArticles = createAsyncThunk(
     const apiUrl = `http://localhost:8000/get-articles/${start_date}/${end_date}/${language}`
     const response = await axios.get(apiUrl, {
       params: {
-        commune_id: data.commune_id > 0 ? data.commune_id : undefined
+        commune_id: data.commune_id > 0 ? data.commune_id : undefined,
+        event_id: data.event_id > 0 ? data.event_id: undefined
       }
     });    
     const result = transformArticlesResult(response.data.data);

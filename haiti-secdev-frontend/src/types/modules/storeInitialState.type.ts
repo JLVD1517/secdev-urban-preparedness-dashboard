@@ -1,4 +1,5 @@
 import { ArticlesInitialState, AvgTonePlotInitialState, NoOfArticlesPlotInitialState } from '..';
+import { EventsInitialState } from './eventsFilters.type';
 import { SelectedItemType } from './selectedItem.type';
 
 export interface InitialStateAppControl {
@@ -50,4 +51,5 @@ export interface AppState {
   ArticlesStore: ArticlesInitialState;
   AverageArticleToneStore: AvgTonePlotInitialState;
   NoOfArticleStore: NoOfArticlesPlotInitialState;
+  EventsListStore: EventsInitialState;
 }

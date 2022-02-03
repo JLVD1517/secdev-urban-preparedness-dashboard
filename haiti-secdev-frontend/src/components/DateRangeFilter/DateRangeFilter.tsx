@@ -22,6 +22,12 @@ const DateRangeFilter: React.FC<DateRangeFilterProps> = ({ darkTheme }) => {
     root: {
       position: 'relative',
     },
+    DateRangePicker:{
+      position:'relative',
+      background: darkTheme ? theme.palette.background.default : '#fff',
+      display:"flex",
+      zIndex:2
+    }
   }));
   const [value, onSelect]: any = useState(null);
   const [modal, setModal]: any = useState<Boolean>(false);
@@ -42,7 +48,7 @@ const DateRangeFilter: React.FC<DateRangeFilterProps> = ({ darkTheme }) => {
 
   const classes = useStyles();
   return (
-    <div className="dateRange">
+    <div className={darkTheme ? "dateRange" : "dateRangeLight"}>
       <TextField
         id="outlined-read-only-input"
         label="Start-End Date Range"

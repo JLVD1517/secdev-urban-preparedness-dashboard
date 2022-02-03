@@ -12,6 +12,7 @@ import {
   tractId,
   mapLayers,
   totalPopCol,
+  communeNameKey,
 } from '../../../../configuration/app-config';
 import { AppState, SelectedItemType } from '../../../../types';
 import {
@@ -74,7 +75,7 @@ const PopupContent: React.FC<PopupContentProps> = ({
         gutterBottom
         className={classes.bigText}
       >
-        {clickedItem.adm3_en}
+        {clickedItem[communeNameKey]}
       </Typography>
 
       <Typography className={classes.title} color="textSecondary" gutterBottom>
