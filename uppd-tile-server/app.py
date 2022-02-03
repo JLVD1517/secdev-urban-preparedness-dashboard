@@ -271,11 +271,9 @@ async def get_temp_group_res(month_number,year,group_id):
     )
     async with pool.acquire() as conn:
         group_res = await conn.fetch(group_query)
-        print(group_res)
         sub_commune_list = []
         group_details = {}
         for record in iter(group_res):
-            print("innnnnnnn")
             arr = record['sub_commune_influence'].split('[')[1].split(']')[0]
             sc_list = list(map(int, arr.split(",")))
             temp_group_details = {}
@@ -288,7 +286,6 @@ async def get_temp_group_res(month_number,year,group_id):
             temp_group_details['alliance_groups'] = record['alliance_groups']
             temp_group_details['rival_groups'] = record['rival_groups']
             for sid in sc_list:
-                print("sid",sid)
                 if sub_commune_list.count(sid) == 0:
                     sub_commune_list.append(sid)
                 group_details[group_id] = temp_group_details
@@ -298,7 +295,6 @@ async def get_temp_group_res(month_number,year,group_id):
             group_id=group_id,
             group_details = json.dumps({group_id:group_details[group_id]})
         ) 
-        print(group_table_query)
         async with pool.acquire() as conn:
             await conn.execute(group_table_query)            
     return Response("success")        
@@ -383,7 +379,6 @@ async def articles_per_event(request):
             cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
         elif  url_str.find(param) != -1 :
             cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'" 
-    print(cond_str)  
     query = query_template4.substitute(
         start_date=start_date,
         end_date=end_date,
@@ -419,7 +414,6 @@ async def avg_tone(request):
             cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
         elif  url_str.find(param) != -1 :
             cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'" 
-    print(cond_str)  
     query = query_template5.substitute(
         start_date=start_date,
         end_date=end_date,
