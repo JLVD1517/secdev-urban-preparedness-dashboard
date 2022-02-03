@@ -183,7 +183,7 @@ query_template2 = Template(
 )
 query_template3 = Template(
     """
-        insert into sub_commune_group_count_map values(${sub_commune_id},${group_count},ARRAY${group_list}::INT[],'${group_details}') on conflict(sub_commune_id) do  update set group_count = ${group_count},group_list = ARRAY${group_list}::INT[],group_details='${group_details}'
+        insert into sub_commune_group_count_map values(${sub_commune_id},${group_count},ARRAY${group_list}::INT[],'${group_details}') on conflict(sub_commune_id) do  update set group_count = ${group_count},group_list = ARRAY${group_list}::INT[],group_details='${group_details}' ;
     """   
 )
 
@@ -222,6 +222,7 @@ async def get_temp_res(month_number,year):
             dict_new[i] = group_list_arr
             dict_group_details[i] = final_group_details
             dict_group_count[i] = len(dict_new[i])
+    final_query = ''        
     for sid in all_sub_commune:
         query2 = query_template3.substitute(
             sub_commune_id=sid,
@@ -229,8 +230,9 @@ async def get_temp_res(month_number,year):
             group_list = dict_new[sid],
             group_details = json.dumps(dict_group_details[sid])
         ) 
-        async with pool.acquire() as conn:
-            await conn.execute(query2)   
+        final_query = final_query + query2
+    async with pool.acquire() as conn:
+        await conn.execute(final_query)   
 
     return Response("success")     
 
@@ -259,7 +261,7 @@ group_template = Template(
 )
 group_query_template = Template(
     """
-        insert into group_sub_commune_map values(${sub_commune_id},${group_id},'${group_details}') on conflict(sub_commune_id) do  update set group_id = ${group_id}, group_details='${group_details}'
+        insert into group_sub_commune_map values(${sub_commune_id},${group_id},'${group_details}') on conflict(sub_commune_id) do  update set group_id = ${group_id}, group_details='${group_details}' ;
     """ 
 )
 
@@ -289,14 +291,16 @@ async def get_temp_group_res(month_number,year,group_id):
                 if sub_commune_list.count(sid) == 0:
                     sub_commune_list.append(sid)
                 group_details[group_id] = temp_group_details
+    final_query = ''
     for sid in sub_commune_list:
         group_table_query = group_query_template.substitute(
             sub_commune_id=sid,
             group_id=group_id,
             group_details = json.dumps({group_id:group_details[group_id]})
         ) 
-        async with pool.acquire() as conn:
-            await conn.execute(group_table_query)            
+        final_query = final_query + group_table_query
+    async with pool.acquire() as conn:
+        await conn.execute(final_query)            
     return Response("success")        
 
 
