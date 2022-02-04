@@ -25,7 +25,13 @@ const SelectGroup: React.FC = () => {
   const handleSelect = (
     event: React.ChangeEvent<{ value: unknown }>
   ) => {
-    const selectedItem = groupsList.find(item => item.group_id == event.target.value);
+    let selectedItem: Group| any = {
+      group_id: -1,
+      name: ''
+    }
+    if(event.target.value != -1) {
+      selectedItem = groupsList.find(item => item.group_id == event.target.value);
+    }
     dispatch(setSelectedGroup(selectedItem as any as Group));
   };
 
@@ -47,7 +53,9 @@ const SelectGroup: React.FC = () => {
           value={selectedGroup.group_id > 0 ? selectedGroup.group_id : ''}
           onChange={handleSelect}
         >
-            <option aria-label="None" value="" />
+            <option aria-label="None" value="-1" >
+              All
+            </option>
             {(groupsList as Group[]).map((item: Group, index: number) => {
           return (
             <option key={item.group_id} value={item.group_id}>

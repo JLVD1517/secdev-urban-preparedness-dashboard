@@ -23,7 +23,14 @@ const SelectEvent: React.FC = () => {
   const handleSelect = (
     event: React.ChangeEvent<{ value: unknown }>
   ) => {
-    const selectedItem = eventsList.find(item => item.event_id == event.target.value);
+    let selectedItem: Event| any = {
+      event_id: -1,
+      name: ''
+    }
+    if(event.target.value != -1) {
+      selectedItem = eventsList.find(item => item.event_id == event.target.value);
+    }
+
     dispatch(setSelectedEventId(selectedItem as any as Event));
   };
 
