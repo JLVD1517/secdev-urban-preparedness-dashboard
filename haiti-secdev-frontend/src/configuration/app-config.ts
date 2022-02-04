@@ -6,11 +6,11 @@ import {
 } from '../types';
 
 export const mapAreaConfig = {
-  zoomLevel: 10,
-  mapCenter: [-72.294076, 18.576421], // [longitude, latitude]
+  zoomLevel: 9.5,
+  mapCenter: [-72.00294531498565, 18.574675948874585], // [longitude, latitude]
   bounds: [
-    [-72.68774831159507, 18.30405923881031], // Southwest Coordinates (bottom left)
-    [-71.88979770150003, 18.6959288130019], // Northeast Coordinates (top right)
+    [-72.69657698048049, 18.233846728442785], // Southwest Coordinates (bottom left)
+    [-71.30931364949113, 18.91482521433265], // Northeast Coordinates (top right)
   ],
   style: {
     dark: 'mapbox://styles/jharnum/cknsxylu20drd17pbsf07gytm',
@@ -20,11 +20,11 @@ export const mapAreaConfig = {
 };
 
 export const eventMapAreaConfig = {
-  zoomLevel: 10,
-  mapCenter: [-72.32259241031323, 18.507533968422422], // [longitude, latitude]
+  zoomLevel: 8.7,
+  mapCenter: [-72.1926245536074, 18.60524685607544], // [longitude, latitude]
   bounds: [
-    [-72.61416269166003, 18.32447004051508], // Southwest Coordinates (bottom left)
-    [-72.03102212896603, 18.69040231476103], // Northeast Coordinates (top right)
+    [-72.79784011849411, 18.225258092760527], // Southwest Coordinates (bottom left)
+    [-71.58740898872112, 18.98438914590291], // Northeast Coordinates (top right)
   ],
   style: {
     dark: 'mapbox://styles/jharnum/cknsxylu20drd17pbsf07gytm',

@@ -9,6 +9,9 @@ import articlesStore from './modules/articlesStore';
 import avgArticleToneStore from './modules/avgArticleTonePlotStore';
 import noOfArticleStore from './modules/noOfArticlePlotStore';
 import eventsListStore from './modules/eventsListStore';
+import groupsListStore from './modules/groupsListStore';
+import groupsPageStore from './modules/groupsPageStore';
+import noOfArticleByEventTypePlotStore from './modules/noOfArticleByEventTypePlotStore';
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +25,9 @@ export const store = configureStore({
     AverageArticleToneStore: avgArticleToneStore,
     NoOfArticleStore: noOfArticleStore,
     EventsListStore: eventsListStore,
+    GroupsListStore: groupsListStore,
+    GroupsPageStore: groupsPageStore,
+    NoOfArticleStoreByEventType: noOfArticleByEventTypePlotStore,
   },
   devTools: true,
 });

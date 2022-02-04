@@ -169,7 +169,7 @@ subcommune_query_template1 = Template(
             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
                 4096, 0, false) AS g
-        FROM sub_commune_group_count_map as scgc inner join haiti_subcommune AS hsb on  scgc.sub_commune_id = hsb.gid 
+        FROM sub_commune_group_count_map as scgc inner join haiti_subcommune AS hsb on  scgc.sub_commune_id = hsb.gid
     ) AS tile;
     """    
 )
@@ -243,6 +243,7 @@ subcommune_group_query_template = Template(
         SELECT 
             hsb.gid,
             hsb.adm3_en,
+            1 as no_of_groups,
             gscm.group_details::json,
             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
@@ -330,9 +331,8 @@ async def get_subcommune(request):
     z = request.path_params["z"]
     month_number = request.path_params['month_number']
     year = request.path_params['year']
-    url_str = str(request.query_params)
-    if url_str.find('group_id') != -1:
-        group_id = request.query_params['group_id']
+    group_id = int(request.path_params['group_id'])
+    if group_id > 0:
         await get_temp_group_res(month_number,year,group_id)
         return await get_subcommune_group_tile(x, y, z, fields)
     else:     
@@ -544,8 +544,8 @@ async def get_groups(request):
 
 article_query_template = Template(
     """
-    select pub_month, array_agg(event_type) as events, array_agg(no_of_articles) as articles_count from (
-    select  ei.pub_month,e.type  as event_type , count(ei.event_info_id) as no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by (ei.pub_month,e.type)  ) as temp group by (pub_month) ;
+    select publication_date, array_agg(event_type) as events, array_agg(no_of_articles) as articles_count from (
+    select  ei.publication_date,e.type  as event_type , count(ei.event_info_id) as no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by (ei.publication_date,e.type)  ) as temp group by (publication_date) ;
     """
 )
 
@@ -569,19 +569,26 @@ async def articles_per_event_per_month(request):
         language=language,
         cond_str=cond_str
     )
-    pub_month_query = "update event_info set pub_month =  split_part(publication_date,'-',2)||'-'||split_part(publication_date,'-',3) "
+    event_type_query = 'select array_agg(type) as event_types from events  '
     async with pool.acquire() as conn:
-        await conn.fetch(pub_month_query)
+        event_arr_res = await conn.fetch(event_type_query)
+        print(event_arr_res[0]['event_types'])
+        event_types = event_arr_res[0]['event_types']
         data_res = await conn.fetch(query)
         data = []
         for record in iter(data_res):
             limit = len(record['events'])
             obj = {}
-            obj['pub_month'] = record['pub_month']
+            obj['publication_date'] = record['publication_date']
             events = record['events']
             articles_count = record['articles_count']
-            for index in range(0,limit):
-                obj[events[index]] = articles_count[index]
+            index  = 0
+            for event_type in event_types:
+                if events.count(event_type) > 0:
+                    obj[event_type] = articles_count[index]
+                    index += 1
+                else:
+                    obj[event_type] = 0 
             data.append(obj)
     return JSONResponse({"success":"true","data":data})
 
@@ -589,14 +596,14 @@ async def articles_per_event_per_month(request):
 routes = [
     Route("/", index),
     Route("/get-commune/{start_date:str}/{end_date:str}/{language:str}/{event_id:str}/{z:int}/{x:int}/{y:int}",get_commune),
-    Route("/get-subcommune/{month_number:int}/{year:int}/{z:int}/{x:int}/{y:int}",get_subcommune),
+    Route("/get-subcommune/{month_number:int}/{year:int}/{group_id:str}/{z:int}/{x:int}/{y:int}",get_subcommune),
     Route("/get-articles/{start_date:str}/{end_date:str}/{language:str}",get_articles),
     Route("/data/articles-per-event/{start_date:str}/{end_date:str}/{language:str}",articles_per_event),
     Route("/articles-per-event/{start_date:str}/{end_date:str}/{language:str}",articles_per_event_per_month),
     Route("/data/avg-tone/{start_date:str}/{end_date:str}/{language:str}",avg_tone),
     Route("/data/articles-per-commune/{start_date:str}/{end_date:str}/{language:str}",articles_per_commune),
-    Route("/get-event-type",get_event_type),
-    Route("/get-groups",get_groups)
+    Route("/events",get_event_type),
+    Route("/groups",get_groups)
 ]
 
 middleware = [

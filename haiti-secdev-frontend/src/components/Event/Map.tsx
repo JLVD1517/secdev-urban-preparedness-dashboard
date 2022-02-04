@@ -45,6 +45,9 @@ import { fetchNoOfArticlesPlot } from "../../store/modules/noOfArticlePlotStore"
 import { setEventsLanguage } from "../../store/modules/eventsPageStore";
 import moment from "moment";
 import SelectEvent from "../SelectBox/SelectEvent";
+import { EventypePlotdata } from "../../types/modules/eventsPlots.type";
+import { fetchNoOfArticlesPlotByEventType } from "../../store/modules/noOfArticleByEventTypePlotStore";
+import MultiLineChartData from "../Chart/MultiLineChartData";
 
 const mapboxgl = require("mapbox-gl");
 
@@ -165,8 +168,8 @@ const Map: React.FC<MapProps> = ({
     (state: AppState) => state.SidebarControl.filterSlider
   );
 
-  const noOfArticlesPlotData: PlotData[] | [] = useSelector(
-    (state: AppState ) => state.NoOfArticleStore.noOfArticlesPlotData
+  const noOfArticlesByEventTypePlotData: EventypePlotdata[] | [] = useSelector(
+    (state: AppState ) => state.NoOfArticleStoreByEventType.data
   );
 
   const avgTonePlotData: PlotData[] = useSelector(
@@ -174,9 +177,9 @@ const Map: React.FC<MapProps> = ({
   );
 
   const articlesData: ArticleData[] | [] = useSelector (
-    (state: AppState) => state.ArticlesStore.articles
-  );
+    (state: AppState) => state.ArticlesStore.articles);
 
+  
   const setSelection = (
     e: mapboxgl.MapMouseEvent & {
       features?: mapboxgl.MapboxGeoJSONFeature[] | undefined;
@@ -186,6 +189,7 @@ const Map: React.FC<MapProps> = ({
       const newSelection = e.features[0];
       if (newSelection.properties !== null) {
         eventsFilter.commune_id = newSelection.properties.gid; 
+
         dispatch(fetchArticles(eventsFilter));
         dispatch(setSelectedItem(newSelection.properties));
       }
@@ -289,6 +293,7 @@ const Map: React.FC<MapProps> = ({
     dispatch(fetchArticles(eventsFilter));
     dispatch(fetchAvgArticlesTonePlot(eventsFilter));
     dispatch(fetchNoOfArticlesPlot(eventsFilter));
+    dispatch(fetchNoOfArticlesPlotByEventType(eventsFilter));
 
     if (!mapRef.current) {
       return;
@@ -451,6 +456,8 @@ const Map: React.FC<MapProps> = ({
 
   useEffect(
     () => {
+      console.log("calledddd");
+      
       resetLayer();
       clearSelectedItem();
       setMapFills();
@@ -459,6 +466,7 @@ const Map: React.FC<MapProps> = ({
       dispatch(fetchArticles(eventsFilter));
       dispatch(fetchAvgArticlesTonePlot(eventsFilter));
       dispatch(fetchNoOfArticlesPlot(eventsFilter));
+      dispatch(fetchNoOfArticlesPlotByEventType(eventsFilter));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [language, startDate, selectedEvent]
@@ -528,15 +536,16 @@ const Map: React.FC<MapProps> = ({
               <SelectEvent/>
             </div>
           </div>
-          <Grid container style={{ paddingBottom: "35px" }}>
+          <Grid container style={{ paddingBottom: "15px" }}>
             <Grid item md={6} className="containerBox">
-              <AreaChartData
+              <h3 style={{textAlign:'center'}}>Event Types by Article over Time</h3>
+              <MultiLineChartData
                 darkTheme={darkTheme}
-                mapGradient={mapGradient}
-                data={noOfArticlesPlotData}
+                data={noOfArticlesByEventTypePlotData}
               />
             </Grid>
             <Grid item md={6} className="containerBox">
+              <h3 style={{textAlign:'center'}}>Tone - Avg over Time</h3>
               <AreaChartData
                 darkTheme={darkTheme}
                 mapGradient={mapGradient}
@@ -552,8 +561,8 @@ const Map: React.FC<MapProps> = ({
               className={classes.summarySection}
               elevation={5}
             >
-              <Grid container className={classes.headlines}>
-                  {`Summary of Filters Selected - Articles from ${moment(startDate).format('DD MMM YYYY')} to ${moment(endDate).format('DD MMM YYYY')} with (event types) in ${language}`}
+              <Grid container className={classes.headlinesSummary}>
+                  {`Summary of Filters Selected - Articles from ${moment(startDate, 'DD-MM-YYYY').format('DD MMM YYYY')} to ${moment(endDate, 'DD-MM-YYYY').format('DD MMM YYYY')} ${selectedEvent.event_id> 0 ? `for ${selectedEvent.name} events`: '' } in ${language}`}
               </Grid> 
             </Paper>
             <Box className={classes.root}>
@@ -561,7 +570,6 @@ const Map: React.FC<MapProps> = ({
                 (articlesData as any[]).map((article: ArticleData) => (
                   <Paper
                     className={classes.listSection}
-                    key={article.title}
                     elevation={5}
                   >
                     <div>

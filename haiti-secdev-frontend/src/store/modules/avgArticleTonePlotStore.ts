@@ -63,7 +63,7 @@ const avgEventsToneSlice = createSlice({
     builder.addCase(fetchAvgArticlesTonePlot.rejected, state => {
       state.error = true;
       state.loaded = false;
-      state.status = 'Error Fetching Articles Data';
+      state.status = 'Error Fetching Avg Tone Articles Data';
     });
   },
 });

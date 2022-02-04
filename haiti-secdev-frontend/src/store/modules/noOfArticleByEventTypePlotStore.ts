@@ -1,21 +1,20 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { axios } from '../../services/axios';
 import { EventsFilters } from '../../types/modules/eventsFilters.type';
-import { NoOfArticlesPlotInitialState } from '../../types/modules/eventsPlots.type';
-import { PlotData } from '../../types';
+import { EventypePlotdata, NoOfArticlesByEventTypePlotInitialState } from '../../types/modules/eventsPlots.type';
 
-const noOfArticlesPlotInitialData: NoOfArticlesPlotInitialState = {
+const noOfArticlesByEventTypePlotInitialData: NoOfArticlesByEventTypePlotInitialState = {
   status: 'idle',
   error: false,
   loaded: false,
-  noOfArticlesPlotData: []
+  data: []
 }
 
-export const fetchNoOfArticlesPlot = createAsyncThunk(
-  'no-of-articles',
+export const fetchNoOfArticlesPlotByEventType = createAsyncThunk(
+  'no-of-articles-by-event-type',
   async (data: EventsFilters) => {
     const {start_date, end_date, language, tone_start_range, tone_end_range, event_id} = data;
-    const apiUrl = `http://localhost:8000/data/articles-per-event/${start_date}/${end_date}/${language}`
+    const apiUrl = `http://localhost:8000/articles-per-event/${start_date}/${end_date}/${language}`
     const response = await axios.get(apiUrl, {
       params: {
           tone_end_range: tone_end_range ? tone_end_range : undefined,
@@ -24,48 +23,50 @@ export const fetchNoOfArticlesPlot = createAsyncThunk(
       }
   });
   const result = transformPlotData(response.data.data);
-  
+
   return result;
   },
 );
 
 const transformPlotData = (plotData: any) => {
-  const transformedPlotData: PlotData[] = [];
+  const transformedPlotData: any= [];
   plotData.map( (item: any) => {
-    const transformedArticle: PlotData = {
-      name: item.event_type,
-      value: item.no_of_articles,
-      date: item.event_type
+    let transformedArticle: EventypePlotdata = {
+      date: item.publication_date
     };
-
+    delete item.publication_date;
+    transformedArticle = {
+      ...transformedArticle,
+      ...item
+    }
     transformedPlotData.push(transformedArticle);
   })
 
   return transformedPlotData;
 }
 
-const noOfEventsSlice = createSlice({
-  name: 'no-of-events',
-  initialState: noOfArticlesPlotInitialData,
+const noOfEventsByEventTypeSlice = createSlice({
+  name: 'no-of-articles-by-event-type',
+  initialState: noOfArticlesByEventTypePlotInitialData,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(fetchNoOfArticlesPlot.pending, state => {
+    builder.addCase(fetchNoOfArticlesPlotByEventType.pending, state => {
       state.status = 'Loading';
       state.loaded = false;
       state.error = false;
     });
-    builder.addCase(fetchNoOfArticlesPlot.fulfilled, (state, { payload }) => {
+    builder.addCase(fetchNoOfArticlesPlotByEventType.fulfilled, (state, { payload }) => {
       state.status = 'Loaded';
       state.error = false;
-      state.noOfArticlesPlotData = payload;
+      state.data = payload;
       state.loaded = true;
     });
-    builder.addCase(fetchNoOfArticlesPlot.rejected, state => {
+    builder.addCase(fetchNoOfArticlesPlotByEventType.rejected, state => {
       state.error = true;
       state.loaded = false;
-      state.status = 'Error Fetching No of Articles Data';
+      state.status = 'Error Fetching No of Articles Data by event type';
     });
   },
 });
 
-export default noOfEventsSlice.reducer;
+export default noOfEventsByEventTypeSlice.reducer;

@@ -20,6 +20,7 @@ import { scaleSteps } from '../../services/sharedFunctions';
 import './Map.scss';
 import Popup from './MapTooltip/Popup';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import { Group } from '../../types/modules/groups.type';
 
 const mapboxgl = require('mapbox-gl');
 
@@ -49,6 +50,10 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
 
   const filterSliderValue: [number, number] = useSelector(
     (state: AppState) => state.SidebarControl.filterSlider,
+  );
+
+  const selectedGroup: Group = useSelector (
+    (state: AppState) => state.GroupsPageStore.selectedGroup
   );
 
   const setSelection = (
@@ -128,7 +133,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       tiles: [
         `${
           process.env.REACT_APP_MAP_TILESERVER_URL
-        }get-subcommune/${selectedMonth}/${selectedYear}/{z}/{x}/{y}`,
+        }get-subcommune/${selectedMonth}/${selectedYear}/${selectedGroup.group_id}/{z}/{x}/{y}`,
       ],
       promoteId: tractId,
       minzoom: 0,
@@ -268,7 +273,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       map.on('mouseenter', 'uppd-layer', () => {
         map.getCanvas().style.cursor = 'pointer';
       });
-
+        
       // add layers and set map
       map.addLayer(layer);
       setMap(map);
@@ -329,7 +334,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       dispatch(resetFilterSlider());
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedYear, selectedMonth],
+    [selectedYear, selectedMonth, selectedGroup],
   );
 
   useEffect(
