@@ -569,18 +569,27 @@ async def articles_per_event_per_month(request):
         language=language,
         cond_str=cond_str
     )
+    event_type_query = 'select array_agg(type) as event_types from events  '
     async with pool.acquire() as conn:
-            data_res = await conn.fetch(query)
-            data = []
-            for record in iter(data_res):
-                limit = len(record['events'])
-                obj = {}
-                obj['publication_date'] = record['publication_date']
-                events = record['events']
-                articles_count = record['articles_count']
-                for index in range(0,limit):
-                    obj[events[index]] = articles_count[index]
-                data.append(obj)
+        event_arr_res = await conn.fetch(event_type_query)
+        print(event_arr_res[0]['event_types'])
+        event_types = event_arr_res[0]['event_types']
+        data_res = await conn.fetch(query)
+        data = []
+        for record in iter(data_res):
+            limit = len(record['events'])
+            obj = {}
+            obj['publication_date'] = record['publication_date']
+            events = record['events']
+            articles_count = record['articles_count']
+            index  = 0
+            for event_type in event_types:
+                if events.count(event_type) > 0:
+                    obj[event_type] = articles_count[index]
+                    index += 1
+                else:
+                    obj[event_type] = 0 
+            data.append(obj)
     return JSONResponse({"success":"true","data":data})
 
 
