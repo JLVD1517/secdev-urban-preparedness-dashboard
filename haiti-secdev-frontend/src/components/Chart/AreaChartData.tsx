@@ -30,9 +30,9 @@ const AreaChartData: React.FC<AreaChartProps> = ({ darkTheme, mapGradient, data}
   return (
     <LineChart
       width={400}
-      height={250}
+      height={270}
       data={data}
-      margin={{ top: 20, right: 30, left: 20, bottom: 12 }}
+      margin={{ top: 20, right: 30, left: 40, bottom: 30 }}
     >
       <defs>
         <linearGradient id="events-plot" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -45,9 +45,9 @@ const AreaChartData: React.FC<AreaChartProps> = ({ darkTheme, mapGradient, data}
         </linearGradient>
       </defs>
       <XAxis dataKey="date">
-          <Label value="Pages of my website" stroke={darkTheme ? "#fff" : "#000"} offset={0} position="insideBottom" />
+          <Label value="Pages of my website" stroke={darkTheme ? "#fff" : "#000"} offset={-12} position="insideBottom" />
       </XAxis>
-      <YAxis label={{ value: 'Number of Articles',stroke:darkTheme ? "#fff" : "#000", angle: -90, position: 'center' }}/>
+      <YAxis label={{ value: 'Number of Articles',stroke:darkTheme ? "#fff" : "#000", angle: -90, position: 'center', dx: -20 }}/>
       <Legend />
       <Line
         type="monotone"

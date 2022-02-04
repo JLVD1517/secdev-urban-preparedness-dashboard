@@ -538,14 +538,14 @@ const Map: React.FC<MapProps> = ({
           </div>
           <Grid container style={{ paddingBottom: "15px" }}>
             <Grid item md={6} className="containerBox">
-              <h3 style={{textAlign:'center'}}>Event Types by Article over Time</h3>
+              <h3 style={{textAlign:'center', marginBottom:'-4px'}}>Event Types by Article over Time</h3>
               <MultiLineChartData
                 darkTheme={darkTheme}
                 data={noOfArticlesByEventTypePlotData}
               />
             </Grid>
             <Grid item md={6} className="containerBox">
-              <h3 style={{textAlign:'center'}}>Tone - Avg over Time</h3>
+              <h3 style={{textAlign:'center', marginBottom:'-4px'}}>Tone - Avg over Time</h3>
               <AreaChartData
                 darkTheme={darkTheme}
                 mapGradient={mapGradient}

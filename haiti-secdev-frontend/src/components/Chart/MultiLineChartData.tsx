@@ -18,7 +18,13 @@ interface AreaChartProps {
   data: EventypePlotdata[] | []
 }
 const colours = ["#FFFF00", "#008000	", "#FF00FF", "#800080", "#800000", "#8884d8", "#82ca9d", "#d2691e", "#8b008b", "#483d8b", "#2f4f4f", "#ffa07a", "#ba55d3", "#6a5acd", "#4682b4", "#40e0d0", "#ee82ee", "#000080", "#FFFF00", "#008000	", "#FF00FF", "#800080", "#800000", "#8884d8", "#000080"];
+const CustomizedLabel = () => {
+  return(
+  <div>
 
+  </div>
+  )
+}
 const MultiLineChartData: React.FC<AreaChartProps> = ({ darkTheme, data}) => {
   const theme = useTheme();
   const useStyles = makeStyles((theme: Theme) => ({
@@ -37,15 +43,15 @@ const MultiLineChartData: React.FC<AreaChartProps> = ({ darkTheme, data}) => {
   return (
     <LineChart
       width={400}
-      height={250}
+      height={270}
       data={data}
-      margin={{ top: 20, right: 30, left: 20, bottom: 12 }}
+      margin={{ top: 20, right: 30, left: 30, bottom: 30 }}
     >
       <XAxis dataKey="date">
-          <Label value="Pages of my website" stroke={darkTheme ? "#fff" : "#000"} offset={0} position="insideBottom" />
+          <Label value="Pages of my website" stroke={darkTheme ? "#fff" : "#000"} offset={-12} position="insideBottom" />
       </XAxis>
-      <YAxis label={{ value: 'Number of Articles',stroke:darkTheme ? "#fff" : "#000", angle: -90, position: 'center' }}/>
-      <Legend />
+      <YAxis label={{ value: 'Number of Articles',stroke:darkTheme ? "#fff" : "#000", angle: -90, position: 'center', dx: -25}}/>
+      <Legend verticalAlign="top" height={36}/>
       {firstObj && Object.keys(firstObj).map( (key, index) => {
         return <Line
                 type="monotone"
