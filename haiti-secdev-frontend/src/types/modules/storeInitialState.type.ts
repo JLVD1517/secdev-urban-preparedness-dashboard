@@ -1,5 +1,6 @@
 import { ArticlesInitialState, AvgTonePlotInitialState, NoOfArticlesPlotInitialState } from '..';
 import { Event, EventsInitialState } from './eventsFilters.type';
+import { NoOfArticlesByEventTypePlotInitialState } from './eventsPlots.type';
 import { Group, GroupsInitialState } from './groups.type';
 import { SelectedItemType } from './selectedItem.type';
 
@@ -59,5 +60,6 @@ export interface AppState {
   NoOfArticleStore: NoOfArticlesPlotInitialState;
   EventsListStore: EventsInitialState;
   GroupsListStore: GroupsInitialState;
-  GroupsPageStore: InitialGroupsComponentState
+  GroupsPageStore: InitialGroupsComponentState;
+  NoOfArticleStoreByEventType: NoOfArticlesByEventTypePlotInitialState;
 }

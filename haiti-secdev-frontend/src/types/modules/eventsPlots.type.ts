@@ -1,7 +1,7 @@
 export interface PlotData {
   name: string;
   value: number;
-  date: string;
+  date?: string;
 }
 
 export interface AvgTonePlotInitialState {
@@ -15,4 +15,14 @@ export interface NoOfArticlesPlotInitialState {
   error: boolean;
   loaded: boolean;
   noOfArticlesPlotData: PlotData[] | [];
+}
+
+export interface EventypePlotdata {
+  [key: string]: string;
+}
+export interface NoOfArticlesByEventTypePlotInitialState {
+  status: string;
+  error: boolean;
+  loaded: boolean;
+  data: EventypePlotdata[] | [];
 }

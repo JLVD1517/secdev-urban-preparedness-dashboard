@@ -544,8 +544,8 @@ async def get_groups(request):
 
 article_query_template = Template(
     """
-    select pub_month, array_agg(event_type) as events, array_agg(no_of_articles) as articles_count from (
-    select  ei.pub_month,e.type  as event_type , count(ei.event_info_id) as no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by (ei.pub_month,e.type)  ) as temp group by (pub_month) ;
+    select publication_date, array_agg(event_type) as events, array_agg(no_of_articles) as articles_count from (
+    select  ei.publication_date,e.type  as event_type , count(ei.event_info_id) as no_of_articles from event_info ei left join events e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.publication_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.publication_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by (ei.publication_date,e.type)  ) as temp group by (publication_date) ;
     """
 )
 
@@ -575,7 +575,7 @@ async def articles_per_event_per_month(request):
             for record in iter(data_res):
                 limit = len(record['events'])
                 obj = {}
-                obj['pub_month'] = record['pub_month']
+                obj['publication_date'] = record['publication_date']
                 events = record['events']
                 articles_count = record['articles_count']
                 for index in range(0,limit):

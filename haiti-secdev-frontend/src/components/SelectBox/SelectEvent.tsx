@@ -38,7 +38,9 @@ const SelectEvent: React.FC = () => {
         value={selectedEvent.event_id > 0 ? selectedEvent.event_id : ''}
         onChange={handleSelect}
       >
-        <option aria-label="None" value="" />
+        <option aria-label="None" value="-1" >
+          {'All'}
+        </option>
         {(eventsList as Event[]).map((item: Event, index: number) => {
           return (
             <option key={item.event_id} value={item.event_id}>

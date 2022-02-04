@@ -39,7 +39,7 @@ const SelectGroup: React.FC = () => {
       justifyContent="center"
     >
       <FormControl className={classes.formControl} variant="outlined">
-        <InputLabel htmlFor="IndexSelect">Select Data</InputLabel>
+        <InputLabel htmlFor="IndexSelect">Select Group</InputLabel>
         <Select
           id="IndexSelect"
           label="Urban Resiliency Index"
