@@ -1,0 +1,34 @@
+version: '3.7'
+services:
+  application:
+    container_name: app
+    build: ../secdev-application
+    image: secdev-ap:la
+    depends_on:
+      - database
+      - server
+    ports:
+      - '8080:80'
+  server:
+    container_name: tile_server
+    build: ../secdev-tile-server
+    image: tile-server:la
+    depends_on:
+      - database
+    environment:
+      DB_HOST: database
+      DB_PASSWORD: changeMe
+      DATABASE: secdev_data
+      RETRY_COUNT: 12
+      RETRY_WAIT: 5
+    ports:
+      - '8000:8000'
+  database:
+    container_name: database
+    build: ../secdev-database
+    image: database:la
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: secdev_data
+    ports:
+      - '5432:5432'
