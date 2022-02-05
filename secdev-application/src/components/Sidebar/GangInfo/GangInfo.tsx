@@ -89,7 +89,7 @@ const GangInfo: React.FC = () => {
             </Paper>  
         </Collapse>
       </List>
-    }): <div><div><img src={darkTheme ? blankDark : blankLight} className={classes.imgNoData} alt="No Data"/></div><div className={classes.imgNoDatatext}>No Group Available</div></div> )}
+    }): <div><div><img src={darkTheme ? blankDark : blankLight} className={classes.imgNoData} alt="No Data"/></div><div className={classes.imgNoDatatext}>No Groups Available</div></div> )}
   </Paper>
   );
 }
