@@ -32,8 +32,14 @@ const useStyles = makeStyles((theme: Theme) =>
         margin:".8rem 0"
     },
     imgNoData:{
-      height:'300px',
-      width:'300px'
+      height:'230px',
+      width:'230px'
+    },
+    imgNoDatatext:{
+      fontWeight:800,
+      display:'flex',
+      justifyContent:'center',
+      marginTop:'-30px'
     }
   }),
 );
@@ -83,7 +89,7 @@ const GangInfo: React.FC = () => {
             </Paper>  
         </Collapse>
       </List>
-    }): <img src={darkTheme ? blankDark : blankLight} className={classes.imgNoData} alt="No Data"/> )}
+    }): <div><div><img src={darkTheme ? blankDark : blankLight} className={classes.imgNoData} alt="No Data"/></div><div className={classes.imgNoDatatext}>No Group Available</div></div> )}
   </Paper>
   );
 }
