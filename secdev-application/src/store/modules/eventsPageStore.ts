@@ -5,6 +5,7 @@ import { InitialEventsComponentState } from '../../types';
 const eventsComponentInitialState: InitialEventsComponentState = {
   startDate: '01-12-2020',
   endDate:  '01-12-2022',
+  selectedCommuneId: -1,
   language: LANGUAGE.ENGLISH,
   selectedEvent: {
     event_id: -1,
@@ -40,6 +41,12 @@ const eventsComponentSlice = createSlice({
     ): void => {
       state.selectedEvent = payload
     },
+    setSelectedCommuneId: (
+      state,
+      { payload }: PayloadAction<number>,
+    ): void => {
+      state.selectedCommuneId = payload
+    },
   },
 });
 
@@ -48,7 +55,8 @@ export const {
   setEventsStartDate,
   setEventsEndDate,
   setEventsLanguage,
-  setSelectedEventId
+  setSelectedEventId,
+  setSelectedCommuneId
 } = eventsComponentSlice.actions;
 
 export default eventsComponentSlice.reducer;

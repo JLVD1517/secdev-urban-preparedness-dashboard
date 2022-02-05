@@ -41,7 +41,7 @@ import { fetchArticles } from "../../store/modules/articlesStore";
 import { Event, EventsFilters } from "../../types/modules/eventsFilters.type";
 import { fetchAvgArticlesTonePlot } from "../../store/modules/avgArticleTonePlotStore";
 import { fetchNoOfArticlesPlot } from "../../store/modules/noOfArticlePlotStore";
-import { setEventsLanguage } from "../../store/modules/eventsPageStore";
+import { setEventsLanguage, setSelectedCommuneId } from "../../store/modules/eventsPageStore";
 import moment from "moment";
 import SelectEvent from "../SelectBox/SelectEvent";
 import { EventypePlotdata } from "../../types/modules/eventsPlots.type";
@@ -133,6 +133,9 @@ const Map: React.FC<MapProps> = ({
   const endDate: string = useSelector(
     (state: AppState) => state.EventsPageStore.endDate
   )
+  const selectedCommuneId: number = useSelector(
+    (state: AppState) => state.EventsPageStore.selectedCommuneId
+  )
   const language: string = useSelector (
     (state: AppState) => state.EventsPageStore.language
   );
@@ -146,7 +149,7 @@ const Map: React.FC<MapProps> = ({
     tone_end_range: 0,
     tone_start_range: 0,
     language: language,
-    commune_id: -1,
+    commune_id: selectedCommuneId,
     event_id: selectedEvent.event_id,
   };
 
@@ -177,9 +180,7 @@ const Map: React.FC<MapProps> = ({
     if (e.features !== undefined && e.features.length > 0) {
       const newSelection = e.features[0];
       if (newSelection.properties !== null) {
-        eventsFilter.commune_id = newSelection.properties.gid; 
-
-        dispatch(fetchArticles(eventsFilter));
+        dispatch(setSelectedCommuneId(newSelection.properties.gid));
         dispatch(setSelectedItem(newSelection.properties));
       }
     }
@@ -465,8 +466,13 @@ const Map: React.FC<MapProps> = ({
   );
 
   const toggleLanguage = () => {
+    dispatch(setSelectedCommuneId(-1));
     dispatch(setEventsLanguage(language === LANGUAGE.ENGLISH ? LANGUAGE.FRENCH : LANGUAGE.ENGLISH));
   };
+
+  useEffect(() => {
+    dispatch(fetchArticles(eventsFilter));
+  }, [selectedCommuneId])
 
   return (
     <div>

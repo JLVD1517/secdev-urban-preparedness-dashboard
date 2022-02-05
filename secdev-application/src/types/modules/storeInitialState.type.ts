@@ -41,6 +41,7 @@ export interface InitialEventsComponentState {
   startDate: string;
   endDate: string;
   language: string;
+  selectedCommuneId: number;
   selectedEvent: Event
 }
 
