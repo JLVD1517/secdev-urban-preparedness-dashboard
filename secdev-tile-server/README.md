@@ -1,4 +1,4 @@
-# uppd-tile-server
+# secdev-tile-server
 
 Tile server for the Haiti Community Violence Monitor project.
 

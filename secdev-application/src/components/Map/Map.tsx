@@ -72,7 +72,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
 
   const setFilters = () => {
     if (map) {
-      map.setFilter('uppd-layer', [
+      map.setFilter('secdev-layer', [
         'all',
         ['has', primaryScore],
         ['>=', ['to-number', ['get', primaryScore]], filterSliderValue[0]],
@@ -104,15 +104,15 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       mapGradient.step6,
     ];
     if (map) {
-      map.setPaintProperty('uppd-layer', 'fill-color', fillColor);
+      map.setPaintProperty('secdev-layer', 'fill-color', fillColor);
     }
   };
 
   const resetLayer = () => {
     if (map) {
-      if (map.getLayer('uppd-layer') !== undefined) {
-        map.removeLayer('uppd-layer');
-        map.removeSource('uppd-layer');
+      if (map.getLayer('secdev-layer') !== undefined) {
+        map.removeLayer('secdev-layer');
+        map.removeSource('secdev-layer');
       }
       map.addLayer(layer);
     }
@@ -127,7 +127,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
   };
 
   const layer: mapboxgl.FillLayer = {
-    id: 'uppd-layer',
+    id: 'secdev-layer',
     type: 'fill',
     source: {
       type: 'vector',
@@ -192,7 +192,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
 
     // set the default popup
     const popup = new mapboxgl.Popup({
-      className: 'uppd-layer-popup',
+      className: 'secdev-layer-popup',
     });
 
     const clearFeatureState = () => {
@@ -200,7 +200,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
         map.setFeatureState(
           {
             id: selectedId,
-            source: 'uppd-layer',
+            source: 'secdev-layer',
             sourceLayer: 'tile',
           },
           { click: false },
@@ -283,7 +283,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
 
       map.on(
         'click',
-        'uppd-layer',
+        'secdev-layer',
         (
           e: mapboxgl.MapMouseEvent & {
             features?: any;
@@ -313,7 +313,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
               map.setFeatureState(
                 {
                   id: selectedId,
-                  source: 'uppd-layer',
+                  source: 'secdev-layer',
                   sourceLayer: 'tile',
                 },
                 { click: true },
@@ -324,7 +324,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       );
 
       // pointer event on hover
-      map.on('mouseenter', 'uppd-layer', () => {
+      map.on('mouseenter', 'secdev-layer', () => {
         map.getCanvas().style.cursor = 'pointer';
       });
         

@@ -1,8 +1,8 @@
-# uppd-database
+# secdev-database
 Data storage for the UPPD project.
 
 ## usage
-This contianer can be launched alone, but is meant to be built in conjunction with the uppd-tile-server container by the uppd-docker-compose file. For directions to use the docker-compose, see the docker-compose readme. 
+This contianer can be launched alone, but is meant to be built in conjunction with the secdev-tile-server container by the secdev-docker-compose file. For directions to use the docker-compose, see the docker-compose readme. 
 
 In order for data to be able to be ingested by this container, there are some rules that must be followed.
  - Shapefile: 

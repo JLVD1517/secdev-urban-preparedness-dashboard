@@ -28,8 +28,8 @@ The entire application can be run in a Docker container. Please note that buildi
 To run the application in a Docker container:
 
 1. Download and organize the four repos as mentioned above.
-2. Follow the instructions to add data in the README.md file found in the **uppd-database** repository.
-3. Navigate into (`cd` into) the **uppd-docker-compose** directory and run:
+2. Follow the instructions to add data in the README.md file found in the **secdev-database** repository.
+3. Navigate into (`cd` into) the **secdev-docker-compose** directory and run:
 
 ```
 docker-compose up --build
@@ -42,8 +42,8 @@ After everything has run, you can view your application running at localhost:80
 General Steps for running the application locally for development:
 
 1. Download and organize the four repos as mentioned above.
-2. Follow the instructions to add data in the README.md file found in the **uppd-database** repository.
-3. Navigate into (`cd` into) the **uppd-docker-compose** directory and run `docker-compose up --build`
+2. Follow the instructions to add data in the README.md file found in the **secdev-database** repository.
+3. Navigate into (`cd` into) the **secdev-docker-compose** directory and run `docker-compose up --build`
 4. Now you can start the application locally by running `npm start` from this directory.
 
 # Configuring the application with your data

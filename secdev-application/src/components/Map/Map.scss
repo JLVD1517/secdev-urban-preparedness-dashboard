@@ -17,7 +17,7 @@
 }
 
 // Choropleth popup style
-.uppd-layer-popup {
+.secdev-layer-popup {
   .mapboxgl-popup-close-button {
     top: 8px;
     right: 8px;
@@ -29,7 +29,7 @@
 }
 
 .mapboxgl-popup-anchor-bottom {
-  &.uppd-layer-popup {
+  &.secdev-layer-popup {
     .mapboxgl-popup-tip {
       border-top-color: transparent !important;
     }
@@ -37,7 +37,7 @@
 }
 
 .mapboxgl-popup-anchor-right {
-  &.uppd-layer-popup {
+  &.secdev-layer-popup {
     .mapboxgl-popup-tip {
       border-left-color: transparent !important;
     }
@@ -45,7 +45,7 @@
 }
 
 .mapboxgl-popup-anchor-left {
-  &.uppd-layer-popup {
+  &.secdev-layer-popup {
     .mapboxgl-popup-tip {
       border-right-color: transparent !important;
     }
@@ -53,7 +53,7 @@
 }
 
 .mapboxgl-popup-anchor-top {
-  &.uppd-layer-popup {
+  &.secdev-layer-popup {
     .mapboxgl-popup-tip {
       border-bottom-color: transparent !important;
     }
