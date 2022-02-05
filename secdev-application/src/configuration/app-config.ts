@@ -3,6 +3,7 @@ import {
   MapLayerDataConfigType,
   RacialDistDataType,
   RadarChartDataType,
+  PointsOfInterestType
 } from '../types';
 
 export const mapAreaConfig = {
@@ -143,6 +144,33 @@ export const racialDistInfo: RacialDistDataType[] = [
   {
     title: 'Native Hawaiian or Other Pacific Islander',
     colName: 'native_hawaiian_other_pacific_islander',
+  },
+];
+
+export const PointsOfInterest: PointsOfInterestType[] = [
+  {
+    title: 'Hospitals',
+    endpoint: 'hospitals_and_medical_centers',
+    icon: 'hospital-15',
+    nameField: 'name',
+  },
+  {
+    title: 'Schools',
+    endpoint: 'schools',
+    icon: 'library-11',
+    nameField: 'name',
+  },
+  {
+    title: 'IDP camps',
+    endpoint: 'idp_camps',
+    icon: 'museum-15',
+    nameField: 'name',
+  },
+  {
+    title: 'MSettlements as points',
+    endpoint: 'msettlements_as_points',
+    icon: 'stadium-15',
+    nameField: 'name',
   },
 ];
 

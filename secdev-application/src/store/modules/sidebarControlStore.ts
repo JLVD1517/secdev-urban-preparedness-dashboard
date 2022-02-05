@@ -4,8 +4,10 @@ import {
   filterScale,
   mapLayers,
   currentYear,
-  currentMonth
+  currentMonth,
+  PointsOfInterest
 } from '../../configuration/app-config';
+import { groupPOI } from '../../services/sharedFunctions';
 
 const sidebarControlInitialState: InitialSidebarState = {
   selectedYear: currentYear,
@@ -15,6 +17,7 @@ const sidebarControlInitialState: InitialSidebarState = {
   filterSlider: [filterScale.lowBound, filterScale.highBound],
   sliderReset: 0,
   desktopCollapse: false,
+  pointsOfInterest: groupPOI(PointsOfInterest),
 };
 
 const sidebarSlice = createSlice({
@@ -55,6 +58,11 @@ const sidebarSlice = createSlice({
     setDesktopCollapse: (state, { payload }: PayloadAction<boolean>): void => {
       state.desktopCollapse = payload;
     },
+    setPoiState: (state, { payload }: PayloadAction<string>): void => {
+      state.pointsOfInterest[payload].selected = !state.pointsOfInterest[
+        payload
+      ].selected;
+    },
   },
 });
 
@@ -66,6 +74,7 @@ export const {
   setFilterSlider,
   resetFilterSlider,
   setDesktopCollapse,
+  setPoiState,
 } = sidebarSlice.actions;
 
 export default sidebarSlice.reducer;

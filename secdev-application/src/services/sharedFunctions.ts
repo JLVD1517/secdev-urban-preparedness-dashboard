@@ -1,4 +1,4 @@
-import { MapGradientType } from '../types';
+import { MapGradientType, PointsOfInterestStoreType, PointsOfInterestType } from '../types';
 
 import { filterScale } from '../configuration/app-config';
 
@@ -49,4 +49,14 @@ export const formatDisplayNumber = (value: string, decPlaces?: number) => {
     return parseFloat(value).toFixed(decPlaces);
   }
   return parseFloat(value).toFixed(1);
+};
+
+export const groupPOI = (items: PointsOfInterestType[]) => {
+  const assets: PointsOfInterestStoreType = {};
+  items.forEach((item: PointsOfInterestType) => {
+    assets[item.title] = {
+      selected: false,
+    };
+  });
+  return assets;
 };

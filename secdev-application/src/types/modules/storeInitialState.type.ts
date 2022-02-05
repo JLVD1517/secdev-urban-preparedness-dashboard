@@ -3,6 +3,7 @@ import { Event, EventsInitialState } from './eventsFilters.type';
 import { NoOfArticlesByEventTypePlotInitialState } from './eventsPlots.type';
 import { Group, GroupsInitialState } from './groups.type';
 import { SelectedItemType } from './selectedItem.type';
+import { PointsOfInterestStoreType } from '../index';
 
 export interface InitialStateAppControl {
   darkTheme: boolean;
@@ -29,6 +30,7 @@ export interface InitialSidebarState {
   filterSlider: [number, number];
   sliderReset: number;
   desktopCollapse: boolean;
+  pointsOfInterest: PointsOfInterestStoreType;
 }
 export interface InitialHistogramDataState {
   columnData: (number | null)[];

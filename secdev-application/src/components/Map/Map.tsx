@@ -6,10 +6,12 @@ import {
   tractId,
   mapAreaConfig,
   primaryScore,
+  PointsOfInterest,
 } from '../../configuration/app-config';
 import {
   MapGradientType,
   AppState,
+  PointsOfInterestStoreType
 } from '../../types';
 import {
   resetFilterSlider,
@@ -42,17 +44,17 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
   const selectedLayerId: string = useSelector(
     (state: AppState) => state.SidebarControl.selectedLayerId,
   );
-
   const satelliteView: boolean = useSelector(
     (state: AppState) => state.MapControl.satelliteView,
   );
-
   const filterSliderValue: [number, number] = useSelector(
     (state: AppState) => state.SidebarControl.filterSlider,
   );
-
   const selectedGroup: Group = useSelector (
     (state: AppState) => state.GroupsPageStore.selectedGroup
+  );
+  const pointsOfInterest: PointsOfInterestStoreType = useSelector(
+    (state: AppState) => state.SidebarControl.pointsOfInterest
   );
 
   const setSelection = (
@@ -226,6 +228,59 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
         }, 5);
       };
 
+      const generatePoiLayers = () => {
+        console.log("PointsOfInterest ===>>> ", PointsOfInterest);
+        
+        PointsOfInterest.forEach(item => {
+          map.addLayer({
+            id: item.title,
+            type: 'symbol',
+            'source-layer': 'tile',
+            source: {
+              type: 'vector',
+              tiles: [
+                `${process.env.REACT_APP_MAP_TILESERVER_URL}assets/${item.endpoint}/{z}/{x}/{y}?fields=${item.nameField}`,
+              ],
+            },
+            layout: {
+              'icon-image': item.icon,
+              'icon-allow-overlap': true,
+              'icon-size': 1,
+              visibility: visCheck(pointsOfInterest[item.title].selected),
+            },
+          });
+        });
+      };
+
+      // tooltips for poi layers
+      PointsOfInterest.forEach(item => {
+        map.on(
+          'click',
+          item.title,
+          (
+            e: mapboxgl.MapMouseEvent & {
+              features?: any;
+            } & mapboxgl.EventData,
+          ) => {
+            e.originalEvent.cancelBubble = true;
+            const newPopup = new mapboxgl.Popup({
+              className: `poi-popup ${darkTheme ? 'dark' : 'light'}`,
+            });
+            const popupContent = e.features[0].properties[item.nameField];
+
+            if (popupContent) {
+              setTimeout(() => {
+                newPopup
+                  .setHTML(popupContent)
+                  .setLngLat({ lat: e.lngLat.lat, lng: e.lngLat.lng })
+
+                  .addTo(map);
+              }, 5);
+            }
+          },
+        );
+      });
+
       map.on(
         'click',
         'uppd-layer',
@@ -275,6 +330,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
         
       // add layers and set map
       map.addLayer(layer);
+      generatePoiLayers();
       setMap(map);
 
       if (document.getElementById('MapSearchBar')) {
@@ -301,6 +357,18 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       clearFeatureState();
     });
   }, [mapGradient, darkTheme]);
+
+  useEffect(() => {
+    if (map) {
+      PointsOfInterest.forEach(item => {
+        map.setLayoutProperty(
+          item.title,
+          'visibility',
+          visCheck(pointsOfInterest[item.title].selected),
+        );
+      });
+    }
+  }, [map, pointsOfInterest]);
 
   useEffect(
     () => {
