@@ -1,9 +1,0 @@
-{
-  "Hospitals": { "selected": true },
-  "Libraries": { "selected": false },
-  "Museums and Aquariums": { "selected": false },
-  "Metro Stations": { "selected": false },
-  "Sports Venues": { "selected": false },
-  "Golf Courses": { "selected": false },
-  "City Parking Lots": { "selected": false }
-}
