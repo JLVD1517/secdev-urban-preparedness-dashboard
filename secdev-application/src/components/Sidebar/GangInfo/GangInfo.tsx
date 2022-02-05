@@ -9,6 +9,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
+import {blankDark,blankLight} from '../../../configuration/img-config';
 import './GangInfo.scss';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -17,7 +18,8 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       maxWidth: 360,
       backgroundColor: theme.palette.background.paper,
-      boxShadow:`0 0 5px 2px ${theme.palette.background.default}`
+      boxShadow:`0 0 5px 2px ${theme.palette.background.default}`,
+      marginBottom:'20px'
     },
     nested: {
       paddingLeft: theme.spacing(3),
@@ -28,6 +30,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     details:{
         margin:".8rem 0"
+    },
+    imgNoData:{
+      height:'300px',
+      width:'300px'
     }
   }),
 );
@@ -36,7 +42,9 @@ const GangInfo: React.FC = () => {
   const selectedItem: SelectedItemType | null = useSelector(
     (state: AppState) => state.SidebarControl.selectedItem,
     );  
-
+  const darkTheme: boolean = useSelector(
+    (state: AppState) => state.AppControl.darkTheme,
+  );
   const classes = useStyles();
   const [selectedIndex, setSelectedIndex] = React.useState(-1);
 
@@ -51,8 +59,9 @@ const GangInfo: React.FC = () => {
   }
 
   return (
-    <Paper className={Object.keys(group_details).length ? 'main-paper-list' : ''}>
+    <Paper className={selectedItem ? 'main-paper-list' : ''}>
     {selectedItem && (
+      Object.keys(group_details).length ?
       Object.keys(group_details).map( (key, index) => { 
         return <List
           component="nav"
@@ -74,9 +83,8 @@ const GangInfo: React.FC = () => {
             </Paper>  
         </Collapse>
       </List>
-    }))}
+    }): <img src={darkTheme ? blankDark : blankLight} className={classes.imgNoData} alt="No Data"/> )}
   </Paper>
   );
 }
-
 export default GangInfo;
