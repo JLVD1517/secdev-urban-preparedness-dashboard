@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.default,
     position: "relative",
     overflow: "auto",
-    maxHeight: 300,
+    //maxHeight: 300,
   },
   listSection: {
     backgroundColor: "inherit",
@@ -88,16 +88,16 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.default,
   },
   container2:{
-    height: 'calc(100vh - 493px)',
+    height: '30vh',
     overflow: 'auto',
     backgroundColor: theme.palette.background.default,
-    border: "3px solid rgba(255, 255, 255, 0.12)",
+    borderTop: "3px solid rgba(255, 255, 255, 0.12)",
   },
   summarySection:{
     backgroundColor: "inherit",
     height: 50,
-    padding: "5px 15px",
-    margin: "10px",
+    padding: "15px 15px",
+    //margin: "10px",
   },
   headlinesSummary: {
     fontWeight: 300,
@@ -479,8 +479,9 @@ const Map: React.FC<MapProps> = ({
               elementData={"Number Of Events"}
               event={true}
             />
+            <MapAttribution />
           </div>
-          <MapAttribution />
+          
         </Grid>
         <Grid item md={7} className={`${classes.rightDiv}`}>
           <div style={{ paddingTop: "4rem" }}>
@@ -511,7 +512,7 @@ const Map: React.FC<MapProps> = ({
             </div>
           </div>
           <Grid container style={{ paddingBottom: "15px" }}>
-            <Grid item md={6} className="containerBox">
+            <Grid item md={6} className="containerBox2">
               <h3 style={{textAlign:'center', marginBottom:'-4px'}}>No Of Events By Event Type Over Time</h3>
               <MultiLineChartData
                 darkTheme={darkTheme}
@@ -519,7 +520,7 @@ const Map: React.FC<MapProps> = ({
                 mapGradient={mapGradient}
               />
             </Grid>
-            <Grid item md={6} className="containerBox">
+            <Grid item md={6} className="containerBox2">
               <h3 style={{textAlign:'center', marginBottom:'-4px'}}>Avg Tone Of Events Over Time</h3>
               <AreaChartData
                 darkTheme={darkTheme}
@@ -540,7 +541,7 @@ const Map: React.FC<MapProps> = ({
                   {`Summary of Filters Selected - Articles from ${moment(startDate, 'DD-MM-YYYY').format('DD MMM YYYY')} to ${moment(endDate, 'DD-MM-YYYY').format('DD MMM YYYY')} ${selectedEvent.event_id> 0 ? `for ${selectedEvent.name} events`: '' } in ${language.toUpperCase()}`}
               </Grid> 
             </Paper>
-            <Box className={classes.root}>
+            <Box className={`${classes.root} d-flex`}>
               {articlesData && articlesData.length ?
                 (articlesData as any[]).map((article: ArticleData) => (
                   <Paper

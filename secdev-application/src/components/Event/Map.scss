@@ -8,11 +8,22 @@
   width: 41.6%;
   height: 493px;
 }
-
+      
 .containerBox {
   width: 100%;
-  height: 493px;
+  //height: 493px;
+  height : 70vh;
   overflow: hidden;
+  padding-top: 4rem;
+  display: flex;
+  align-items: stretch;
+}
+.containerBox2 {
+  //width: 100%;
+  //height: 493px;
+  //height : 70vh;
+  //overflow: hidden;
+  //padding-top: 4rem;
 }
 .cusSwitch{
   width: 35%;
@@ -26,8 +37,11 @@
 .noDataAvail{
   display: flex;
   justify-content: center;
-  padding-top: 6rem;
+  //padding-top: 6rem;
+  align-items: center;
   font-size: 16px;
+  height: calc(30vh -  53px);
+  margin:auto;
 }
 
 

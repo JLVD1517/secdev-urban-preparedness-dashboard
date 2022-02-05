@@ -20,6 +20,7 @@ const Groups = lazy(() => import('./components/Groups'));
 const Events = lazy(() => import('./components/Events'));
 const Navbar = lazy(() => import('./components/Navigation/Navbar'));
 const SideDrawer = lazy(() => import('./components/Navigation/SideDrawer'));
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 const useStyles = makeStyles({
   root: {
