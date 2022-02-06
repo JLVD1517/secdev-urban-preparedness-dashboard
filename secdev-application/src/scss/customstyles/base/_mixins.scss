@@ -1,0 +1,43 @@
+@mixin h1_medium{
+  font-size: 2rem ;
+  font-weight: 500;
+  line-height: 34px;
+ // color: $color-title;
+}
+
+@mixin h2_medium{
+  font-size: 1.50rem ;
+  font-weight: 500;
+  line-height: 22px;
+  //color: $color-title;
+}
+@mixin h3_medium{
+  font-size: 1.17rem ;
+  font-weight: 500;
+  line-height: 18px;
+ // color: $color-title;
+}
+
+
+
+
+
+/*
+@mixin h1_big_medium{
+  font-size: $font-size-20 ;
+  font-weight: $font-weight-medium;
+  line-height: 30px;
+}
+@mixin h2_medium{
+  font-size: $font-size-16 ;
+  font-weight: $font-weight-medium;
+  line-height: 22px;
+  color: $color-title;
+}
+@mixin h3_medium{
+  font-size: $font-size-14 ;
+  font-weight: $font-weight-medium;
+  line-height: 18px;
+  color: $color-title;
+}
+ */

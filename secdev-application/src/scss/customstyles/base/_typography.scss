@@ -1,0 +1,9 @@
+.h1, h1{
+	@include h1_medium;
+}
+.h2, h2{
+	@include h2_medium;
+}
+.h3, h3{
+	@include h3_medium;
+}

@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.default,
     position: "relative",
     overflow: "auto",
-    maxHeight: 300,
+    //maxHeight: 300,
   },
   listSection: {
     backgroundColor: "inherit",
@@ -88,16 +88,17 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.default,
   },
   container2:{
-    height: 'calc(100vh - 493px)',
+    //height: 'calc(100vh - 493px)',
+    height: '30vh',
     overflow: 'auto',
     backgroundColor: theme.palette.background.default,
-    border: "3px solid rgba(255, 255, 255, 0.12)",
+    borderTop: "3px solid rgba(255, 255, 255, 0.12)",
   },
   summarySection:{
     backgroundColor: "inherit",
     height: 50,
-    padding: "5px 15px",
-    margin: "10px",
+    padding: "15px 15px",
+    //margin: "10px",
   },
   headlinesSummary: {
     fontWeight: 300,
@@ -475,9 +476,9 @@ const Map: React.FC<MapProps> = ({
   }, [selectedCommuneId])
 
   return (
-    <div>
-      <Grid container className="containerBox">
-        <Grid item md={5}>
+    <div className='container-fluid'>
+      <div className="containerBox row">
+        <div className='col-md-5'>
           <div>
             <div className="mapEventContainer" id="map" ref={mapRef} />
             <Footerbar
@@ -485,13 +486,14 @@ const Map: React.FC<MapProps> = ({
               elementData={"Number Of Events"}
               event={true}
             />
+            <MapAttribution />
           </div>
-          <MapAttribution />
-        </Grid>
-        <Grid item md={7} className={`${classes.rightDiv}`}>
-          <div style={{ paddingTop: "4rem" }}>
+          
+        </div>
+        <div className={`${classes.rightDiv} col-md-7`}>
+          <div>
             <div className="row">
-              <h1 className={classes.mainHeader}>
+              <h1 className={`${classes.mainHeader} pt-2 pb-3`}>
                 UN Haiti Port Au Prince Event Monitor
               </h1>
             </div>
@@ -517,7 +519,7 @@ const Map: React.FC<MapProps> = ({
             </div>
           </div>
           <Grid container style={{ paddingBottom: "15px" }}>
-            <Grid item md={6} className="containerBox">
+            <Grid item md={6} className="containerBox2">
               <h3 style={{textAlign:'center', marginBottom:'-4px'}}>No Of Events By Event Type Over Time</h3>
               <MultiLineChartData
                 darkTheme={darkTheme}
@@ -525,7 +527,7 @@ const Map: React.FC<MapProps> = ({
                 mapGradient={mapGradient}
               />
             </Grid>
-            <Grid item md={6} className="containerBox">
+            <Grid item md={6} className="containerBox2">
               <h3 style={{textAlign:'center', marginBottom:'-4px'}}>Avg Tone Of Events Over Time</h3>
               <AreaChartData
                 darkTheme={darkTheme}
@@ -534,50 +536,52 @@ const Map: React.FC<MapProps> = ({
               />
             </Grid>
           </Grid>
-        </Grid>
-      </Grid>
-      <Grid item md={12} className={classes.container2}>
-          <ThemeProvider theme={tableTheme}>
-            <Paper
-              className={classes.summarySection}
-              elevation={5}
-            >
-              <Grid container className={classes.headlinesSummary}>
-                  {`Summary of Filters Selected - Articles from ${moment(startDate, 'DD-MM-YYYY').format('DD MMM YYYY')} to ${moment(endDate, 'DD-MM-YYYY').format('DD MMM YYYY')} ${selectedEvent.event_id> 0 ? `for ${selectedEvent.name} events`: '' } in ${language.toUpperCase()}`}
-              </Grid> 
-            </Paper>
-            <Box className={classes.root}>
-              {articlesData && articlesData.length ?
-                (articlesData as any[]).map((article: ArticleData) => (
-                  <Paper
-                    className={classes.listSection}
-                    elevation={5}
-                  >
-                    <div>
-                    <a href={article.url} target="_blank" className={classes.headlines} rel="noreferrer"><span>{article.title}</span></a>
-                      <Grid container>
-                        <Grid item md={2} className={classes.datePubline}>
-                          {article.publicationDate}
+        </div>
+      </div>
+      <div className='row'>
+        <div className={`${classes.container2} col-md-12`}>
+            <ThemeProvider theme={tableTheme}>
+              <Paper
+                className={classes.summarySection}
+                elevation={5}
+              >
+                <Grid container className={classes.headlinesSummary}>
+                    {`Summary of Filters Selected - Articles from ${moment(startDate, 'DD-MM-YYYY').format('DD MMM YYYY')} to ${moment(endDate, 'DD-MM-YYYY').format('DD MMM YYYY')} ${selectedEvent.event_id> 0 ? `for ${selectedEvent.name} events`: '' } in ${language.toUpperCase()}`}
+                </Grid> 
+              </Paper>
+              <Box className={`${classes.root} d-flex`}>
+                {articlesData && articlesData.length ?
+                  (articlesData as any[]).map((article: ArticleData) => (
+                    <Paper
+                      className={classes.listSection}
+                      elevation={5}
+                    >
+                      <div>
+                      <a href={article.url} target="_blank" className={classes.headlines} rel="noreferrer"><span>{article.title}</span></a>
+                        <Grid container>
+                          <Grid item md={2} className={classes.datePubline}>
+                            {article.publicationDate}
+                          </Grid>
+                          <Grid item md={3} className={classes.datePubline}>
+                            {article.source}
+                          </Grid>
                         </Grid>
-                        <Grid item md={3} className={classes.datePubline}>
-                          {article.source}
+                        <Grid container>
+                          <Grid item md={2} className={classes.datePubline}>
+                            Event Type: {article?.eventType.charAt(0).toUpperCase() + article?.eventType.slice(1)}
+                          </Grid>
+                          <Grid item md={3} className={classes.datePubline}>
+                            Tone: {article.tone}
+                          </Grid>
                         </Grid>
-                      </Grid>
-                      <Grid container>
-                        <Grid item md={2} className={classes.datePubline}>
-                          Event Type: {article?.eventType.charAt(0).toUpperCase() + article?.eventType.slice(1)}
-                        </Grid>
-                        <Grid item md={3} className={classes.datePubline}>
-                          Tone: {article.tone}
-                        </Grid>
-                      </Grid>
-                    </div>
-                  </Paper>
-                )): <div className="noDataAvail"><EventNoteIcon/> <span style={{paddingLeft:'1rem'}}>No News Headlines Available</span></div>
-                }
-            </Box>
-          </ThemeProvider>
-        </Grid>
+                      </div>
+                    </Paper>
+                  )): <div className="noDataAvail"><EventNoteIcon/> <span style={{paddingLeft:'1rem'}}>No News Headlines Available</span></div>
+                  }
+              </Box>
+            </ThemeProvider>
+        </div>
+      </div>
     </div>
   );
 };
