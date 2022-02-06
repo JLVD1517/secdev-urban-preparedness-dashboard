@@ -65,7 +65,7 @@ const GangInfo: React.FC = () => {
   }
 
   return (
-    <Paper className={selectedItem ? 'main-paper-list' : ''}>
+    <Paper className={selectedItem ? 'main-paper-list' : ''} style={{display:!Object.keys(group_details).length ? 'flex' :''}}>
     {selectedItem && (
       Object.keys(group_details).length ?
       Object.keys(group_details).map( (key, index) => { 
