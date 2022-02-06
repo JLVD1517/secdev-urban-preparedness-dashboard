@@ -2,58 +2,13 @@
 
 ### Version 1.0
 
-## Changelog
-
-<table>
-  <tr>
-   <td>Date
-   </td>
-   <td>Description of Major Changes
-   </td>
-   <td>Editor
-   </td>
-  </tr>
-  <tr>
-   <td>2022-02-04
-   </td>
-   <td>Turn loose deployment notes into formal guide
-   </td>
-   <td>Vamshi
-   </td>
-  </tr>
-  <tr>
-   <td>2022-02-04
-   </td>
-   <td>Complete deployment checklist
-   </td>
-   <td>Vamshi
-   </td>
-  </tr>
-  <tr>
-   <td>2022-02-04
-   </td>
-   <td>Review comments + add example code changes
-   </td>
-   <td>Vamshi
-   </td>
-  </tr>
-  <tr>
-   <td>2022-02-04
-   </td>
-   <td>Final revisions for V1
-   </td>
-   <td>Vamshi
-   </td>
-  </tr>
-</table>
-
 ## Introduction
 
 This document will walk you through the process of deploying your own local version of the [Secdev Community Violence Reduction Dashboard Application](https://google.com) (referred to as secdev cvr or ‘the application’).
 
 For your convenience, we have provided a `main` git branch that includes all assets required to run the application for Haiti.
 
-You can view a live demo of the Los Angeles dashboard [here](https://google.com)
+You can view a live demo of the Secdev CVR dashboard [here](https://google.com)
 
 ## Structure
 
