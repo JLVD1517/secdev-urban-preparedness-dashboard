@@ -1,4 +1,4 @@
-# UPPD Application
+# SECDEV CVR Dashboard
 
 ## Application Dependencies:
 
@@ -64,23 +64,21 @@ This file contains the following variables:
   - This variable sets the base url for other rest endpoints called in the application.
 
 ### The `./src/configuration` directory.
-
 For a detailed explanation of the configurations available see the `config` file at the root of the [configuration directory](./src/configuration)
 
-### The `./src/About.tsx` file.
-
+### The `./src/components/About.tsx` file.
 This React component contains the code for landing page. The page content is currently written as generic _Lorem Ipsum_ boilerplate text.
 
-### The `./src/Info.tsx` file.
+### The `./src/components/Groups.tsx` file.
+This React component contains the code for info page displayed on the '/groups' route. The page content currently written as generic _Lorem Ipsum_ boilerplate text.
 
-This React component contains the code for info page displayed on the '/info' route. The page content currently written as generic _Lorem Ipsum_ boilerplate text.
+### The `./src/components/Events.tsx` file.
+This React component contains the code for info page displayed on the '/events' route. The page content currently written as generic _Lorem Ipsum_ boilerplate text.
 
 ### Favicon
-
 The favicon can be updated by replacing the `favicon.ico` file in the `./public` directory.
 
 # React App General Information and Scripts
-
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
 
 ## Available Scripts
@@ -150,3 +148,25 @@ Material-UI [Material-UI Official Documentation](https://material-ui.com/)
 Redux Toolkit [RTK Official Documentation](https://redux-toolkit.js.org/)
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+**PointsOfInterest** (lines 150)
+This is where you tell the front end application which points of interest you added to the database. You can have as many or as few as you like.
+```
+    export const PointsOfInterest: PointsOfInterestType[] = [
+     {
+       title: 'Hospitals',
+       endpoint: 'hospitals_and_medical_centers',
+       icon: 'hospital-15',
+       nameField: 'name',
+     },
+     {
+       title: 'Libraries',
+       endpoint: 'libraries',
+       icon: 'library-11',
+       nameField: 'name',
+     },
+```
+* `title` is the label to display in the toggle dropdown for points of interest.
+* `endpoint` is the name of the csv file you added to the database’s csv asset folder without the `.csv` extension. So in this example, the file with the hospital locations was called `hospitals_and_medical_centers.csv`.
+* `icon` is the name of a maki icon - you can find the full icon set [here](https://labs.mapbox.com/maki-icons/) and [here](https://openclipart.org/tag/maki-icons). The number after the dash handles sizing in pixels - so here, the library icon is set to appear smaller than the hospital icon.
+* `nameField` is the column name in the original csv file that contains the name of the location you would like to have displayed when that point is selected.
