@@ -11,12 +11,12 @@ export const mapGradientDark = {
 }
 
 export const mapGradientLight = {
-  step6: '#EFF3FF',
-  step5: '#C6DBEF',
-  step4: '#9ECAE1',
-  step3: '#6BAED6',
-  step2: '#3182BD',
-  step1: '#08519C',
+  step1: '#EFF3FF',
+  step2: '#C6DBEF',
+  step3: '#9ECAE1',
+  step4: '#6BAED6',
+  step5: '#3182BD',
+  step6: '#08519C',
 };
 
 export const themeOverrides: Overrides = {
@@ -51,7 +51,7 @@ export const lightTheme = createTheme({
   palette: {
     type: 'light',
     primary: {
-      main: mapGradientLight.step1,
+      main: mapGradientLight.step6,
     },
     secondary: {
       main: '#A5CDE4',
