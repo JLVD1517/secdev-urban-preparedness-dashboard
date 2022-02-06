@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 """
-Must be run from the root dir of uppd-database. Requires pandas.
+Must be run from the root dir of secdev-database. Requires pandas.
 
 Traverses the files in /docker/data/ and checks them against the
 requirements. Notifies user in stdout and will alter files accordingly

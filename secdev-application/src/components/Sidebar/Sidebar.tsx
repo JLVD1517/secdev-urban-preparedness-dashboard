@@ -171,7 +171,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
         {!desktopCollapse ? (
           <div>
             <h1 className={classes.mainHeader}>
-              Haiti Safety score Dashboard
+              Community Violence Reduction Dashboard
             </h1>
             <Box
               my={3}

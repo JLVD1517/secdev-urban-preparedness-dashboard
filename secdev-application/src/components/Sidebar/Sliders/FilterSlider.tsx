@@ -91,7 +91,7 @@ const FilterSlider: React.FC<FilterSliderProps> = ({ mapGradient }) => {
           borderRadius: '3px',
         },
         thumb: {
-          color: theme.palette.primary.main,
+          color: mapGradient.step5,
         },
         markLabel: {
           color: theme.palette.text.secondary,

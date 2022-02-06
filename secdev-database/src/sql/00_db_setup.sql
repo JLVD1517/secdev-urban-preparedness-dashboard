@@ -6,32 +6,32 @@ CREATE ROLE admin SUPERUSER;
 CREATE ROLE readwrite;
 CREATE ROLE read;
  
-CREATE USER uppdadmin WITH ENCRYPTED PASSWORD 'changeMe';
-CREATE USER uppdread WITH ENCRYPTED PASSWORD 'changeMe';
-CREATE USER uppdreadwrite WITH ENCRYPTED PASSWORD 'changeMe';
+CREATE USER secdevadmin WITH ENCRYPTED PASSWORD 'changeMe';
+CREATE USER secdevread WITH ENCRYPTED PASSWORD 'changeMe';
+CREATE USER secdevreadwrite WITH ENCRYPTED PASSWORD 'changeMe';
 
 ALTER USER postgres WITH ENCRYPTED PASSWORD 'changeMe';
  
-GRANT admin TO uppdadmin;
-GRANT readwrite TO uppdreadwrite;
-GRANT read TO uppdread;
+GRANT admin TO secdevadmin;
+GRANT readwrite TO secdevreadwrite;
+GRANT read TO secdevread;
 
 GRANT USAGE ON SCHEMA secdev to admin;
 GRANT USAGE ON SCHEMA secdev to readwrite;
 GRANT USAGE ON SCHEMA secdev to read;
 
 ALTER DEFAULT PRIVILEGES IN SCHEMA secdev
-  GRANT SELECT ON TABLES TO uppdread;
+  GRANT SELECT ON TABLES TO secdevread;
 ALTER DEFAULT PRIVILEGES IN SCHEMA secdev
-  GRANT SELECT ON SEQUENCES TO uppdread;
+  GRANT SELECT ON SEQUENCES TO secdevread;
 ALTER DEFAULT PRIVILEGES IN SCHEMA secdev
-  GRANT SELECT, INSERT, UPDATE ON TABLES TO uppdreadwrite;
+  GRANT SELECT, INSERT, UPDATE ON TABLES TO secdevreadwrite;
 ALTER DEFAULT PRIVILEGES IN SCHEMA secdev
-  GRANT SELECT, UPDATE ON SEQUENCES TO uppdreadwrite;
+  GRANT SELECT, UPDATE ON SEQUENCES TO secdevreadwrite;
 
 
 
---- Realed Tables Creation
+--- Related Tables Creation
 
 CREATE TYPE secdev.LANGUAGE AS ENUM (
   'english',

@@ -11,6 +11,7 @@ import {
   mapGradientDark,
 } from '../configuration/theme-color-config';
 import { AppState } from '../types';
+import LayerMenu from './Map/LayerMenu/Menu';
 
 const Groups: React.FC = () => {
   const [dimensions, setDimensions] = useState({
@@ -65,6 +66,7 @@ const Groups: React.FC = () => {
             mapGradient={currentMapGradient}
           />
           <Sidebar mapGradient={currentMapGradient} />
+          <LayerMenu />
           <Footerbar mapGradient={currentMapGradient} elementData={'Number Of Gangs'} event={false}/>
           <MapAttribution />
         </div>

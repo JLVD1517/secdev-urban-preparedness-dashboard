@@ -619,9 +619,53 @@ async def articles_per_event_per_month(request):
             data.append(obj)
     return JSONResponse({"success":"true","data":data})
 
+query_template = Template(
+    """
+    SELECT ST_AsMVT(tile, 'tile')
+    FROM (
+        SELECT ${fields},
+            ST_AsMVTGeom(ST_Transform(ST_SetSRID(geom,4326), 3857),
+            ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
+                4096, 0, false) AS g
+        FROM ${table}
+        WHERE (geom &&
+            ST_Transform(ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857), 4326))
+    ) AS tile;
+    """
+)
+
+async def get_tile(table, x, y, z, fields="gid"):
+    """Retrieve the tile from the database or cache"""
+    tilepath = f"{CACHE_DIR}/{table}/{z}/{x}/{y}.pbf"
+    if not os.path.exists(tilepath):
+        xmin, xmax, ymin, ymax = tile_extent(x, y, z)
+        query = query_template.substitute(
+            table=table, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, fields=fields
+        )
+        async with pool.acquire() as conn:
+            tile = await conn.fetchval(query)
+        if not os.path.exists(os.path.dirname(tilepath)):
+            os.makedirs(os.path.dirname(tilepath))
+        async with aiofiles.open(tilepath, mode="wb") as f:
+            await f.write(tile)
+        response = Response(tile, media_type="application/x-protobuf")
+    else:
+        response = FileResponse(tilepath, media_type="application/x-protobuf")
+    return response
+
+async def tile(request):
+    """Parse request parameters and get tile"""
+    fields = request.query_params.get("fields", "gid")
+    fields = ",".join([f'"{field}"' for field in fields.split(",")])
+    table = request.path_params["table"]
+    x = request.path_params["x"]
+    y = request.path_params["y"]
+    z = request.path_params["z"]
+    return await get_tile(table, x, y, z, fields)
 
 routes = [
     Route("/", index),
+    Route("/assets/{table:str}/{z:int}/{x:int}/{y:int}", tile),
     Route("/get-commune/{start_date:str}/{end_date:str}/{language:str}/{event_id:str}/{z:int}/{x:int}/{y:int}",get_commune),
     Route("/get-subcommune/{month_number:int}/{year:int}/{group_id:str}/{z:int}/{x:int}/{y:int}",get_subcommune),
     Route("/get-articles/{start_date:str}/{end_date:str}/{language:str}",get_articles),

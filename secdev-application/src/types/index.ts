@@ -23,3 +23,7 @@ export type {
 } from './modules/dataConfig.type';
 export type { ArticlesInitialState, ArticleData } from './modules/article.type';
 export type { PlotData, AvgTonePlotInitialState, NoOfArticlesPlotInitialState} from './modules/eventsPlots.type'
+export type {
+  PointsOfInterestType,
+  PointsOfInterestStoreType,
+} from './modules/poi.type';
