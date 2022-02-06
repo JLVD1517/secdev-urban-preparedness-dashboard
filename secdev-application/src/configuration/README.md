@@ -116,3 +116,100 @@ Each variable (`darkTheme` or `lightTheme`) contains an object with a key named 
 ## Theme Specific Override Extensions: `darkTheme.overrides` and `lightTheme.overrides`
 
 These two override extensions include global css overrides specifically for the MapBox Geocoder component corresponding to the light and dark themes. These overrides reference the theme colors of each customized palette and should not need to be modified in most instances.
+
+
+### 1. Image Configuration
+
+img-config.ts lines 1-25
+
+```
+// main logo used at the top left corner
+import navLogo from '../assets/appBranding/Seal_of_Los_Angeles.svg';
+export const mainLogo = navLogo;
+
+// Background images
+import backgroundImageOne from '../assets/img/background-image.jpg';
+import backgroundImageTwo from '../assets/img/la-bg2.jpg';
+[[...
+lines 8-18
+...]]
+// Background image for the About Page
+export const AboutBackgroundImage = backgroundImageOne;
+// Background image for the Info Page
+export const InfoBackgroundImage = backgroundImageTwo;
+```
+
+Image files can be placed in secdev-application/src/assets and be imported in img-config.ts to customize the logo in the top left corner of the application as well as the background images used on the main landing page (`AboutBackgroundImage`) and the info / methodology page (`InfoBackgroundImage`)
+
+### 2. Color Configuration
+
+theme-color-config.ts lines 4 - 67
+
+```
+export const mapGradientDark = {
+ step6: '#FEE5D9',
+ step5: '#FCBBA1',
+ step4: '#FC9272',
+ step3: '#FB6A4A',
+ step2: '#DE2D26',
+ step1: '#A50F15',
+};
+
+export const mapGradientLight = {
+ step6: '#EFF3FF',
+ step5: '#C6DBEF',
+ step4: '#9ECAE1',
+ step3: '#6BAED6',
+ step2: '#3182BD',
+ step1: '#08519C',
+};
+
+export const themeOverrides: Overrides = {
+ MuiButton: {
+   label: {
+     textTransform: 'capitalize',
+   },
+ },
+};
+
+export const darkTheme = createMuiTheme({
+ palette: {
+   type: 'dark',
+   primary: {
+     main: mapGradientDark.step1,
+     light: mapGradientDark.step2,
+   },
+   secondary: {
+     main: '#FDCDBA',
+   },
+   background: {
+     default: '#1E1E1E',
+   },
+   warning: {
+     main: '#F3F800',
+   },
+ },
+ overrides: themeOverrides,
+});
+
+export const lightTheme = createMuiTheme({
+ palette: {
+   type: 'light',
+   primary: {
+     main: mapGradientLight.step1,
+   },
+   secondary: {
+     main: '#A5CDE4',
+   },
+   background: {
+     default: '#F3F3F3',
+   },
+   warning: {
+     main: '#DBDB0F',
+   },
+ },
+ overrides: themeOverrides,
+});
+```
+
+This file allows you to customize the colours used in light and dark mode (`lightTheme` and `darkTheme`), as well as the colours used in the heatmap gradient (`mapGradientLight` and `mapGradientDark`). `step6` of the map gradient is the lightest colour, used to show the highest values of the index (lowest risk) and `step1` is the darkest colour, used to show the lowest values of the index (highest risk). `step1` and `step2` for the light and dark gradients are re-used in the themes for the overall application to provide colour coherence, but any of these values can be changed and replaced with a hex colour code.

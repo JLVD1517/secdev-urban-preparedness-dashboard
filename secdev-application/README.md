@@ -148,3 +148,25 @@ Material-UI [Material-UI Official Documentation](https://material-ui.com/)
 Redux Toolkit [RTK Official Documentation](https://redux-toolkit.js.org/)
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+**PointsOfInterest** (lines 150)
+This is where you tell the front end application which points of interest you added to the database. You can have as many or as few as you like.
+```
+    export const PointsOfInterest: PointsOfInterestType[] = [
+     {
+       title: 'Hospitals',
+       endpoint: 'hospitals_and_medical_centers',
+       icon: 'hospital-15',
+       nameField: 'name',
+     },
+     {
+       title: 'Libraries',
+       endpoint: 'libraries',
+       icon: 'library-11',
+       nameField: 'name',
+     },
+```
+* `title` is the label to display in the toggle dropdown for points of interest.
+* `endpoint` is the name of the csv file you added to the database’s csv asset folder without the `.csv` extension. So in this example, the file with the hospital locations was called `hospitals_and_medical_centers.csv`.
+* `icon` is the name of a maki icon - you can find the full icon set [here](https://labs.mapbox.com/maki-icons/) and [here](https://openclipart.org/tag/maki-icons). The number after the dash handles sizing in pixels - so here, the library icon is set to appear smaller than the hospital icon.
+* `nameField` is the column name in the original csv file that contains the name of the location you would like to have displayed when that point is selected.
