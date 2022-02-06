@@ -60,25 +60,29 @@ const useStyles = makeStyles((theme) => ({
     position: "relative",
     overflow: "auto",
     //maxHeight: 300,
+    maxHeight: 'calc(60vh - 50px - 45px - 58px - 30px)',
+    minHeight: '232px',
   },
   listSection: {
-    backgroundColor: "inherit",
-    height: 80,
+    backgroundColor: `rgba(${theme.palette.background.default}, 0.5)`,
+    minHeight: 80,
     padding: "5px 15px",
     margin: "10px",
   },
   headlines: {
-    fontWeight: 700,
+    fontWeight: 500,
     fontSize: "18px",
     cursor:"pointer",
     textDecoration:'none',
     color:'inherit',
     '&:hover': {
-      textDecoration: 'underline'
+      textDecoration: 'underline',
+      color:'inherit',
+
     }
   },
   datePubline: {
-    fontWeight: 700,
+    fontWeight: 300,
     fontSize: "14px",
   },
   mainHeader: {
@@ -97,7 +101,7 @@ const useStyles = makeStyles((theme) => ({
   summarySection:{
     backgroundColor: "inherit",
     height: 50,
-    padding: "15px 15px",
+    padding: "15px 0 15px 15px",
     //margin: "10px",
   },
   headlinesSummary: {
@@ -477,9 +481,9 @@ const Map: React.FC<MapProps> = ({
 
   return (
     <div className='container-fluid'>
-      <div className="containerBox row">
-        <div className='col-md-5'>
-          <div>
+      <div className={`containerBox  row ${classes.rightDiv}`}>
+        <div className='col-md-5 px-0'>
+          <div className='position-relative'>
             <div className="mapEventContainer" id="map" ref={mapRef} />
             <Footerbar
               mapGradient={mapGradient}
@@ -488,68 +492,42 @@ const Map: React.FC<MapProps> = ({
             />
             <MapAttribution />
           </div>
-          
         </div>
-        <div className={`${classes.rightDiv} col-md-7`}>
-          <div>
-            <div className="row">
-              <h1 className={`${classes.mainHeader} pt-2 pb-3`}>
-                UN Haiti Port Au Prince Event Monitor
-              </h1>
+        <div className='col-md-7'>
+          <h1 className={`${classes.mainHeader} pt-3 pb-4`}>
+              UN Haiti Port Au Prince Event Monitor
+            </h1>
+            <div className="wrapper">
+              
+              <div className="dateRangeFormat">
+                <DateRangeFilter darkTheme={darkTheme} />
+              </div>
+              <div className="toneSlider">
+                <SelectEvent/>
+              </div>
+              <div className="cusSwitch">
+                <FormControlLabel
+                  label={language.toLocaleUpperCase()}
+                  control={
+                    <CustomSwitch
+                      checked={language === LANGUAGE.ENGLISH}
+                      onChange={toggleLanguage}
+                      name="toggle theme"
+                    />
+                  }
+                />
+              </div>
             </div>
-          </div>
-          <div className="wrapper">
-            <div className="cusSwitch">
-              <FormControlLabel
-                label={language.toLocaleUpperCase()}
-                control={
-                  <CustomSwitch
-                    checked={language === LANGUAGE.ENGLISH}
-                    onChange={toggleLanguage}
-                    name="toggle theme"
-                  />
-                }
-              />
-            </div>
-            <div className="dateRangeFormat">
-              <DateRangeFilter darkTheme={darkTheme} />
-            </div>
-            <div className="toneSlider">
-              <SelectEvent/>
-            </div>
-          </div>
-          <Grid container style={{ paddingBottom: "15px" }}>
-            <Grid item md={6} className="containerBox2">
-              <h3 style={{textAlign:'center', marginBottom:'-4px'}}>No Of Events By Event Type Over Time</h3>
-              <MultiLineChartData
-                darkTheme={darkTheme}
-                data={noOfArticlesByEventTypePlotData}
-                mapGradient={mapGradient}
-              />
-            </Grid>
-            <Grid item md={6} className="containerBox2">
-              <h3 style={{textAlign:'center', marginBottom:'-4px'}}>Avg Tone Of Events Over Time</h3>
-              <AreaChartData
-                darkTheme={darkTheme}
-                mapGradient={mapGradient}
-                data={avgTonePlotData}
-              />
-            </Grid>
-          </Grid>
-        </div>
-      </div>
-      <div className='row'>
-        <div className={`${classes.container2} col-md-12`}>
-            <ThemeProvider theme={tableTheme}>
+             <ThemeProvider theme={tableTheme}>
               <Paper
                 className={classes.summarySection}
-                elevation={5}
+                elevation={0}
               >
                 <Grid container className={classes.headlinesSummary}>
                     {`Summary of Filters Selected - Articles from ${moment(startDate, 'DD-MM-YYYY').format('DD MMM YYYY')} to ${moment(endDate, 'DD-MM-YYYY').format('DD MMM YYYY')} ${selectedEvent.event_id> 0 ? `for ${selectedEvent.name} events`: '' } in ${language.toUpperCase()}`}
                 </Grid> 
               </Paper>
-              <Box className={`${classes.root} d-flex`}>
+              <Box className={`${classes.root} ${articlesData && articlesData.length ? '':'d-flex'}`}>
                 {articlesData && articlesData.length ?
                   (articlesData as any[]).map((article: ArticleData) => (
                     <Paper
@@ -582,7 +560,31 @@ const Map: React.FC<MapProps> = ({
               </Box>
             </ThemeProvider>
         </div>
+          
       </div>
+        <div className='row'>
+          <div className={`${classes.rightDiv} col-md-12 pt-4`}>
+            
+            <Grid container style={{ paddingBottom: "15px" }}>
+              <Grid item md={6} className="containerBox2">
+                <h3 style={{textAlign:'center', marginBottom:'-4px'}}>No Of Events By Event Type Over Time</h3>
+                <MultiLineChartData
+                  darkTheme={darkTheme}
+                  data={noOfArticlesByEventTypePlotData}
+                  mapGradient={mapGradient}
+                />
+              </Grid>
+              <Grid item md={6} className="containerBox2">
+                <h3 style={{textAlign:'center', marginBottom:'-4px'}}>Avg Tone Of Events Over Time</h3>
+                <AreaChartData
+                  darkTheme={darkTheme}
+                  mapGradient={mapGradient}
+                  data={avgTonePlotData}
+                />
+              </Grid>
+            </Grid>
+          </div>
+        </div>
     </div>
   );
 };

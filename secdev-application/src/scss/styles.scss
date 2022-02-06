@@ -2,7 +2,8 @@
 @import './theme-colors.scss';
 .App {
   ::-webkit-scrollbar {
-    width: 10px;
+    width: 3px;
+    height: 3px;
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {

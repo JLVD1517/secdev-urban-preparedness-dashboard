@@ -10,7 +10,7 @@ const SelectGroup: React.FC = () => {
   const useStyles = makeStyles((theme) => ({
     formControl: {
       margin: theme.spacing(1),
-      minWidth: 250,
+      minWidth: 200,
     },
   }));
 

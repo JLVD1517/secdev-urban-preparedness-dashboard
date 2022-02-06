@@ -7,12 +7,12 @@ const MapAttribution: React.FC = () => {
   const useStyles = makeStyles(() =>
     createStyles({
       root: {
-        position: 'fixed',
         bottom: '0',
         left: '0',
         padding: '5px 5px 5px 2rem',
         backgroundColor: 'rgba(256, 256, 256, 0.15)',
         borderRadius: '0 5px 0 0',
+        position:'absolute',
       },
     }),
   );

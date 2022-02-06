@@ -13,13 +13,14 @@ const FootBar: React.FC<FootBarProps> = ({ mapGradient, elementData, event}) => 
   const theme = useTheme();
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
-      position: 'relative',
-      top: event ? `calc(100vh - 90vh)` : `calc(100vh - 15vh)`,
+      position: 'absolute',
+     // top: event ? `calc(100vh - 90vh)` : `calc(100vh - 15vh)`,
       left: '10%',
       width: event ? '210px' : '293px',
       height: '50px',
       background: theme.palette.background.paper,
       borderRadius: '.5rem',
+      bottom: '33px',
     },
     lengend: {
       margin: 'auto',
@@ -51,7 +52,7 @@ const FootBar: React.FC<FootBarProps> = ({ mapGradient, elementData, event}) => 
     <div className={classes.root}>
       <div className={classes.lengend}>
         <div className={classes.bar} />
-        <div className={`row ${classes.text}`}>
+        <div className={`${classes.text}`}>
           <div className={classes.rangeText}>0</div>
           <div className={classes.centerBarText}>{elementData}</div>
           <div className={classes.rangeText}>MAX</div>

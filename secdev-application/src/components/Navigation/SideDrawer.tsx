@@ -139,11 +139,13 @@ const SideDrawer: React.FC = () => {
         borderRadius: '5px',
         '&:hover': {
           backgroundColor: darken(`${theme.palette.primary.main}`, 0.5),
+          color: 'inherit',
         },
         '&.active-link': {
           backgroundColor: darken(`${theme.palette.primary.main}33`, 0.5),
           '&:hover': {
             backgroundColor: darken(`${theme.palette.primary.main}`, 0.2),
+            color: 'inherit',
           },
         },
       },
