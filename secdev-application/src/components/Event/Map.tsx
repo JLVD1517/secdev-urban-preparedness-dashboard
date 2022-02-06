@@ -91,6 +91,10 @@ const useStyles = makeStyles((theme) => ({
   rightDiv: {
     backgroundColor: theme.palette.background.default,
   },
+   rightDiv2: {
+    backgroundColor: theme.palette.background.default,
+    borderTop: `2px solid ${theme.palette.text.disabled}`
+  },
   container2:{
     //height: 'calc(100vh - 493px)',
     height: '30vh',
@@ -563,7 +567,7 @@ const Map: React.FC<MapProps> = ({
           
       </div>
         <div className='row'>
-          <div className={`${classes.rightDiv} col-md-12 pt-4`}>
+          <div className={`${classes.rightDiv2} col-md-12 pt-4`}>
             
             <Grid container style={{ paddingBottom: "15px" }}>
               <Grid item md={6} className="containerBox2">
