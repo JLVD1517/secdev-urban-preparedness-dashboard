@@ -37,6 +37,7 @@ const MultiLineChartData: React.FC<AreaChartProps> = ({ mapGradient, darkTheme, 
   }
 
   const classes = useStyles();
+  
   return (
     <LineChart
       width={500}
@@ -48,6 +49,7 @@ const MultiLineChartData: React.FC<AreaChartProps> = ({ mapGradient, darkTheme, 
           {/* <Label value="Pages of my website" stroke={darkTheme ? "#fff" : "#000"} offset={-12} position="insideBottom" /> */}
       </XAxis>
       <YAxis label={{ value: 'Number of Articles',stroke:darkTheme ? "#fff" : "#000", angle: -90, position: 'center', dx: -25}}/>
+      <Tooltip filterNull={true} contentStyle={{color:'#000'}}/>
       <Legend verticalAlign="top" layout='vertical' align='right' height={35}/>
       {firstObj && Object.keys(firstObj).map( (key, index) => {
         return <Line

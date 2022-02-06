@@ -559,15 +559,16 @@ const Map: React.FC<MapProps> = ({
                       <div>
                       <a href={article.url} target="_blank" className={classes.headlines} rel="noreferrer"><span>{article.title}</span></a>
                         <Grid container>
-                          <Grid item md={2} className={classes.datePubline}>
+                          <Grid item md={5} className={classes.datePubline}>
                             {article.publicationDate}
                           </Grid>
-                          <Grid item md={3} className={classes.datePubline}>
+                          <Grid item md={5} className={classes.datePubline}>
                             {article.source}
                           </Grid>
+
                         </Grid>
                         <Grid container>
-                          <Grid item md={2} className={classes.datePubline}>
+                          <Grid item md={5} className={classes.datePubline}>
                             Event Type: {article?.eventType.charAt(0).toUpperCase() + article?.eventType.slice(1)}
                           </Grid>
                           <Grid item md={3} className={classes.datePubline}>
