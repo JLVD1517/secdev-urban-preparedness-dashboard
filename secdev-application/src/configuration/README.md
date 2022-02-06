@@ -8,7 +8,26 @@ This file contains the bulk of the data configuration for the application.
 
 ### Map Area Config: `mapAreaConfig`
 
-The map area config has this basic structure:
+The groups map area config has this basic structure: 
+
+```
+ {
+  zoomLevel: number,
+  mapCenter: [number, number], // [longitude, latitude]
+  bounds: [
+    [number, number], // Southwest Coordinates
+    [number, number], // Northeast Coordinates
+  ],
+  style: {
+    dark: string,
+    light: string,
+    satellite: string,
+  },
+};
+```
+
+### Events Map Area Config: `eventMapAreaConfig`
+The events map area config has this basic structure:
 
 ```
 {
@@ -55,16 +74,15 @@ The general structure of the `filterScale` is as follows:
 
 ### Tract Id: `tractId`
 
-This variable sets the column name containing the Census Tract Id. This is being used for identifying the clicked geography and setting the Census Tract info in the sidebar and tooltips.
+This variable sets the column name containing the count of groups. This is being used for identifying the clicked geography and setting the context info in the sidebar and tooltips.
 
 ### Primary Score: `primaryScore`
 
-This variable sets the column name of the overall score. This variable is used to set the value of the outlined box in the side bar.
+This variable sets the column name of the overall count of groups. This variable is used to set the value of the outlined box in the side bar displaying group details.
 
-### Projected Years: `projectedYears`
+### Primary Score: `eventsPrimaryScore`
 
-This variable sets an array of projected years. If the selected year on the map is included in this array, the projection disclaimer will be displayed on the map.
-
+This variable sets the column name of the overall count of events. This variable is used to set the value of the outlined box in the container to filter the articles list.
 
 ## Image Configuration: `img-config.ts`
 

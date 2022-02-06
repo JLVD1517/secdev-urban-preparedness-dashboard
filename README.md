@@ -1,4 +1,4 @@
-# UPPD Application Deployment Guide
+# SECDEV CVR Dashboard Application Deployment Guide
 
 ### Version 1.0
 
@@ -14,50 +14,46 @@
    </td>
   </tr>
   <tr>
-   <td>2021-08-05
+   <td>2022-02-04
    </td>
    <td>Turn loose deployment notes into formal guide
    </td>
-   <td>Jamie
+   <td>Vamshi
    </td>
   </tr>
   <tr>
-   <td>2021-08-09
+   <td>2022-02-04
    </td>
    <td>Complete deployment checklist
    </td>
-   <td>Jamie
+   <td>Vamshi
    </td>
   </tr>
   <tr>
-   <td>2021-09-13
+   <td>2022-02-04
    </td>
    <td>Review comments + add example code changes
    </td>
-   <td>Jamie
+   <td>Vamshi
    </td>
   </tr>
   <tr>
-   <td>2021-09-15
+   <td>2022-02-04
    </td>
    <td>Final revisions for V1
    </td>
-   <td>Jamie
+   <td>Vamshi
    </td>
   </tr>
 </table>
 
 ## Introduction
 
-This document will walk you through the process of deploying your own local version of the [Urban Pandemic Preparedness Dashboard](https://urbanresilience.secdev.com/) (referred to as UPPD or ‘the application’).
+This document will walk you through the process of deploying your own local version of the [Secdev Community Violence Reduction Dashboard Application](https://urbanresilience.secdev.com/) (referred to as secdev cvr or ‘the application’).
 
-For your convenience, we have provided a `main` git branch that includes all assets required to run the application for Los Angeles. There is also a `clean` branch that has cleared out all example information for users wishing to deploy their own version of the tool.
+For your convenience, we have provided a `main` git branch that includes all assets required to run the application for Haiti.
 
-You can view a live demo of the Los Angeles dashboard [here](https://urbanresilience.secdev.com/los-angeles)
-
-Below are the full requirements for the index and asset files to be compatible with our deployment package as well as examples and instructions for customizing the tool. Please note that the guide below assumes you have already completed the index calculations in a structure somewhat similar to our own - please see the methodology documents [in this directory](https://github.com/SECDEV-GROUP/urban-preparedness-dashboard/tree/main/secdev-application/src/assets) for details on our index methodology.
-
-If you have any questions about deploying your UPPD with additional customization or require assistance with data integration beyond the scope of this document, please contact the SecDev Group at [secdev@secdev.com](mailto:secdev@secdev.com)
+You can view a live demo of the Los Angeles dashboard [here](https://google.com)
 
 ## Prerequisites
 
@@ -77,8 +73,10 @@ There are four main subdirectories, each representing a component of the applica
 
 - `secdev-docker-compose`: Contains docker-compose file for easy deployment of all components. Only potential changes needed involve changing ports depending on your deployment needs.
 - `secdev-tile-server`: Contains the code to initalize the tile server for the map - the coloured heatmap tiles and the points of interest are shown by querying this server
-- `secdev-database`: Contains the code to initialize all datasets for the map, including importing indices, points of interest, and shapefile from user-added files.
+- `secdev-database`: Contains the code to initialize all datasets for the map, including importing points of interest, and shapefile from user-added files.
 - `secdev-application`: Contains all the front end code. This is the directory that will require the most customization to deploy your own version.
+
+Please refer to the corresponding folder ReadMe file for detailed explanation of respective application.
 
 ## Data File Requirements
 
@@ -100,21 +98,6 @@ There are three main types of data files, all of which are located in the `secde
   - ‘longitude’
 - Note the name of the label column for use with secdev-application later.
 - Files must be .csv files located in secdev-database/docker/data/csv/assets
-
-### Primary Index
-
-- The primary dataset to be visualized - in our demo, this is the UPPD Index Score or Risk Score. It is also referred to as `city_metrics` in the database
-- Aside from the points of interest and shapefile, all data that should be included in the dashboard should be in the index files.
-- Must be .csv files located in `secdev-database/docker/data/csv/indices`
-- The most recent index file should be called `current_indices.csv`
-  - Currently, this project does not support automatic data updates. This means that adding additional years of data to V1 of the application will require current_indices to be replaced and the database to be rebuilt
-- The most recent index file will be used to create the database table for the indices.
-- Any additional index files must have the same column names in the same order as current_indices, or data may be added inaccurately.
-- Additional index files should be called `filename_YYYY_indices.csv`, where YYYY is the year of data represented in the indices file
-- The database expects a column called `tractce10` to be in current_indices to align with the shapefile.
-  - If you have a different column name for the main code or id used for the areas of interest (usually the smallest available unit, such as a census tract, neighborhood, or Lower-layer Super Output Areas (LSOAs)), adjust the name in `secdev-database/src/sql/views/05_view_data.sql` line 4, after the `m.`
-- The database expects a column called `source_date` with dates in the format YYYY-MM-DD or MM/DD/YYYY.
-- Take note of the columns which have data you will want to display on the front end. Consult the methodology documents in `secdev-application/src/assets` for details about how we organized the column names and calculated the values for our deployments
 
 ### Shapefile
 
@@ -317,79 +300,6 @@ The bulk of the front end configuration happens in this file. Please be sure to 
 * `tractId` is the name of the column to use for matching the region to its shape in the shapefile.
 * `primaryScore` is the name of the column with the overall index score - the main value to be displayed when a tract is selected.
 * `totalPopCol` is the name of the column with the total population of a given region
-
-
-**Years of Data** (lines 33-35 main branch)
-```
-    export const currentYear = 2019;
-    export const availableYears: number[] = [2019, 2018, 2017];
-    export const projectedYears: number[] = [];
-```
-* `currentYear` is the most recent year of data available. We found that data was most rich for 2019 in most cities we have developed for so far.
-* `availableYears` is used to create the year slider.
-    * If only one year of data is available, put only one year between the brackets. 
-      *  You may also wish to remove the `DateSlider` component from the sidebar - see `secdev-application/src/components/sidebar/Sidebar.tsx` in the main branch and comment out `&lt;DateSlider />` on line 207 as well as the `DateSlider` import on line 26. 
-* `projectedYears` allows a warning message to be displayed when certain years are selected. This is to allow for data that has been created using predictive analysis of some kind. Any year that is not projected can be assumed to be real data rather than projected or interpolated data.
-
-**mapLayers** (lines 37 - 218)
-The mapLayers variable is a list of dictionary (or key: value) items, starting with the main index value (in our case, the Urban Pandemic Preparedness Index).
-Below are two key examples of these items:
-
-Line 38-42 - **Main index value**
-
-```
-    {
-       title: 'Urban Pandemic Preparedness Index',
-       colName: 'secdev_res_plr',
-       subcategories: [],
-     },
-```
-* Note that no subcategories are listed for the main value - this is because they are listed as separate dictionary items in the rest of the list. `title` is what will be displayed on the dropdown menu and sidebar for this item and `colName` is the column in the index file that contains the data.
-
-
-Lines 43-55 - **Economic factors**
-```
-    {
-       title: 'Economic Factors',
-       colName: 'econ_fctrs_plr',
-       subcategories: [
-         {
-           title: 'Percent living below poverty',
-           colName: 'pvrty_pe',
-         },
-         { title: 'Percent unemployed', colName: 'unemp_pe' },
-         { title: 'Income per capita', colName: 'pci_e' },
-         { title: 'Percent without a high school diploma', colName: 'nohsdp_plr' },
-       ],
-     },
-```
-* Here we have four subcategories or metrics listed in the Economic Factors section. When the ‘Economic Factors’ section is clicked in the sidebar, a section will appear showing the individual metrics in this category. `title` will display on the sidebar as the label for the value in the column defined in `colName`.
-* The user can add as many or as few of these dictionary items as they would like to display. Currently, no additional number formatting is available, so it may be useful to state in words if a value is a percentage or not, as shown in the example above.
-
-
-**radarChartConfig** (lines 220-236)
-The radar or spider chart is used to display the main category values relative to one another in order to view which aspects a particular region may be stronger or weaker in than others. These are the categories defined in `mapLayers` that have subcategories.
-
-```
-    export const radarChartConfig: RadarChartDataType = {
-     enabled: true,
-     fields: [
-       { title: 'Econ. Factors', colName: 'econ_fctrs_plr' },
-       { title: 'Disease Factors', colName: 'chronic_fctrs_plr' },
-       { title: 'Demo. Factors', colName: 'demograph_fctrs_plr' },
-       { title: 'Social Factors', colName: 'social_fctrs_plr' },
-       {
-         title: 'Lifestyle Factors',
-         colName: 'clncl_fctrs_plr',
-       },
-       {
-         title: 'Digital Prep.',
-         colName: 'digital_fctrs_plr',
-       },
-     ],
-    };
-```
-* Because of the small space available for the radar chart labels, some `title`s have been abbreviated. The `colName`s should match the `colName` used for that subcategory in the `mapLayers` variable discussed above.
 
 
 **linearCharts** (lines 239-264)

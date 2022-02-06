@@ -1,4 +1,4 @@
-# UPPD Application
+# SECDEV CVR Dashboard
 
 ## Application Dependencies:
 
@@ -64,23 +64,21 @@ This file contains the following variables:
   - This variable sets the base url for other rest endpoints called in the application.
 
 ### The `./src/configuration` directory.
-
 For a detailed explanation of the configurations available see the `config` file at the root of the [configuration directory](./src/configuration)
 
-### The `./src/About.tsx` file.
-
+### The `./src/components/About.tsx` file.
 This React component contains the code for landing page. The page content is currently written as generic _Lorem Ipsum_ boilerplate text.
 
-### The `./src/Info.tsx` file.
+### The `./src/components/Groups.tsx` file.
+This React component contains the code for info page displayed on the '/groups' route. The page content currently written as generic _Lorem Ipsum_ boilerplate text.
 
-This React component contains the code for info page displayed on the '/info' route. The page content currently written as generic _Lorem Ipsum_ boilerplate text.
+### The `./src/components/Events.tsx` file.
+This React component contains the code for info page displayed on the '/events' route. The page content currently written as generic _Lorem Ipsum_ boilerplate text.
 
 ### Favicon
-
 The favicon can be updated by replacing the `favicon.ico` file in the `./public` directory.
 
 # React App General Information and Scripts
-
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
 
 ## Available Scripts
