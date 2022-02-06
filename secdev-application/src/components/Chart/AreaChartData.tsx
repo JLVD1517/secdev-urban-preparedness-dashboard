@@ -49,7 +49,7 @@ const AreaChartData: React.FC<AreaChartProps> = ({ darkTheme, mapGradient, data}
           {/* <Label value="Pages of my website" stroke={darkTheme ? "#fff" : "#000"} offset={-12} position="insideBottom" /> */}
       </XAxis>
       <YAxis label={{ value: 'Number of Articles',stroke:darkTheme ? "#fff" : "#000", angle: -90, position: 'center', dx: -20 }}/>
-      <Tooltip />
+      <Tooltip contentStyle={{color:'#000'}}/>
       {/* <Legend /> */}
       <Line
         type="monotone"
