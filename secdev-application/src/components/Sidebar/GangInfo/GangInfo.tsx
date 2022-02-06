@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: 360,
       backgroundColor: theme.palette.background.paper,
       boxShadow:`0 0 5px 2px ${theme.palette.background.default}`,
-      marginBottom:'20px'
+      marginBottom:'13px'
     },
     nested: {
       paddingLeft: theme.spacing(3),
