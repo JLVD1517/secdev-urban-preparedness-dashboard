@@ -1,14 +1,14 @@
 version: '3.7'
 services:
-   application:
-     container_name: app
-     build: ../secdev-application
-     image: secdev-ap:la
-     depends_on:
-       - database
-       - server
-     ports:
-       - '8080:80'
+  application:
+    container_name: app
+    build: ../secdev-application
+    image: secdev-ap:la
+    depends_on:
+      - database
+      - server
+    ports:
+      - '8080:80'
   server:
     container_name: tile_server
     build: ../secdev-tile-server
