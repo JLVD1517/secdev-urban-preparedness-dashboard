@@ -12,11 +12,11 @@ You can view a live demo of the Secdev CVR dashboard [here](https://google.com)
 
 ## Structure
 
-There are four main subdirectories, each representing a component of the application. These subdirectories have additional README’s composed by our partners in developing the frontend, RS21.
+There are four main subdirectories, each representing a component of the application.
 
 - `secdev-docker-compose`: Contains docker-compose file for easy deployment of all components. Only potential changes needed involve changing ports depending on your deployment needs.
 - `secdev-tile-server`: Contains the code to initalize the tile server for the map - the coloured heatmap tiles and the points of interest are shown by querying this server
-- `secdev-database`: Contains the code to initialize all datasets for the map, including importing points of interest, and shapefile from user-added files.
+- `secdev-database`: Contains the code to initialize all datasets for the map, including importing points of interest and shapefile from user-added files.
 - `secdev-application`: Contains all the front end code. This is the directory that will require the most customization to deploy your own version.
 
 Please refer to the corresponding folder ReadMe file for detailed explanation of respective application.
@@ -44,18 +44,19 @@ Please refer to the corresponding folder ReadMe file for detailed explanation of
 1. Git clone the repository ((link here))
 2. Create .env file inside secdev-application and secdev-tile-server folders
 3. Add the following environment variables in secdev-application/.env file
-```
-  REACT_APP_MAPBOX_ACCESS_TOKEN=[Mapbox API KEY]
-  REACT_APP_MAP_TILESERVER_URL=[URL FOR TILE SERVER]
-  REACT_APP_ENDPOINT_URL=[URL FOR BACKEND SERVER]
-```
+- `REACT_APP_MAPBOX_ACCESS_TOKEN`
+  - This variable sets the appropriate MapBox access token. For more information about MapBox Access Tokens see [the MapBox documentation on access tokens.](https://docs.mapbox.com/help/getting-started/access-tokens/)
+- `REACT_APP_MAP_TILESERVER_URL`
+  - This variable sets the base url for the tile server.
+- `REACT_APP_ENDPOINT_URL`
+  - This variable sets the base url for other rest endpoints called in the application.
 4. Get and Add Mapbox API key to secdev-application/.env
 5. Edit src/sql/00_db_setup.sql to include secure passwords instead of default value
 6. Set the changed database credentials in secdev-tile-server/.env file
-```
-  DB_USER= database user name
-  DB_PASSWORD = database password
-```
+- `DB_USER`
+  - database user name
+- `DB_PASSWORD`
+  - database password
 7. Check docker-compose.yml in secdev-docker-compose to ensure that none of the ports are already in use. If they are, change them only on the left side of the colon (eg. `80:80` may become `81:80` if port 80 is already in use
 8. Use the command `docker-compose up --build` to build the entire project. Pay attention to any error messages that may appear, particularly when the database is being initialized
 9. If there are database errors, use `ctrl+c` to stop the programs and then use the command `docker system prune` to fully remove the database that was set up. This helps to ensure that old errors won’t crop up again unexpectedly
