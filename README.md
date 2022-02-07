@@ -92,7 +92,7 @@ There are three main types of data files, all of which are located in the `secde
 - These files are to enable a view that includes important landmarks
 - Files should be separated by landmark type - for example, libraries and hospitals would be in separate .csv files
 - They should have at least 3 columns:
-  - a column for the label you wish to show on the front end
+  - ‘name’ a column for the label you wish to show on the front end
   - ‘latitude’
   - ‘longitude’
 - Note the name of the label column for use with secdev-application later.

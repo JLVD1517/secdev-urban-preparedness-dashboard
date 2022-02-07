@@ -149,26 +149,14 @@ export const racialDistInfo: RacialDistDataType[] = [
 
 export const PointsOfInterest: PointsOfInterestType[] = [
   {
-    title: 'Hospitals',
-    endpoint: 'hospitals_and_medical_centers',
+    title: 'Health Sites',
+    endpoint: 'healthsites',
     icon: 'hospital-15',
     nameField: 'name',
   },
   {
-    title: 'Schools',
-    endpoint: 'schools',
-    icon: 'library-11',
-    nameField: 'name',
-  },
-  {
-    title: 'IDP camps',
-    endpoint: 'idp_camps',
-    icon: 'museum-15',
-    nameField: 'name',
-  },
-  {
-    title: 'MSettlements as points',
-    endpoint: 'msettlements_as_points',
+    title: 'Settlements As Points',
+    endpoint: 'settlements_as_points',
     icon: 'stadium-15',
     nameField: 'name',
   },
