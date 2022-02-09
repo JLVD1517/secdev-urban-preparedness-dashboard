@@ -5,7 +5,7 @@ import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import { Paper, FormControlLabel } from "@material-ui/core";
-import EventNoteIcon from '@material-ui/icons/EventNote';
+import EventNoteIcon from "@material-ui/icons/EventNote";
 import {
   makeStyles,
   createMuiTheme,
@@ -22,11 +22,7 @@ import {
   eventsPrimaryScore,
   LANGUAGE,
 } from "../../configuration/app-config";
-import {
-  MapGradientType,
-  AppState,
-  ArticleData,
-} from '../../types';
+import { MapGradientType, AppState, ArticleData } from "../../types";
 import {
   resetFilterSlider,
   setSelectedItem,
@@ -41,7 +37,10 @@ import { fetchArticles } from "../../store/modules/articlesStore";
 import { Event, EventsFilters } from "../../types/modules/eventsFilters.type";
 import { fetchAvgArticlesTonePlot } from "../../store/modules/avgArticleTonePlotStore";
 import { fetchNoOfArticlesPlot } from "../../store/modules/noOfArticlePlotStore";
-import { setEventsLanguage, setSelectedCommuneId } from "../../store/modules/eventsPageStore";
+import {
+  setEventsLanguage,
+  setSelectedCommuneId,
+} from "../../store/modules/eventsPageStore";
 import moment from "moment";
 import SelectEvent from "../SelectBox/SelectEvent";
 import { EventypePlotdata } from "../../types/modules/eventsPlots.type";
@@ -70,12 +69,12 @@ const useStyles = makeStyles((theme) => ({
   headlines: {
     fontWeight: 700,
     fontSize: "18px",
-    cursor:"pointer",
-    textDecoration:'none',
-    color:'inherit',
-    '&:hover': {
-      textDecoration: 'underline'
-    }
+    cursor: "pointer",
+    textDecoration: "none",
+    color: "inherit",
+    "&:hover": {
+      textDecoration: "underline",
+    },
   },
   datePubline: {
     fontWeight: 700,
@@ -84,16 +83,22 @@ const useStyles = makeStyles((theme) => ({
   mainHeader: {
     textAlign: "center",
   },
+  mainHeader1: {
+    textAlign: "center",
+    padding: "10px 30px",
+    marginBottom: "2rem",
+    fontSize: "11px",
+  },
   rightDiv: {
     backgroundColor: theme.palette.background.default,
   },
-  container2:{
-    height: 'calc(100vh - 493px)',
-    overflow: 'auto',
+  container2: {
+    height: "calc(100vh - 493px)",
+    overflow: "auto",
     backgroundColor: theme.palette.background.default,
     border: "3px solid rgba(255, 255, 255, 0.12)",
   },
-  summarySection:{
+  summarySection: {
     backgroundColor: "inherit",
     height: 50,
     padding: "5px 15px",
@@ -102,8 +107,8 @@ const useStyles = makeStyles((theme) => ({
   headlinesSummary: {
     fontWeight: 300,
     fontSize: "18px",
-    textDecoration:'none',
-    color:'inherit'
+    textDecoration: "none",
+    color: "inherit",
   },
 }));
 
@@ -114,11 +119,7 @@ interface MapProps {
   mapGradient: MapGradientType;
 }
 
-const Map: React.FC<MapProps> = ({
-  darkTheme,
-  mapGradient,
-}) => {
-
+const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
   const classes = useStyles();
   const tableTheme = darkTheme
     ? createMuiTheme({ palette: { type: "dark" } })
@@ -132,14 +133,14 @@ const Map: React.FC<MapProps> = ({
   );
   const endDate: string = useSelector(
     (state: AppState) => state.EventsPageStore.endDate
-  )
+  );
   const selectedCommuneId: number = useSelector(
     (state: AppState) => state.EventsPageStore.selectedCommuneId
-  )
-  const language: string = useSelector (
+  );
+  const language: string = useSelector(
     (state: AppState) => state.EventsPageStore.language
   );
-  const selectedEvent: Event = useSelector (
+  const selectedEvent: Event = useSelector(
     (state: AppState) => state.EventsPageStore.selectedEvent
   );
 
@@ -163,15 +164,15 @@ const Map: React.FC<MapProps> = ({
     (state: AppState) => state.SidebarControl.filterSlider
   );
   const noOfArticlesByEventTypePlotData: EventypePlotdata[] | [] = useSelector(
-    (state: AppState ) => state.NoOfArticleStoreByEventType.data
+    (state: AppState) => state.NoOfArticleStoreByEventType.data
   );
   const avgTonePlotData: PlotData[] = useSelector(
     (state: AppState) => state.AverageArticleToneStore.avgTonePlotData
   );
-  const articlesData: ArticleData[] | [] = useSelector (
-    (state: AppState) => state.ArticlesStore.articles);
+  const articlesData: ArticleData[] | [] = useSelector(
+    (state: AppState) => state.ArticlesStore.articles
+  );
 
-  
   const setSelection = (
     e: mapboxgl.MapMouseEvent & {
       features?: mapboxgl.MapboxGeoJSONFeature[] | undefined;
@@ -467,33 +468,39 @@ const Map: React.FC<MapProps> = ({
 
   const toggleLanguage = () => {
     dispatch(setSelectedCommuneId(-1));
-    dispatch(setEventsLanguage(language === LANGUAGE.ENGLISH ? LANGUAGE.FRENCH : LANGUAGE.ENGLISH));
+    dispatch(
+      setEventsLanguage(
+        language === LANGUAGE.ENGLISH ? LANGUAGE.FRENCH : LANGUAGE.ENGLISH
+      )
+    );
   };
 
   useEffect(() => {
     dispatch(fetchArticles(eventsFilter));
-  }, [selectedCommuneId])
+  }, [selectedCommuneId]);
 
   return (
     <div>
       <Grid container className="containerBox">
-        <Grid item md={5}>
-          <div>
-            <div className="mapEventContainer" id="map" ref={mapRef} />
-            <Footerbar
-              mapGradient={mapGradient}
-              elementData={"Number Of Events"}
-              event={true}
-            />
-          </div>
-          <MapAttribution />
-        </Grid>
-        <Grid item md={7} className={`${classes.rightDiv}`}>
+        <Grid item md={8} className={`${classes.rightDiv}`}>
           <div style={{ paddingTop: "4rem" }}>
             <div className="row">
               <h1 className={classes.mainHeader}>
                 UN Haiti Port Au Prince Event Monitor
               </h1>
+            </div>
+            <div className="row">
+              <h3 className={classes.mainHeader1}>
+                The community violence reduction monitor collects and
+                synthesizes relevant events from global and local news media in
+                French and English. A predefined list of queries are
+                automatically sent to searX, a meta search engine, on a daily
+                basis with an aim to collect news articles published in the
+                online news media. These articles are then processed using
+                Natural Language Processing (NLP) techniques to extract the
+                summary, date, place, keywords, event category and sentiment of
+                the articles.
+              </h3>
             </div>
           </div>
           <div className="wrapper">
@@ -513,12 +520,14 @@ const Map: React.FC<MapProps> = ({
               <DateRangeFilter darkTheme={darkTheme} />
             </div>
             <div className="toneSlider">
-              <SelectEvent/>
+              <SelectEvent />
             </div>
           </div>
           <Grid container style={{ paddingBottom: "15px" }}>
             <Grid item md={6} className="containerBox">
-              <h3 style={{textAlign:'center', marginBottom:'-4px'}}>No Of Events By Event Type Over Time</h3>
+              <h3 style={{ textAlign: "center", marginBottom: "-4px" }}>
+                No Of Events By Event Type Over Time
+              </h3>
               <MultiLineChartData
                 darkTheme={darkTheme}
                 data={noOfArticlesByEventTypePlotData}
@@ -526,7 +535,9 @@ const Map: React.FC<MapProps> = ({
               />
             </Grid>
             <Grid item md={6} className="containerBox">
-              <h3 style={{textAlign:'center', marginBottom:'-4px'}}>Avg Tone Of Events Over Time</h3>
+              <h3 style={{ textAlign: "center", marginBottom: "-4px" }}>
+                Avg Tone Of Events Over Time
+              </h3>
               <AreaChartData
                 darkTheme={darkTheme}
                 mapGradient={mapGradient}
@@ -535,49 +546,80 @@ const Map: React.FC<MapProps> = ({
             </Grid>
           </Grid>
         </Grid>
+        <Grid item md={4}>
+          <div>
+            <div className="mapEventContainer" id="map" ref={mapRef} />
+            <Footerbar
+              mapGradient={mapGradient}
+              elementData={"Number Of Events"}
+              event={true}
+            />
+          </div>
+          <MapAttribution />
+        </Grid>
       </Grid>
       <Grid item md={12} className={classes.container2}>
-          <ThemeProvider theme={tableTheme}>
-            <Paper
-              className={classes.summarySection}
-              elevation={5}
-            >
-              <Grid container className={classes.headlinesSummary}>
-                  {`Summary of Filters Selected - Articles from ${moment(startDate, 'DD-MM-YYYY').format('DD MMM YYYY')} to ${moment(endDate, 'DD-MM-YYYY').format('DD MMM YYYY')} ${selectedEvent.event_id> 0 ? `for ${selectedEvent.name} events`: '' } in ${language.toUpperCase()}`}
-              </Grid> 
-            </Paper>
-            <Box className={classes.root}>
-              {articlesData && articlesData.length ?
-                (articlesData as any[]).map((article: ArticleData) => (
-                  <Paper
-                    className={classes.listSection}
-                    elevation={5}
-                  >
-                    <div>
-                    <a href={article.url} target="_blank" className={classes.headlines} rel="noreferrer"><span>{article.title}</span></a>
-                      <Grid container>
-                        <Grid item md={5} className={classes.datePubline}>
-                          {article.publicationDate}
-                        </Grid>
-                        <Grid item md={3} className={classes.datePubline}>
-                          {article.source}
-                        </Grid>
+        <ThemeProvider theme={tableTheme}>
+          <Paper className={classes.summarySection} elevation={5}>
+            <Grid container className={classes.headlinesSummary}>
+              {`Summary of Filters Selected - Articles from ${moment(
+                startDate,
+                "DD-MM-YYYY"
+              ).format("DD MMM YYYY")} to ${moment(
+                endDate,
+                "DD-MM-YYYY"
+              ).format("DD MMM YYYY")} ${
+                selectedEvent.event_id > 0
+                  ? `for ${selectedEvent.name} events`
+                  : ""
+              } in ${language.toUpperCase()}`}
+            </Grid>
+          </Paper>
+          <Box className={classes.root}>
+            {articlesData && articlesData.length ? (
+              (articlesData as any[]).map((article: ArticleData) => (
+                <Paper className={classes.listSection} elevation={5}>
+                  <div>
+                    <a
+                      href={article.url}
+                      target="_blank"
+                      className={classes.headlines}
+                      rel="noreferrer"
+                    >
+                      <span>{article.title}</span>
+                    </a>
+                    <Grid container>
+                      <Grid item md={5} className={classes.datePubline}>
+                        {article.publicationDate}
                       </Grid>
-                      <Grid container>
-                        <Grid item md={5} className={classes.datePubline}>
-                          Event Type: {article?.eventType.charAt(0).toUpperCase() + article?.eventType.slice(1)}
-                        </Grid>
-                        <Grid item md={3} className={classes.datePubline}>
-                          Tone: {article.tone}
-                        </Grid>
+                      <Grid item md={3} className={classes.datePubline}>
+                        {article.source}
                       </Grid>
-                    </div>
-                  </Paper>
-                )): <div className="noDataAvail"><EventNoteIcon/> <span style={{paddingLeft:'1rem'}}>No News Headlines Available</span></div>
-                }
-            </Box>
-          </ThemeProvider>
-        </Grid>
+                    </Grid>
+                    <Grid container>
+                      <Grid item md={5} className={classes.datePubline}>
+                        Event Type:{" "}
+                        {article?.eventType.charAt(0).toUpperCase() +
+                          article?.eventType.slice(1)}
+                      </Grid>
+                      <Grid item md={3} className={classes.datePubline}>
+                        Tone: {article.tone}
+                      </Grid>
+                    </Grid>
+                  </div>
+                </Paper>
+              ))
+            ) : (
+              <div className="noDataAvail">
+                <EventNoteIcon />{" "}
+                <span style={{ paddingLeft: "1rem" }}>
+                  No News Headlines Available
+                </span>
+              </div>
+            )}
+          </Box>
+        </ThemeProvider>
+      </Grid>
     </div>
   );
 };
