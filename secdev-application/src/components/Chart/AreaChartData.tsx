@@ -11,6 +11,35 @@ import {
 import { useTheme, Theme } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import { MapGradientType, PlotData } from "../../types";
+import "./tooltip.scss";
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <ul className="custom-tooltip custom-tooltip-list">
+        <p className="intro">{label}</p>
+        {payload.map(({ value, name, color }: any) => {
+            return (
+              <li className={"custom-tooltip-item"}>
+                <h5 className={"custom-tooltip-item-title"}>
+                  <span
+                    className={"custom-tooltip-item-icon"}
+                    style={{ backgroundColor: color }}
+                  />
+                  <span className={"custom-tooltip-item-text"}>{name}: </span> 
+                  <span className={"custom-tooltip-item-text"}> {typeof value === "number"
+                    ? value.toFixed(1)
+                    : (0).toFixed(1)} </span>
+                </h5>
+              </li>
+            );
+          })}
+      </ul>
+    );
+  }
+
+  return null;
+};
 
 interface AreaChartProps {
   darkTheme: boolean;
@@ -62,7 +91,13 @@ const AreaChartData: React.FC<AreaChartProps> = ({
         stroke={darkTheme ? "#fff" : "#000"}
         fontSize={10}
       />
-      <Tooltip contentStyle={{ color: "#000" }} />
+      <Tooltip 
+        filterNull={true}
+        contentStyle={{ color: "#000" }}
+        cursor={{ stroke: "rgba(230, 234, 238, 0.6)", strokeWidth: 3 }}
+        isAnimationActive={false}
+        offset={40}
+        content={<CustomTooltip />} />
       {/* <Legend /> */}
       <Line
         type="monotone"
