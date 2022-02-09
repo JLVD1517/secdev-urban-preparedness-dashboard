@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   XAxis,
   YAxis,
@@ -6,30 +6,34 @@ import {
   Label,
   LineChart,
   Line,
-  Legend
-} from 'recharts';
-import { useTheme, Theme } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
-import {  MapGradientType, PlotData } from '../../types';
+  Legend,
+} from "recharts";
+import { useTheme, Theme } from "@material-ui/core";
+import { makeStyles } from "@material-ui/styles";
+import { MapGradientType, PlotData } from "../../types";
 
 interface AreaChartProps {
   darkTheme: boolean;
   mapGradient: MapGradientType;
-  data: PlotData[] | []
+  data: PlotData[] | [];
 }
 
-const AreaChartData: React.FC<AreaChartProps> = ({ darkTheme, mapGradient, data}) => {
+const AreaChartData: React.FC<AreaChartProps> = ({
+  darkTheme,
+  mapGradient,
+  data,
+}) => {
   const theme = useTheme();
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
-      position: 'relative',
+      position: "relative",
     },
   }));
 
   const classes = useStyles();
-  
+
   return (
-  <LineChart
+    <LineChart
       width={400}
       height={270}
       data={data}
@@ -37,7 +41,6 @@ const AreaChartData: React.FC<AreaChartProps> = ({ darkTheme, mapGradient, data}
     >
       <defs>
         <linearGradient id="events-plot" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor={mapGradient.step1} stopOpacity={1} />
           <stop offset="32%" stopColor={mapGradient.step2} stopOpacity={1} />
           <stop offset="48%" stopColor={mapGradient.step3} stopOpacity={1} />
           <stop offset="64%" stopColor={mapGradient.step4} stopOpacity={1} />
@@ -45,11 +48,21 @@ const AreaChartData: React.FC<AreaChartProps> = ({ darkTheme, mapGradient, data}
           <stop offset="96%" stopColor={mapGradient.step6} stopOpacity={1} />
         </linearGradient>
       </defs>
-      <XAxis dataKey="date">
-          {/* <Label value="Pages of my website" stroke={darkTheme ? "#fff" : "#000"} offset={-12} position="insideBottom" /> */}
+      <XAxis dataKey="date" stroke={darkTheme ? "#fff" : "#000"} fontSize={10}>
+        {/* <Label value="Pages of my website" stroke={darkTheme ? "#fff" : "#000"} offset={-12} position="insideBottom" /> */}
       </XAxis>
-      <YAxis label={{ value: 'Number of Articles',stroke:darkTheme ? "#fff" : "#000", angle: -90, position: 'center', dx: -20 }}/>
-      <Tooltip contentStyle={{color:'#000'}}/>
+      <YAxis
+        label={{
+          value: "Number of Articles",
+          stroke: darkTheme ? "#fff" : "#000",
+          angle: -90,
+          position: "center",
+          dx: -20,
+        }}
+        stroke={darkTheme ? "#fff" : "#000"}
+        fontSize={10}
+      />
+      <Tooltip contentStyle={{ color: "#000" }} />
       {/* <Legend /> */}
       <Line
         type="monotone"
