@@ -79,11 +79,11 @@ CREATE TYPE secdev.ACTIVITIES AS ENUM (
   );
 
 CREATE TYPE secdev.GROUP_TYPE AS ENUM (
-  'Organized gang',
-  'Local baz',
-  'Vigilance brigade',
+  'organized gang',
+  'local baz',
+  'vigilance brigade',
   'cambrioleur',
-  'Petty criminal'
+  'petty criminal'
 );
 
 CREATE TABLE secdev.commune (
@@ -100,8 +100,8 @@ CREATE TABLE secdev.sub_commune (
 );
 
 CREATE TABLE secdev.groups (
-  "group_id" int PRIMARY KEY,
-  "name" text
+  "group_id" SERIAL PRIMARY KEY,
+  "name" text UNIQUE
 );
 
 CREATE TABLE secdev.group_records (

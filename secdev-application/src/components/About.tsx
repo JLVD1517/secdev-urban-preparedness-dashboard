@@ -44,27 +44,16 @@ export const About: React.FC = () => {
           <Grid item xs={12} md={6}>
             <h1 className={classes.SectionHeader}>Los Angeles</h1>
             <h2 className={classes.IntroHeader}>
-              Pandemic Preparedness and Recovery Dashboard
+            Community violence reduction monitor
             </h2>
             <Typography variant="body1" gutterBottom>
-              The urban pandemic preparedness and recovery dashboard is designed
-              to improve city situational awareness, planning and coordination.
-              By mapping out health risks, social and economic vulnerabilities
-              and digital preparedness, it can help city executives, planners
-              and operational teams with accurate information on at-risk
-              population groups.{' '}
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              This demo uses open source data from Los Angeles, California.{' '}
-              <br />
-              To find out how to deploy your own UPPD, reach out to{' '}
-              <Link
-                href="https://www.secdev.com/"
-                aria-label="the SecDev Group homepage"
-              >
-                the SecDev Group
-              </Link>{' '}
-              for more details.
+            The community violence reduction monitor is an interactive dashboard designed 
+            to improve situational awareness in Port-au-Prince, Haiti. 
+            The platform has two basic functions: 
+            (1) visualizing patterns of crime and victimization from English and French media sources and 
+            (2) mapping the influence of armed groups across the metropolitan area. 
+            
+            Users can interact with the map and filters to track the scope, scale and dynamics of community violence over time.{' '}
             </Typography>
             <Button
               variant="outlined"
@@ -74,36 +63,21 @@ export const About: React.FC = () => {
               to="/groups"
               aria-label="go to group"
             >
-              Go To Groups
+              View Group Map
             </Button>
             <h2 className={classes.SectionHeader}>About</h2>
             <Typography variant="body1" gutterBottom>
-              The platform was designed by{' '}
+            The community violence reduction monitor was designed and developed by{' '}
               <Link
                 href="https://www.secdev.com/"
                 aria-label="Link to the SecDev Group homepage"
               >
                 the SecDev Group
-              </Link>{' '}
-              with support from{' '}
-              <Link
-                href="https://www.rs21.io/#!/"
-                aria-label="Link to the RS21 homepage"
-              >
-                RS21
-              </Link>
-              ,{' '}
-              <Link
-                href="https://mapbox.com/community/"
-                aria-label="Link to the Mapbox Community page"
-              >
-                Mapbox Community
-              </Link>
-              , Georgetown University and the CDC, as well as city networks such
-              as the C40, Metropolis, Global Resilient Cities Network, Mayors
-              Migration Council and the Global Parliament of Mayors. The
-              dashboard was financially supported by the Hilton Foundation, Open
-              Society Foundation and Walder Foundation.
+              </Link>{' '} 
+            in partnership with the UN Population Fund (UNFPA). 
+            The interactive platform benefits from the support of MapBox and shapefiles are retrieved from OCHA. 
+            All data is drawn from public open sources and the dashboard is intended to help the United Nations (UN), 
+            Haitian authorities and civil society groups improve data-driven and evidence-based community violence reduction strategies. 
             </Typography>
             <Partners />
           </Grid>

@@ -42,6 +42,9 @@ RUN apt-get update \
 	postgis \
 	&& rm -rf /var/lib/apt/lists/*
 
+# install Python 3 and pip3
+RUN apt-get update && apt-get install -y python3 python3-pip
+
 # Create directories in the image to store scripts and files
 RUN mkdir -p /docker-entrypoint-initdb.d
 RUN mkdir -p /usr/local/data/dbdata

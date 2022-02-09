@@ -1,5 +1,5 @@
 // main logo used at the top left corner
-import navLogo from '../assets/appBranding/UN_emblem_blue.svg';
+import navLogo from '../assets/appBranding/Coat_of_arms_of_Haiti.svg';
 
 // Background images
 import backgroundImageOne from '../assets/img/background-image.jpg';

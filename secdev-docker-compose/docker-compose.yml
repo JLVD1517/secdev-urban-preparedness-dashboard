@@ -3,16 +3,16 @@ services:
   application:
     container_name: app
     build: ../secdev-application
-    image: secdev-ap:la
+    image: secdev-app
     depends_on:
-      - database
-      - server
+       - database
+       - server
     ports:
-      - '8080:80'
+       - '8080:80'
   server:
     container_name: tile_server
     build: ../secdev-tile-server
-    image: tile-server:la
+    image: tile-server
     depends_on:
       - database
     environment:
@@ -26,9 +26,11 @@ services:
   database:
     container_name: database
     build: ../secdev-database
-    image: database:la
+    image: database
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: secdev_data
     ports:
       - '5432:5432'
+    volumes:
+      - ../secdev-database/data_helpers:/usr/local/bin/helpers
