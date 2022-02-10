@@ -21,6 +21,9 @@ from starlette.middleware.cors import CORSMiddleware
 from string import Template
 from tenacity import retry, stop_after_attempt, wait_fixed
 import uvicorn
+from datetime import date, timedelta
+
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CACHE_DIR = os.path.join(BASE_DIR, "cache")
 pool = None
@@ -72,10 +75,10 @@ async def db_connection_pool():
         user=os.getenv("DB_USER", "postgres"),
         password=os.getenv("DB_PASSWORD", "changeMe"),
         database=os.getenv("DATABASE", "secdev_data"),
-        host=os.getenv("DB_HOST", "localhost"),
+        host= os.getenv("DB_HOST", "localhost"),
         port=5432,
     )
-    
+
 
 
 
@@ -113,13 +116,13 @@ commune_query_template = Template(
                 4096, 0, false) AS g ,
                  gid,
                  ${commune_name}
-                  FROM haiti_commune  ) AS hc left join  ( 
+                  FROM haiti_commune  ) AS hc left join  (
         SELECT count(ei.event_id) as no_of_articles,
             avg(ei.tone) as avg_tone,
             c.commune_id
-        FROM    ${EVENTS} e inner join ${EVENT_INFO} ei on e.event_id = ei.event_id inner join  ${COMMUNE}  c on ei.commune_id = c.commune_id  where ${cond_str} AND TO_DATE(ei.pub_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.pub_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and ei.language = '${language}' group by (c.commune_id)  ) as d on d.commune_id = hc.gid 
+        FROM    ${EVENTS} e inner join ${EVENT_INFO} ei on e.event_id = ei.event_id inner join  ${COMMUNE}  c on ei.commune_id = c.commune_id  where ${cond_str} AND TO_DATE(ei.pub_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.pub_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and ei.language = '${language}' group by (c.commune_id)  ) as d on d.commune_id = hc.gid
     ) AS tile;
-    """   
+    """
 )
 
 
@@ -138,15 +141,15 @@ async def get_commune(request):
     param_list = ['tone_start_range','source','type']
     url_str = str(request.query_params)
     cond_str = ' 1=1 '
-    
+
     if (event_id and event_id > 0):
         cond_str =  cond_str + f" and ei.event_id = {event_id}"
-    
+
     for param in param_list:
         if url_str.find(param) != -1 and param == 'tone_start_range':
-            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
+            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range']
         elif  url_str.find(param) != -1 :
-            cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'" 
+            cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'"
     return await get_commune_tile(x, y, z, start_date,end_date,language,cond_str,commune_name)
 
 async def get_commune_tile(x, y, z,start_date,end_date,language, cond_str,commune_name):
@@ -184,20 +187,20 @@ subcommune_query_template1 = Template(
                 4096, 0, false) AS g
         FROM ${SUB_COMMUNE_GROUP_COUNT_MAP} as scgc inner join haiti_subcommune AS hsb on  scgc.sub_commune_id = hsb.gid
     ) AS tile;
-    """    
+    """
 )
 
 
 query_template2 = Template(
     """
-        SELECT * 
-        FROM ${GROUP_RECORDS} where month_number = ${month_number} and year = ${year} order by group_record_id asc 
+        SELECT *
+        FROM ${GROUP_RECORDS} where month_number = ${month_number} and year = ${year} order by group_record_id asc
     """
 )
 query_template3 = Template(
     """
         insert into ${SUB_COMMUNE_GROUP_COUNT_MAP} values(${sub_commune_id},${group_count},ARRAY${group_list}::INT[],'${group_details}') on conflict(sub_commune_id) do  update set group_count = ${group_count},group_list = ARRAY${group_list}::INT[],group_details='${group_details}' ;
-    """   
+    """
 )
 
 
@@ -230,7 +233,7 @@ async def get_temp_res(month_number,year):
                 temp_group_details['leader_name'] = record['leader_name']
                 temp_group_details['key_activities'] = record['key_activities']
                 temp_group_details['group_size'] = int(record['group_size'])
-                temp_group_details['affiliation'] = record['affiliation'] 
+                temp_group_details['affiliation'] = record['affiliation']
                 temp_group_details['alliance_groups'] = record['alliance_groups']
                 temp_group_details['rival_groups'] = record['rival_groups']
                 if sc_list.count(i) > 0:
@@ -248,18 +251,18 @@ async def get_temp_res(month_number,year):
             group_list = dict_new[sid],
             group_details = json.dumps(dict_group_details[sid]),
             **TABLES
-        ) 
+        )
         final_query = final_query + query2
 
     async with pool.acquire() as conn:
-        await conn.execute(final_query)   
+        await conn.execute(final_query)
     return Response("success")
 
 subcommune_group_query_template = Template(
     """
     SELECT ST_AsMVT(tile, 'tile')
     FROM (
-        SELECT 
+        SELECT
             hsb.gid,
             hsb.adm3_en,
             1 as no_of_groups,
@@ -267,22 +270,22 @@ subcommune_group_query_template = Template(
             ST_AsMVTGeom(ST_Transform(ST_SetSRID(hsb.geom,4326), 3857),
             ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 3857),
                 4096, 0, false) AS g
-        FROM ${GROUP_SUB_COMMUNE_MAP} as gscm inner join haiti_subcommune AS hsb on  gscm.sub_commune_id = hsb.gid 
+        FROM ${GROUP_SUB_COMMUNE_MAP} as gscm inner join haiti_subcommune AS hsb on  gscm.sub_commune_id = hsb.gid
     ) AS tile;
-    """    
+    """
 )
 
 
 group_template = Template(
     """
-        SELECT * 
-        FROM ${GROUP_RECORDS} where month_number = ${month_number} and year = ${year} and group_id = ${group_id} order by group_record_id asc 
+        SELECT *
+        FROM ${GROUP_RECORDS} where month_number = ${month_number} and year = ${year} and group_id = ${group_id} order by group_record_id asc
     """
 )
 group_query_template = Template(
     """
         insert into ${GROUP_SUB_COMMUNE_MAP} values(${sub_commune_id},${group_id},'${group_details}') on conflict(sub_commune_id) do  update set group_id = ${group_id}, group_details='${group_details}' ;
-    """ 
+    """
 )
 
 async def get_temp_group_res(month_number,year,group_id):
@@ -309,7 +312,7 @@ async def get_temp_group_res(month_number,year,group_id):
             temp_group_details['leader_name'] = record['leader_name']
             temp_group_details['key_activities'] = record['key_activities']
             temp_group_details['group_size'] = int(record['group_size'])
-            temp_group_details['affiliation'] = record['affiliation'] 
+            temp_group_details['affiliation'] = record['affiliation']
             temp_group_details['alliance_groups'] = record['alliance_groups']
             temp_group_details['rival_groups'] = record['rival_groups']
             for sid in sc_list:
@@ -323,11 +326,11 @@ async def get_temp_group_res(month_number,year,group_id):
             group_id=group_id,
             group_details = json.dumps({group_id:group_details[group_id]}),
             **TABLES
-        ) 
-        final_query = final_query + group_table_query 
+        )
+        final_query = final_query + group_table_query
     async with pool.acquire() as conn:
-        await conn.execute(final_query)            
-    return Response("success")        
+        await conn.execute(final_query)
+    return Response("success")
 
 
 
@@ -342,7 +345,7 @@ async def get_subcommune_group_tile(x,y,z,fields='gid'):
         **TABLES
     )
     async with pool.acquire() as conn:
-        tile = await conn.fetchval(query)  
+        tile = await conn.fetchval(query)
     response = Response(tile, media_type="application/x-protobuf")
     return response
 
@@ -361,7 +364,7 @@ async def get_subcommune(request):
     if group_id > 0:
         await get_temp_group_res(month_number,year,group_id)
         return await get_subcommune_group_tile(x, y, z, fields)
-    else:     
+    else:
         await get_temp_res(month_number,year)
         return await get_subcommune_tile(x, y, z, fields)
 
@@ -377,7 +380,7 @@ async def get_subcommune_tile(x, y, z, fields="gid"):
         **TABLES,
     )
     async with pool.acquire() as conn:
-        tile = await conn.fetchval(query)  
+        tile = await conn.fetchval(query)
     response = Response(tile, media_type="application/x-protobuf")
     return response
 
@@ -406,9 +409,9 @@ async def articles_per_event(request):
     cond_str = ' 1=1 '
     for param in param_list:
         if url_str.find(param) != -1 and param == 'tone_start_range':
-            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
+            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range']
         elif  url_str.find(param) != -1 :
-            cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'" 
+            cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'"
     query = query_template4.substitute(
         start_date=start_date,
         end_date=end_date,
@@ -442,9 +445,9 @@ async def avg_tone(request):
     cond_str = ' 1=1 '
     for param in param_list:
         if url_str.find(param) != -1 and param == 'tone_start_range':
-            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
+            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range']
         elif  url_str.find(param) != -1 :
-            cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'" 
+            cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'"
     query = query_template5.substitute(
         start_date=start_date,
         end_date=end_date,
@@ -461,7 +464,35 @@ async def avg_tone(request):
             obj['no_of_articles'] = record['no_of_articles']
             obj['avg_tone'] = record['avg_tone']
             data.append(obj)
-    return JSONResponse({"success":"true","data":data})
+    start_date_year = int(start_date.split("-")[2])
+    start_date_month = int(start_date.split("-")[1])
+    start_date_day = int(start_date.split("-")[0])
+    end_date_year = int(end_date.split("-")[2])
+    end_date_month = int(end_date.split("-")[1])
+    end_date_day = int(end_date.split("-")[0])
+
+    sdate = date(start_date_year,start_date_month,start_date_day)   # start date
+    edate = date(end_date_year,end_date_month,end_date_day)   # end date
+
+    def dates_bwn_twodates(start_date, end_date):
+        for n in range(int ((end_date - start_date).days)):
+            yield start_date + timedelta(n)
+    #print(dates_bwn_twodates(sdate,edate))
+    #print([str(d.strftime("%d-%m-%Y")) for d in dates_bwn_twodates(sdate,edate)])
+    result_list = []
+    date_list = [str(d.strftime("%d-%m-%Y")) for d in dates_bwn_twodates(sdate,edate)]
+    for date_str in date_list:
+        obj_list = [p for p in data if p['publication_date'] == date_str]
+        #print(obj_list)
+        if len(obj_list) == 0:
+            temp_obj = {}
+            temp_obj['publication_date'] = date_str
+            temp_obj['no_of_articles'] = 0
+            temp_obj['avg_tone'] = 0
+            result_list.append(temp_obj)
+        else:
+            result_list.append(obj_list[0])
+    return JSONResponse({"success":"true","data":result_list})
 
 
 query_template6 = Template(
@@ -479,9 +510,9 @@ async def articles_per_commune(request):
     cond_str = ' 1=1 '
     for param in param_list:
         if url_str.find(param) != -1 and param == 'tone_start_range':
-            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
+            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range']
         elif  url_str.find(param) != -1 :
-            cond_str = cond_str + f' and {param} = '+"'"+request.query_params[param]+"'"   
+            cond_str = cond_str + f' and {param} = '+"'"+request.query_params[param]+"'"
     query = query_template6.substitute(
         start_date=start_date,
         end_date=end_date,
@@ -517,10 +548,10 @@ async def get_articles(request):
     cond_str = ' 1=1 '
     for param in param_list:
         if url_str.find(param) != -1 and param == 'tone_start_range':
-            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
+            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range']
         elif  url_str.find(param) != -1 :
-            cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'"       
-    
+            cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'"
+
     query = articles_query.substitute(
         start_date=start_date,
         end_date=end_date,
@@ -528,7 +559,7 @@ async def get_articles(request):
         cond_str=cond_str,
         **TABLES
     )
-   
+
     async with pool.acquire() as conn:
         data_res = await conn.fetch(query)
         data_arr = []
@@ -536,16 +567,16 @@ async def get_articles(request):
             obj = {}
             obj['event_info_id'] = int(data['event_info_id'])
             obj['publication_date'] = data['pub_date']
-            obj['source']= data['source'] 
-            obj['title']=data['title'] 
-            obj['url']=data['url'] 
-            obj['summary']=data['summary'] 
-            obj['tone']= int(data['tone']) 
-            obj['compound']= int(data['compound']) 
+            obj['source']= data['source']
+            obj['title']=data['title']
+            obj['url']=data['url']
+            obj['summary']=data['summary']
+            obj['tone']= int(data['tone'])
+            obj['compound']= int(data['compound'])
             obj['commune_id']=int(data['commune_id'])
             obj['language']=data['language']
             obj['category'] = data['category']
-            obj['event_type'] = data['type'] 
+            obj['event_type'] = data['type']
             data_arr.append(obj)
     return JSONResponse({"success":"true","data":data_arr})
 
@@ -587,9 +618,9 @@ async def articles_per_event_per_month(request):
     cond_str = ' 1=1 '
     for param in param_list:
         if url_str.find(param) != -1 and param == 'tone_start_range':
-            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range'] 
+            cond_str = cond_str + ' and tone between '+request.query_params['tone_start_range'] + ' and '+ request.query_params['tone_end_range']
         elif  url_str.find(param) != -1 :
-            cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'" 
+            cond_str = cond_str + f' and ei.{param} = '+"'"+request.query_params[param]+"'"
     query = article_query_template.substitute(
         start_date=start_date,
         end_date=end_date,
@@ -615,9 +646,39 @@ async def articles_per_event_per_month(request):
                     obj[event_type] = articles_count[index]
                     index += 1
                 else:
-                    obj[event_type] = 0 
+                    obj[event_type] = 0
             data.append(obj)
-    return JSONResponse({"success":"true","data":data})
+    #start_date = request.path_params['start_date']
+    #end_date = request.path_params['end_date']
+    start_date_year = int(start_date.split("-")[2])
+    start_date_month = int(start_date.split("-")[1])
+    start_date_day = int(start_date.split("-")[0])
+    end_date_year = int(end_date.split("-")[2])
+    end_date_month = int(end_date.split("-")[1])
+    end_date_day = int(end_date.split("-")[0])
+
+    sdate = date(start_date_year,start_date_month,start_date_day)   # start date
+    edate = date(end_date_year,end_date_month,end_date_day)   # end date
+
+    def dates_bwn_twodates(start_date, end_date):
+        for n in range(int ((end_date - start_date).days)):
+            yield start_date + timedelta(n)
+    #print(dates_bwn_twodates(sdate,edate))
+    #print([str(d.strftime("%d-%m-%Y")) for d in dates_bwn_twodates(sdate,edate)])
+    result_list = []
+    date_list = [str(d.strftime("%d-%m-%Y")) for d in dates_bwn_twodates(sdate,edate)]
+    for date_str in date_list:
+        obj_list = [p for p in data if p['publication_date'] == date_str]
+        #print(obj_list)
+        if len(obj_list) == 0:
+            temp_obj = {}
+            temp_obj['publication_date'] = date_str
+            for event_type in event_types:
+                temp_obj[event_type] = 0
+            result_list.append(temp_obj)
+        else:
+            result_list.append(obj_list[0])
+    return JSONResponse({"success":"true","data":result_list})
 
 query_template = Template(
     """
@@ -681,6 +742,6 @@ middleware = [
     Middleware(CORSMiddleware, allow_origins=["*"])
     ]
 app = Starlette(routes=routes, middleware=middleware, on_startup=[on_startup])
-
+#
 # if __name__ == "__main__":
 #     uvicorn.run(app, host='localhost', port=8000)

@@ -5,13 +5,13 @@ ALTER DATABASE secdev_data SET search_path to secdev, public;
 CREATE ROLE admin SUPERUSER;
 CREATE ROLE readwrite;
 CREATE ROLE read;
- 
+
 CREATE USER secdevadmin WITH ENCRYPTED PASSWORD 'changeMe';
 CREATE USER secdevread WITH ENCRYPTED PASSWORD 'changeMe';
 CREATE USER secdevreadwrite WITH ENCRYPTED PASSWORD 'changeMe';
 
 ALTER USER postgres WITH ENCRYPTED PASSWORD 'changeMe';
- 
+
 GRANT admin TO secdevadmin;
 GRANT readwrite TO secdevreadwrite;
 GRANT read TO secdevread;
@@ -167,3 +167,30 @@ ALTER TABLE secdev.event_info ADD CONSTRAINT fk_event_id FOREIGN KEY (event_id) 
 ALTER TABLE secdev.sub_commune ADD CONSTRAINT fk_sub_to_commune_id FOREIGN KEY ("commune_id") REFERENCES secdev.commune ("commune_id");
 
 ALTER TABLE secdev.group_records ADD CONSTRAINT fk_group_id FOREIGN KEY ("group_id") REFERENCES secdev.groups ("group_id");
+
+
+
+ALTER  TABLE secdev.event_info alter column event_id set not null ;
+ALTER  TABLE secdev.event_info alter column tone set not null ;
+ALTER  TABLE secdev.event_info alter column source set not null ;
+ALTER  TABLE secdev.event_info alter column language set not null ;
+ALTER  TABLE secdev.event_info alter column pub_date set not null ;
+ALTER  TABLE secdev.event_info alter column title set not null ;
+ALTER  TABLE secdev.event_info alter column url set not null ;
+ALTER  TABLE secdev.event_info alter column summary set not null ;
+ALTER  TABLE secdev.event_info alter column compound set not null ;
+ALTER  TABLE secdev.event_info alter column commune_id set not null ;
+ALTER  TABLE secdev.event_info alter column category set not null ;
+
+
+
+
+ALTER  TABLE secdev.group_records alter column month_number set not null ;
+ALTER  TABLE secdev.group_records alter column year set not null ;
+ALTER  TABLE secdev.group_records alter column sub_commune_influence set not null ;
+ALTER  TABLE secdev.group_records alter column name set not null ;
+ALTER  TABLE secdev.group_records alter column type set not null ;
+ALTER  TABLE secdev.group_records alter column leader_name set not null ;
+ALTER  TABLE secdev.group_records alter column key_activities set not null ;
+ALTER  TABLE secdev.group_records alter column group_size set not null ;
+ALTER  TABLE secdev.group_records alter column affiliation set not null ;
