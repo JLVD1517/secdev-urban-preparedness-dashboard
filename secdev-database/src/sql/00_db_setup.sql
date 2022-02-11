@@ -141,7 +141,7 @@ CREATE TABLE secdev.event_info (
   "summary" text,
   "tone" int,
   "url" text,
-  "compound" int,
+  "compound" numeric,
   "language" secdev.LANGUAGE,
   "commune_id" int
 );
