@@ -21,12 +21,6 @@ init_dir = os.path.dirname(os.path.realpath(__file__))
 # get full filepath
 filepath = os.path.join(init_dir, datafile)
 
-sub_commune_col_map = {
-    'admin3_clean': 'name',
-    'admin3Pcode': 'adm3_pcode',
-    'commune_id': 'commune_id'
-}
-
 config = configparser.ConfigParser(interpolation=None)
 configpath = os.path.join(init_dir, 'config.ini')
 config.read(configpath)

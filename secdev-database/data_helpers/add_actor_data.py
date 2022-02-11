@@ -78,7 +78,6 @@ while i < max:
     i = end_i
 
 actor_df = pd.DataFrame(actor_list)
-print(actor_df.head())
 
 # clean column names
 for col in actor_df.columns:
