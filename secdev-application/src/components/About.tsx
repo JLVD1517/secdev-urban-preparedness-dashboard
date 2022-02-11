@@ -42,18 +42,20 @@ export const About: React.FC = () => {
       <Container>
         <Grid container spacing={1} className={classes.AboutContainer}>
           <Grid item xs={12} md={6}>
-            <h1 className={classes.SectionHeader}>Los Angeles</h1>
+            <h1 className={classes.SectionHeader}>Port Au Prince</h1>
             <h2 className={classes.IntroHeader}>
             Community violence reduction monitor
             </h2>
             <Typography variant="body1" gutterBottom>
             The community violence reduction monitor is an interactive dashboard designed 
-            to improve situational awareness in Port-au-Prince, Haiti. 
-            The platform has two basic functions: 
-            (1) visualizing patterns of crime and victimization from English and French media sources and 
-            (2) mapping the influence of armed groups across the metropolitan area. 
-            
-            Users can interact with the map and filters to track the scope, scale and dynamics of community violence over time.{' '}
+            to improve situational awareness in Port-au-Prince, Haiti. <br/>
+            The platform has two basic functions: <br/>
+            <ul>
+            <li>visualizing patterns of crime and victimization from English and French media sources and</li>
+            <li>mapping the influence of armed groups across the metropolitan area. </li>  
+            </ul>
+            Users can interact with the map and filters to track the scope, scale and 
+            dynamics of community violence over time.{' '}
             </Typography>
             <Button
               variant="outlined"
@@ -76,8 +78,10 @@ export const About: React.FC = () => {
               </Link>{' '} 
             in partnership with the UN Population Fund (UNFPA). 
             The interactive platform benefits from the support of MapBox and shapefiles are retrieved from OCHA. 
-            All data is drawn from public open sources and the dashboard is intended to help the United Nations (UN), 
-            Haitian authorities and civil society groups improve data-driven and evidence-based community violence reduction strategies. 
+            Events data is drawn from public open sources and group data is derived from local analyst input. 
+            The dashboard is intended to help the United Nations (UN), 
+            Haitian authorities and civil society groups improve data-driven and 
+            evidence-based community violence reduction strategies. 
             </Typography>
             <Partners />
           </Grid>
