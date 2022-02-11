@@ -67,7 +67,7 @@ const Groups: React.FC = () => {
           />
           <Sidebar mapGradient={currentMapGradient} />
           <LayerMenu />
-          <Footerbar mapGradient={currentMapGradient} elementData={'Number Of Gangs'} event={false}/>
+          <Footerbar mapGradient={currentMapGradient} elementData={'Number Of Groups'} event={false}/>
           <MapAttribution />
         </div>
       ) : (
