@@ -2,4 +2,7 @@
 
 A series of helper files in Python to add the initial data to the database. Example datafiles are included in the datafiles directory.
 
-TODO: set up to run on container build
+When the database container is built, enter it using `docker exec -it database bash`
+
+Then `su - postgres` and run `./usr/local/bin/helpers/run_helpers.sh`. 
+This will add existing location, actor, and event data to the database.
