@@ -59,6 +59,8 @@ COPY ./docker/pgscripts/     /usr/local/bin/
 COPY ./docker/dbscripts/     /usr/local/bin/
 COPY ./data_helpers/		/usr/local/bin/helpers/
 
+RUN chown -R postgres /usr/local/bin/helpers
+
 # Copy csv tables from python to postgres container
 COPY --from=csvkit /usr/local/data/csv/done/*.sql /usr/local/data/dbschema/
 
@@ -76,6 +78,6 @@ RUN chmod +x /usr/local/bin/version.sh
 # install Python 3, pip3
 RUN apt-get update && apt-get install -y python3 python3-pip
 
-# Make helper script executable and run it
+# Make helper script executable
 RUN chmod u+x /usr/local/bin/helpers/run_helpers.sh
-# RUN ./usr/local/bin/helpers/run_helpers.sh
+#RUN /usr/local/bin/helpers/run_helpers.sh
