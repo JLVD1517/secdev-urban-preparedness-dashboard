@@ -83,6 +83,14 @@ def add_events(config, data):
         for key, val in each.items():
             if "'" in str(val):
                 each[key] = val.replace("'", "")
+            if key == 'pubdate':
+                # make date fit format DD-MM-YYYY
+                # TODO change this when app format requirements are updated
+                if str(val):  # if a date is available
+                    val_list = str(val).split('-')
+                    new_val =  '-'.join(val_list[::-1])
+                    logger.debug(f'DD-MM-YYYY date: {new_val}')
+                    each[key] = new_val
 
         # get the commune_ids
         try:
