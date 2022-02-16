@@ -1,12 +1,10 @@
 '''
 takes event data from the events database and puts it into the front end database
-
-TODO command line args to request only data from after x date 
-(so daily runs can just go back two days and so we can bulk add some backlog)
-
 '''
+import argparse
 import configparser
 import os
+import datetime
 
 import psycopg2
 import psycopg2.extras
@@ -180,8 +178,22 @@ if __name__ == '__main__':
     configpath = os.path.join(init_dir, 'config.ini')
     config.read(configpath)
 
+    date_format = '%Y-%m-%d'
+    default_time = datetime.date.today() - datetime.timedelta(days=2)
+    default_time_str = default_time.strftime(date_format)
+
+    parser = argparse.ArgumentParser(description='Take data from the events database and add it to the front end')
+    parser.add_argument('--date', '-d', default=default_time_str,
+                    help='Collect events after this date (not inclusive)')
+    args = parser.parse_args()
+
+    try:
+        datetime.datetime.strptime(args.date, date_format)
+    except ValueError:
+        print('Incorrect date format, must be YYYY-MM-DD')
+
     logger.info('Selecting events from event database')
-    events = get_events(config, '2020-12-31')
+    events = get_events(config, args.date)
     logger.info('Adding events to frontend database')
     add_events(config, events)
     logger.info('Add_event_data complete')
