@@ -85,7 +85,7 @@ export const About: React.FC = () => {
                 variant="outlined"
                 className={classes.Button}
                 component={RouterLink}
-                to="/event"
+                to="/events"
                 aria-label="go to event"
               >
                 Go To Events
