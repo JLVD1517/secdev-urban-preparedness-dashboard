@@ -724,6 +724,25 @@ async def tile(request):
     z = request.path_params["z"]
     return await get_tile(table, x, y, z, fields)
 
+
+async def year_month_list(request):
+    year_month_query = 'select distinct(pub_date) from {EVENT_INFO} '.format(**TABLES)
+    async with pool.acquire() as conn:
+        year_month_query_res = await conn.fetch(year_month_query)
+        list_num = dict()
+        for date in iter(year_month_query_res):
+            month = date['pub_date'].split("-")[1]
+            year = date['pub_date'].split("-")[2]
+            if year in list_num.keys():
+                temp_arr_num = list_num[year]
+                if temp_arr_num.count(month) == 0:
+                    temp_arr_num.append(month)
+                    list_num[year] = temp_arr_num
+            else :
+                temp_arr_num = [month]
+                list_num[year] = temp_arr_num
+    return JSONResponse({"success":"true","data":list_num})
+
 routes = [
     Route("/", index),
     Route("/assets/{table:str}/{z:int}/{x:int}/{y:int}", tile),
@@ -735,7 +754,8 @@ routes = [
     Route("/data/avg-tone/{start_date:str}/{end_date:str}/{language:str}",avg_tone),
     Route("/data/articles-per-commune/{start_date:str}/{end_date:str}/{language:str}",articles_per_commune),
     Route("/events",get_event_type),
-    Route("/groups",get_groups)
+    Route("/groups",get_groups),
+    Route("/year-month-list",year_month_list)
 ]
 
 middleware = [
