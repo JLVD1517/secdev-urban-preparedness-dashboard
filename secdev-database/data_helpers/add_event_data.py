@@ -94,7 +94,7 @@ def add_events(config, data):
 
         # get the commune_ids
         try:
-            each['commune_id'] = commune_ids[each['place']]
+            each['commune_id'] = commune_ids[each['place'].lower()]
         except KeyError:
             logger.error(f'Could not find a commune_id for {each["place"]}')
             logger.warning(f'This means the event with url {each["url"]} will not be added to the front end')
@@ -161,7 +161,7 @@ def get_commune_ids(config):
     db_username = db_conf['db_username']
     db_password = db_conf['db_password']
 
-    sql = ''' SELECT name, commune_id FROM commune '''
+    sql = ''' SELECT LOWER(name), commune_id FROM commune '''
     
     # initialize database connection and query for data
     try:
