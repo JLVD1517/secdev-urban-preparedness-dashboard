@@ -535,7 +535,7 @@ async def articles_per_commune(request):
 
 articles_query = Template (
     """
-    select * from ${EVENT_INFO} ei inner join ${EVENTS} e on ei.event_id = e.event_id  where ${cond_str} and TO_DATE(ei.pub_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.pub_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and ei.language = '${language}' order by ei.pub_date desc
+    select * from ${EVENT_INFO} ei inner join ${EVENTS} e on ei.event_id = e.event_id  where ${cond_str} and TO_DATE(ei.pub_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.pub_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and ei.language = '${language}' order by TO_DATE(ei.pub_date,'dd-mm-yyyy') desc
     """
 )
 
