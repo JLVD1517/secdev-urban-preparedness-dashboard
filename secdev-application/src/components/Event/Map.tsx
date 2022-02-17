@@ -94,7 +94,6 @@ const useStyles = makeStyles((theme) => ({
   },
   container2: {
     height: "calc(100vh - 493px)",
-    overflow: "auto",
     backgroundColor: theme.palette.background.default,
     border: "3px solid rgba(255, 255, 255, 0.12)",
   },

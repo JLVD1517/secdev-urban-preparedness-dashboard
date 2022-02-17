@@ -21,7 +21,6 @@ import {
   CalendarToday,
   SignalCellularAlt,
 } from '@material-ui/icons';
-import CensusInfo from './CensusInfo/CensusInfo';
 import FilterSlider from './Sliders/FilterSlider';
 import DateSlider from './Sliders/DateSlider';
 import { AppState, MapGradientType, SelectedItemType } from '../../types';
@@ -39,6 +38,7 @@ import { formatDisplayNumber } from '../../services/sharedFunctions';
 import { componentSizing } from '../../services/component-sizing';
 import GangInfo from './GangInfo/GangInfo';
 import SelectGroup from '../SelectBox/SelectGroup';
+import SelectMonth from '../SelectBox/SelectMonth';
 
 interface SidebarProps {
   mapGradient: MapGradientType;
@@ -202,7 +202,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
               </FormControl>
             </Box>
             <SelectGroup/>      
-            <DateSlider />
+            <SelectMonth />
             <FilterSlider mapGradient={mapGradient} />
             <p>{sidebarText}</p>
             {selectedItem && <h2 className="main-header">Groups Details</h2>}
