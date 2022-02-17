@@ -431,7 +431,7 @@ async def articles_per_event(request):
 
 query_template5 = Template(
     """
-    select ei.pub_date , count(ei.event_info_id) as no_of_articles, avg(ei.tone) as avg_tone from ${EVENT_INFO} ei left join ${EVENTS} e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.pub_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.pub_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by ei.pub_date ;
+    select ei.pub_date , count(ei.event_info_id) as no_of_articles, ROUND(avg(ei.tone)::numeric,2) as avg_tone from ${EVENT_INFO} ei left join ${EVENTS} e on e.event_id = ei.event_id  where ${cond_str} and TO_DATE(ei.pub_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.pub_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and  ei.language = '${language}'  group by ei.pub_date ;
     """
 )
 
@@ -535,7 +535,7 @@ async def articles_per_commune(request):
 
 articles_query = Template (
     """
-    select * from ${EVENT_INFO} ei inner join ${EVENTS} e on ei.event_id = e.event_id  where ${cond_str} and TO_DATE(ei.pub_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.pub_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and ei.language = '${language}'
+    select * from ${EVENT_INFO} ei inner join ${EVENTS} e on ei.event_id = e.event_id  where ${cond_str} and TO_DATE(ei.pub_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.pub_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and ei.language = '${language}' order by ei.pub_date desc
     """
 )
 
