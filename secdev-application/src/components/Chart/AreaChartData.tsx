@@ -82,7 +82,7 @@ const AreaChartData: React.FC<AreaChartProps> = ({
       </XAxis>
       <YAxis
         label={{
-          value: "Number of Articles",
+          value: "Avg Tone of Events",
           stroke: darkTheme ? "#fff" : "#000",
           angle: -90,
           position: "center",
