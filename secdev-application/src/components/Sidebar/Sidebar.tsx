@@ -202,7 +202,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
               </FormControl>
             </Box>
             <SelectGroup/>      
-            <DateSlider />
+            <DateSlider mapGradient={mapGradient}/>
             <FilterSlider mapGradient={mapGradient} />
             <p>{sidebarText}</p>
             {selectedItem && <h2 className="main-header">Groups Details</h2>}
