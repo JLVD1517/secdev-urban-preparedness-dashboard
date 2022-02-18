@@ -186,7 +186,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
                 </InputLabel>
                 <Select
                   id="IndexSelect"
-                  label="Urban Resiliency Index"
+                  label="Select Year"
                   native
                   value={selectedYear}
                   onChange={handleYearSelection}
@@ -205,7 +205,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
             <DateSlider />
             <FilterSlider mapGradient={mapGradient} />
             <p>{sidebarText}</p>
-            {selectedItem && <h2 className="main-header">Groups Details</h2>}
+            {selectedItem && <h2 className="main-header">Group Details</h2>}
             <GangInfo/>
           </div>
         ) : (
