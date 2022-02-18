@@ -75,7 +75,7 @@ async def db_connection_pool():
         user=os.getenv("DB_USER", "postgres"),
         password=os.getenv("DB_PASSWORD", "changeMe"),
         database=os.getenv("DATABASE", "secdev_data"),
-        host= os.getenv("DB_HOST", "localhost"),
+        host=os.getenv("DB_HOST", "localhost"),
         port=5432,
     )
 
@@ -535,7 +535,7 @@ async def articles_per_commune(request):
 
 articles_query = Template (
     """
-    select * from ${EVENT_INFO} ei inner join ${EVENTS} e on ei.event_id = e.event_id  where ${cond_str} and TO_DATE(ei.pub_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.pub_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and ei.language = '${language}' order by ei.pub_date desc
+    select * from ${EVENT_INFO} ei inner join ${EVENTS} e on ei.event_id = e.event_id  where ${cond_str} and TO_DATE(ei.pub_date,'dd-mm-yyyy') >= TO_DATE('${start_date}','dd-mm-yyyy') and TO_DATE(ei.pub_date,'dd-mm-yyyy') <= TO_DATE('${end_date}','dd-mm-yyyy') and ei.language = '${language}' order by TO_DATE(ei.pub_date,'dd-mm-yyyy') desc
     """
 )
 
@@ -628,7 +628,7 @@ async def articles_per_event_per_month(request):
         cond_str=cond_str,
         **TABLES
     )
-    event_type_query = 'select array_agg(type) as event_types from {EVENTS} '.format(**TABLES)
+    event_type_query = 'select array_agg(distinct(type)) as event_types from {EVENTS} '.format(**TABLES)
     async with pool.acquire() as conn:
         event_arr_res = await conn.fetch(event_type_query)
         event_types = event_arr_res[0]['event_types']
