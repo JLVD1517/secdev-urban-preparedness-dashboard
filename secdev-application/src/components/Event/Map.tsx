@@ -250,8 +250,8 @@ const Map: React.FC<MapProps> = ({
       "fill-opacity": [
         "case",
         ["boolean", ["feature-state", "click"], false],
-        0.85,
-        0.4,
+        0.9,
+        0.7,
       ],
     },
   };
@@ -482,7 +482,7 @@ const Map: React.FC<MapProps> = ({
             <div className="mapEventContainer" id="map" ref={mapRef} />
             <Footerbar
               mapGradient={mapGradient}
-              elementData={"Number Of Events"}
+              elementData={"Number Of Articles"}
               event={true}
             />
           </div>
@@ -492,7 +492,7 @@ const Map: React.FC<MapProps> = ({
           <div style={{ paddingTop: "4rem" }}>
             <div className="row">
               <h1 className={classes.mainHeader}>
-                UN Haiti Port Au Prince Event Monitor
+                Violence in Port-au-Prince in the Media
               </h1>
             </div>
           </div>
@@ -504,7 +504,7 @@ const Map: React.FC<MapProps> = ({
                   <CustomSwitch
                     checked={language === LANGUAGE.ENGLISH}
                     onChange={toggleLanguage}
-                    name="toggle theme"
+                    name="toggle language"
                   />
                 }
               />
@@ -518,7 +518,7 @@ const Map: React.FC<MapProps> = ({
           </div>
           <Grid container style={{ paddingBottom: "15px" }}>
             <Grid item md={6} className="containerBox">
-              <h3 style={{textAlign:'center', marginBottom:'-4px'}}>No Of Events By Event Type Over Time</h3>
+              <h3 style={{textAlign:'center', marginBottom:'-4px'}}>Articles By Event Type Over Time</h3>
               <MultiLineChartData
                 darkTheme={darkTheme}
                 data={noOfArticlesByEventTypePlotData}
@@ -526,7 +526,7 @@ const Map: React.FC<MapProps> = ({
               />
             </Grid>
             <Grid item md={6} className="containerBox">
-              <h3 style={{textAlign:'center', marginBottom:'-4px'}}>Avg Tone Of Events Over Time</h3>
+              <h3 style={{textAlign:'center', marginBottom:'-4px'}}>Average Tone of Articles Over Time</h3>
               <AreaChartData
                 darkTheme={darkTheme}
                 mapGradient={mapGradient}
@@ -540,10 +540,10 @@ const Map: React.FC<MapProps> = ({
           <ThemeProvider theme={tableTheme}>
             <Paper
               className={classes.summarySection}
-              elevation={5}
+              elevation={1}
             >
               <Grid container className={classes.headlinesSummary}>
-                  {`Summary of Filters Selected - Articles from ${moment(startDate, 'DD-MM-YYYY').format('DD MMM YYYY')} to ${moment(endDate, 'DD-MM-YYYY').format('DD MMM YYYY')} ${selectedEvent.event_id> 0 ? `for ${selectedEvent.name} events`: '' } in ${language.toUpperCase()}`}
+                  {`Articles from ${moment(startDate, 'DD-MM-YYYY').format('DD MMM YYYY')} to ${moment(endDate, 'DD-MM-YYYY').format('DD MMM YYYY')} ${selectedEvent.event_id> 0 ? `for ${selectedEvent.name} events`: '' } in ${language.toUpperCase()}`}
               </Grid> 
             </Paper>
             <Box className={classes.root}>
@@ -551,7 +551,7 @@ const Map: React.FC<MapProps> = ({
                 (articlesData as any[]).map((article: ArticleData) => (
                   <Paper
                     className={classes.listSection}
-                    elevation={5}
+                    elevation={1}
                   >
                     <div>
                     <a href={article.url} target="_blank" className={classes.headlines} rel="noreferrer"><span>{article.title}</span></a>
