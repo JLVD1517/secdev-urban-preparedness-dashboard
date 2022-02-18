@@ -1,40 +1,45 @@
-import React from 'react';
-import { Container, Grid, Theme, Typography, Button } from '@material-ui/core';
-import Link from '@material-ui/core/Link';
-import { Link as RouterLink } from 'react-router-dom';
-import { createStyles, makeStyles } from '@material-ui/styles';
-import { useSelector } from 'react-redux';
-import { AboutBackgroundImage } from '../configuration/img-config';
-import { componentSizing } from '../services/component-sizing';
-import InfoPageContainer from './BaseUIComponents/InfoPageContainer';
-import { AppState } from '../types';
-import Partners from './Partners';
+import React from "react";
+import { Container, Grid, Theme, Typography, Button } from "@material-ui/core";
+import Link from "@material-ui/core/Link";
+import { Link as RouterLink } from "react-router-dom";
+import { createStyles, makeStyles } from "@material-ui/styles";
+import { useSelector } from "react-redux";
+import { AboutBackgroundImage } from "../configuration/img-config";
+import { componentSizing } from "../services/component-sizing";
+import InfoPageContainer from "./BaseUIComponents/InfoPageContainer";
+import { AppState } from "../types";
+import Partners from "./Partners";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     AboutContainer: {
       minHeight: `calc(100vh - ${componentSizing.appBarHeight})`,
-      padding: '5rem 0',
+      padding: "5rem 0",
     },
     SectionHeader: {
-      marginTop: '1rem',
+      marginTop: "1rem",
     },
     IntroHeader: {
-      marginTop: '0.5rem',
+      marginTop: "0.5rem",
     },
     Button: {
-      marginTop: '1rem',
-      marginBottom: '1rem',
-      fontSize: '20px',
+      marginTop: "1rem",
+      marginBottom: "1rem",
+      fontSize: "20px",
+      width: "40%",
     },
-  }),
+    btnStyle: {
+      display: "flex",
+      justifyContent: "space-around",
+    },
+  })
 );
 
 export const About: React.FC = () => {
   const classes = useStyles();
 
   const darkTheme: boolean = useSelector(
-    (state: AppState) => state.AppControl.darkTheme,
+    (state: AppState) => state.AppControl.darkTheme
   );
 
   return (
@@ -52,47 +57,57 @@ export const About: React.FC = () => {
               By mapping out health risks, social and economic vulnerabilities
               and digital preparedness, it can help city executives, planners
               and operational teams with accurate information on at-risk
-              population groups.{' '}
+              population groups.{" "}
             </Typography>
             <Typography variant="body1" gutterBottom>
-              This demo uses open source data from Los Angeles, California.{' '}
+              This demo uses open source data from Los Angeles, California.{" "}
               <br />
-              To find out how to deploy your own UPPD, reach out to{' '}
+              To find out how to deploy your own UPPD, reach out to{" "}
               <Link
                 href="https://www.secdev.com/"
                 aria-label="the SecDev Group homepage"
               >
                 the SecDev Group
-              </Link>{' '}
+              </Link>{" "}
               for more details.
             </Typography>
-            <Button
-              variant="outlined"
-              className={classes.Button}
-              component={RouterLink}
-              fullWidth
-              to="/groups"
-              aria-label="go to group"
-            >
-              Go To Groups
-            </Button>
+            <div className={classes.btnStyle}>
+              <Button
+                variant="outlined"
+                className={classes.Button}
+                component={RouterLink}
+                to="/groups"
+                aria-label="go to group"
+              >
+                Go To Groups
+              </Button>
+              <Button
+                variant="outlined"
+                className={classes.Button}
+                component={RouterLink}
+                to="/events"
+                aria-label="go to event"
+              >
+                Go To Events
+              </Button>
+            </div>
             <h2 className={classes.SectionHeader}>About</h2>
             <Typography variant="body1" gutterBottom>
-              The platform was designed by{' '}
+              The platform was designed by{" "}
               <Link
                 href="https://www.secdev.com/"
                 aria-label="Link to the SecDev Group homepage"
               >
                 the SecDev Group
-              </Link>{' '}
-              with support from{' '}
+              </Link>{" "}
+              with support from{" "}
               <Link
                 href="https://www.rs21.io/#!/"
                 aria-label="Link to the RS21 homepage"
               >
                 RS21
               </Link>
-              ,{' '}
+              ,{" "}
               <Link
                 href="https://mapbox.com/community/"
                 aria-label="Link to the Mapbox Community page"
