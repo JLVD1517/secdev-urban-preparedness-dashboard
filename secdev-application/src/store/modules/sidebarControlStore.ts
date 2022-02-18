@@ -5,13 +5,13 @@ import {
   mapLayers,
   currentYear,
   currentMonth,
-  PointsOfInterest
+  PointsOfInterest,
 } from '../../configuration/app-config';
 import { groupPOI } from '../../services/sharedFunctions';
 
 const sidebarControlInitialState: InitialSidebarState = {
   selectedYear: currentYear,
-  selectedMonth: currentMonth, 
+  selectedMonth: currentMonth,
   selectedItem: null,
   selectedLayerId: mapLayers[0].colName,
   filterSlider: [filterScale.lowBound, filterScale.highBound],
@@ -59,9 +59,8 @@ const sidebarSlice = createSlice({
       state.desktopCollapse = payload;
     },
     setPoiState: (state, { payload }: PayloadAction<string>): void => {
-      state.pointsOfInterest[payload].selected = !state.pointsOfInterest[
-        payload
-      ].selected;
+      state.pointsOfInterest[payload].selected =
+        !state.pointsOfInterest[payload].selected;
     },
   },
 });

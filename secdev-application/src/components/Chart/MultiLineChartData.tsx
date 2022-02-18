@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   XAxis,
   YAxis,
@@ -7,12 +7,12 @@ import {
   LineChart,
   Line,
   Legend,
-} from "recharts";
-import { useTheme, Theme } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
-import { MapGradientType, PlotData } from "../../types";
-import { EventypePlotdata } from "../../types/modules/eventsPlots.type";
-import "./tooltip.scss";
+} from 'recharts';
+import { useTheme, Theme } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
+import { MapGradientType, PlotData } from '../../types';
+import { EventypePlotdata } from '../../types/modules/eventsPlots.type';
+import './tooltip.scss';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -20,21 +20,24 @@ const CustomTooltip = ({ active, payload, label }: any) => {
       <ul className="custom-tooltip custom-tooltip-list">
         <p className="intro">{label}</p>
         {payload.map(({ value, name, color }: any) => {
-            return (
-              <li className={"custom-tooltip-item"}>
-                <h5 className={"custom-tooltip-item-title"}>
-                  <span
-                    className={"custom-tooltip-item-icon"}
-                    style={{ backgroundColor: color }}
-                  />
-                  <span className={"custom-tooltip-item-text"}>{name}: </span> 
-                  <span className={"custom-tooltip-item-text"}> {typeof value === "number"
+          return (
+            <li className={'custom-tooltip-item'}>
+              <h5 className={'custom-tooltip-item-title'}>
+                <span
+                  className={'custom-tooltip-item-icon'}
+                  style={{ backgroundColor: color }}
+                />
+                <span className={'custom-tooltip-item-text'}>{name}: </span>
+                <span className={'custom-tooltip-item-text'}>
+                  {' '}
+                  {typeof value === 'number'
                     ? value.toFixed(1)
-                    : (0).toFixed(1)} </span>
-                </h5>
-              </li>
-            );
-          })}
+                    : (0).toFixed(1)}{' '}
+                </span>
+              </h5>
+            </li>
+          );
+        })}
       </ul>
     );
   }
@@ -49,30 +52,30 @@ interface AreaChartProps {
 }
 
 const colours = [
-  "#008000	",
-  "#FF00FF",
-  "#800080",
-  "#800000",
-  "#8884d8",
-  "#82ca9d",
-  "#d2691e",
-  "#8b008b",
-  "#483d8b",
-  "#2f4f4f",
-  "#ffa07a",
-  "#ba55d3",
-  "#6a5acd",
-  "#4682b4",
-  "#40e0d0",
-  "#ee82ee",
-  "#000080",
-  "#FFFF00",
-  "#008000	",
-  "#FF00FF",
-  "#800080",
-  "#800000",
-  "#8884d8",
-  "#000080",
+  '#008000	',
+  '#FF00FF',
+  '#800080',
+  '#800000',
+  '#8884d8',
+  '#82ca9d',
+  '#d2691e',
+  '#8b008b',
+  '#483d8b',
+  '#2f4f4f',
+  '#ffa07a',
+  '#ba55d3',
+  '#6a5acd',
+  '#4682b4',
+  '#40e0d0',
+  '#ee82ee',
+  '#000080',
+  '#FFFF00',
+  '#008000	',
+  '#FF00FF',
+  '#800080',
+  '#800000',
+  '#8884d8',
+  '#000080',
 ];
 
 const MultiLineChartData: React.FC<AreaChartProps> = ({
@@ -83,7 +86,7 @@ const MultiLineChartData: React.FC<AreaChartProps> = ({
   const theme = useTheme();
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
-      position: "relative",
+      position: 'relative',
     },
   }));
 
@@ -102,24 +105,24 @@ const MultiLineChartData: React.FC<AreaChartProps> = ({
       data={data}
       margin={{ top: 20, right: 30, left: 30, bottom: 30 }}
     >
-      <XAxis dataKey="date" stroke={darkTheme ? "#fff" : "#000"} fontSize={10}>
+      <XAxis dataKey="date" stroke={darkTheme ? '#fff' : '#000'} fontSize={10}>
         {/* <Label value="Pages of my website" stroke={darkTheme ? "#fff" : "#000"} offset={-12} position="insideBottom" /> */}
       </XAxis>
       <YAxis
         label={{
-          value: "Number of Articles",
-          stroke: darkTheme ? "#fff" : "#000",
+          value: 'Number of Articles',
+          stroke: darkTheme ? '#fff' : '#000',
           angle: -90,
-          position: "center",
+          position: 'center',
           dx: -25,
         }}
-        stroke={darkTheme ? "#fff" : "#000"}
+        stroke={darkTheme ? '#fff' : '#000'}
         fontSize={10}
       />
       <Tooltip
         filterNull={true}
-        contentStyle={{ color: "#000" }}
-        cursor={{ stroke: "rgba(230, 234, 238, 0.6)", strokeWidth: 3 }}
+        contentStyle={{ color: '#000' }}
+        cursor={{ stroke: 'rgba(230, 234, 238, 0.6)', strokeWidth: 3 }}
         isAnimationActive={false}
         offset={40}
         content={<CustomTooltip />}

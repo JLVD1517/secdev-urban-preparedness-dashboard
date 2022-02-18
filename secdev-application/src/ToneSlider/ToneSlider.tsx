@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Box, Slider } from "@material-ui/core";
-import { createTheme, ThemeProvider, useTheme } from "@material-ui/core/styles";
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Box, Slider } from '@material-ui/core';
+import { createTheme, ThemeProvider, useTheme } from '@material-ui/core/styles';
 
 interface MarksType {
   value: number;
@@ -27,14 +27,14 @@ const ToneSlider: React.FC = () => {
 
   const handleChange = (
     event: React.ChangeEvent<{}>,
-    newValue: number | number[]
+    newValue: number | number[],
   ) => {
     setValue(newValue);
   };
 
   const commitChange = (
     event: React.ChangeEvent<{}>,
-    newValue: number | number[]
+    newValue: number | number[],
   ) => {
     //call apis
   };
@@ -48,7 +48,7 @@ const ToneSlider: React.FC = () => {
     overrides: {
       MuiSlider: {
         mark: {
-          display: "none",
+          display: 'none',
         },
         track: {
           color: theme.palette.primary.main,
@@ -61,7 +61,7 @@ const ToneSlider: React.FC = () => {
         },
         markLabel: {
           color: theme.palette.text.secondary,
-          marginTop: "-40px",
+          marginTop: '-40px',
         },
         markLabelActive: {
           color: theme.palette.text.primary,
@@ -71,11 +71,11 @@ const ToneSlider: React.FC = () => {
   });
 
   return (
-    <div style={{width:'18vw'}}> 
+    <div style={{ width: '18vw' }}>
       <Box>
         <ThemeProvider theme={muiTheme}>
           <Slider
-            style={{marginBottom:'-32px'}}
+            style={{ marginBottom: '-32px' }}
             id="DateSlider"
             value={value}
             track={false}

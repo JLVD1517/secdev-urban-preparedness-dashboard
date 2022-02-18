@@ -1,4 +1,8 @@
-import { ArticlesInitialState, AvgTonePlotInitialState, NoOfArticlesPlotInitialState } from '..';
+import {
+  ArticlesInitialState,
+  AvgTonePlotInitialState,
+  NoOfArticlesPlotInitialState,
+} from '..';
 import { Event, EventsInitialState } from './eventsFilters.type';
 import { NoOfArticlesByEventTypePlotInitialState } from './eventsPlots.type';
 import { Group, GroupsInitialState } from './groups.type';
@@ -20,7 +24,6 @@ export interface InitialAvailableYearsState {
   error: boolean;
   loaded: boolean;
 }
-
 
 export interface InitialSidebarState {
   selectedYear: number | number[];
@@ -44,11 +47,11 @@ export interface InitialEventsComponentState {
   endDate: string;
   language: string;
   selectedCommuneId: number;
-  selectedEvent: Event
+  selectedEvent: Event;
 }
 
 export interface InitialGroupsComponentState {
-  selectedGroup: Group
+  selectedGroup: Group;
 }
 
 export interface AppState {

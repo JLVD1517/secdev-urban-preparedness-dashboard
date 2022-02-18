@@ -88,7 +88,9 @@ const PopupContent: React.FC<PopupContentProps> = ({
         gutterBottom
         className={classes.bigText}
       >
-        {clickedItem[primaryScore] as any as number > 0 ? clickedItem[primaryScore] : '-'}
+        {(clickedItem[primaryScore] as any as number) > 0
+          ? clickedItem[primaryScore]
+          : '-'}
       </Typography>
     </Card>
   );

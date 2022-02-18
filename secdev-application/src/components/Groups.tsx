@@ -62,12 +62,16 @@ const Groups: React.FC = () => {
           <Map
             darkTheme={darkTheme}
             selectedYear={selectedYear}
-            selectedMonth = {selectedMonth}
+            selectedMonth={selectedMonth}
             mapGradient={currentMapGradient}
           />
           <Sidebar mapGradient={currentMapGradient} />
           <LayerMenu />
-          <Footerbar mapGradient={currentMapGradient} elementData={'Number Of Groups'} event={false}/>
+          <Footerbar
+            mapGradient={currentMapGradient}
+            elementData={'Number Of Groups'}
+            event={false}
+          />
           <MapAttribution />
         </div>
       ) : (

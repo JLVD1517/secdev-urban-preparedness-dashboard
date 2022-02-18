@@ -6,17 +6,14 @@ const eventsInitialState: EventsInitialState = {
   status: 'idle',
   error: false,
   loaded: false,
-  events: []
-}
+  events: [],
+};
 
-export const fetchEvents = createAsyncThunk(
-  'fetch-events',
-  async () => {
-    const apiUrl = `${process.env.REACT_APP_ENDPOINT_URL}events`
-    const response = await axios.get(apiUrl);    
-    return response.data
-  },
-);
+export const fetchEvents = createAsyncThunk('fetch-events', async () => {
+  const apiUrl = `${process.env.REACT_APP_ENDPOINT_URL}events`;
+  const response = await axios.get(apiUrl);
+  return response.data;
+});
 
 const eventsListSlice = createSlice({
   name: 'events-list',

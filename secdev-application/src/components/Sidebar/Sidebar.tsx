@@ -181,9 +181,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
               justifyContent="center"
             >
               <FormControl className={classes.formControl} variant="outlined">
-                <InputLabel htmlFor="IndexSelect">
-                  Select year
-                </InputLabel>
+                <InputLabel htmlFor="IndexSelect">Select year</InputLabel>
                 <Select
                   id="IndexSelect"
                   label="Select Year"
@@ -200,13 +198,13 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
                   })}
                 </Select>
               </FormControl>
-            </Box>  
+            </Box>
             <DateSlider />
-            <SelectGroup/>    
+            <SelectGroup />
             <FilterSlider mapGradient={mapGradient} />
             <p>{sidebarText}</p>
             {selectedItem && <h2 className="main-header">Group Details</h2>}
-            <GangInfo/>
+            <GangInfo />
           </div>
         ) : (
           <Grid

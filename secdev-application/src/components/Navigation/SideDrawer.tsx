@@ -184,7 +184,10 @@ const SideDrawer: React.FC = () => {
             >
               {' '}
               <ListItemIcon>
-                <item.icon className={classes.icon} aria-label={`icon for ${item.name} page`} />
+                <item.icon
+                  className={classes.icon}
+                  aria-label={`icon for ${item.name} page`}
+                />
               </ListItemIcon>
               <ListItemText primary={item.name} />
             </ListItem>

@@ -570,7 +570,6 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
                     className={classes.listSection}
                     elevation={1}
                   >
-                    <div>
                     <a href={article.url} target="_blank" className={classes.headlines} rel="noreferrer"><span>{article.title}</span></a>
                       <Grid container>
                         <Grid item md={5} className={classes.datePubline}>
@@ -584,6 +583,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
                         {article.source}
                       </Grid>
                     </Grid>
+
                     <Grid container>
                       <Grid item md={5} className={classes.datePubline}>
                         Event Type:{" "}
@@ -594,7 +594,6 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
                         Tone: {article.tone}
                       </Grid>
                     </Grid>
-                  </div>
                 </Paper>
               ))
             ) : (

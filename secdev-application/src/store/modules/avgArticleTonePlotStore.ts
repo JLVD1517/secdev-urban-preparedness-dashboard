@@ -8,20 +8,27 @@ const avgArticleTonePlotInitialState: AvgTonePlotInitialState = {
   status: 'idle',
   error: false,
   loaded: false,
-  avgTonePlotData: []
-}
+  avgTonePlotData: [],
+};
 
 export const fetchAvgArticlesTonePlot = createAsyncThunk(
   'avg-tone',
   async (data: EventsFilters) => {
-    const {start_date, end_date, language, tone_start_range, tone_end_range, event_id} = data;
-    const apiUrl = `${process.env.REACT_APP_ENDPOINT_URL}data/avg-tone/${start_date}/${end_date}/${language}`
+    const {
+      start_date,
+      end_date,
+      language,
+      tone_start_range,
+      tone_end_range,
+      event_id,
+    } = data;
+    const apiUrl = `${process.env.REACT_APP_ENDPOINT_URL}data/avg-tone/${start_date}/${end_date}/${language}`;
     const response = await axios.get(apiUrl, {
-        params: {
-            tone_end_range: tone_end_range ? tone_end_range : undefined,
-            tone_start_range: tone_start_range ? tone_start_range : undefined,
-            event_id: event_id && event_id > -1 ? event_id : undefined,
-        }
+      params: {
+        tone_end_range: tone_end_range ? tone_end_range : undefined,
+        tone_start_range: tone_start_range ? tone_start_range : undefined,
+        event_id: event_id && event_id > -1 ? event_id : undefined,
+      },
     });
     const result = transformPlotData(response.data.data);
 
@@ -31,18 +38,18 @@ export const fetchAvgArticlesTonePlot = createAsyncThunk(
 
 const transformPlotData = (plotData: any) => {
   const transformedPlotData: PlotData[] = [];
-  plotData.map( (item: any) => {
+  plotData.map((item: any) => {
     const transformedArticle: PlotData = {
       name: item.publication_date,
       value: item.avg_tone,
-      date: item.publication_date
+      date: item.publication_date,
     };
 
     return transformedPlotData.push(transformedArticle);
-  })
+  });
 
   return transformedPlotData;
-}
+};
 
 const avgEventsToneSlice = createSlice({
   name: 'avg-tone',
@@ -54,12 +61,15 @@ const avgEventsToneSlice = createSlice({
       state.loaded = false;
       state.error = false;
     });
-    builder.addCase(fetchAvgArticlesTonePlot.fulfilled, (state, { payload }) => {
-      state.status = 'Loaded';
-      state.error = false;
-      state.avgTonePlotData = payload;
-      state.loaded = true;
-    });
+    builder.addCase(
+      fetchAvgArticlesTonePlot.fulfilled,
+      (state, { payload }) => {
+        state.status = 'Loaded';
+        state.error = false;
+        state.avgTonePlotData = payload;
+        state.loaded = true;
+      },
+    );
     builder.addCase(fetchAvgArticlesTonePlot.rejected, state => {
       state.error = true;
       state.loaded = false;

@@ -1,11 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Slider } from '@material-ui/core';
-import {
-  createTheme,
-  ThemeProvider,
-  useTheme,
-} from '@material-ui/core/styles';
+import { createTheme, ThemeProvider, useTheme } from '@material-ui/core/styles';
 import { setSelectedMonth } from '../../../store/modules/sidebarControlStore';
 import { AppState, MapGradientType } from '../../../types';
 import { availableMonths } from '../../../configuration/app-config';

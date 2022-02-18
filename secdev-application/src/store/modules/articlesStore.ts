@@ -1,35 +1,38 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { axios } from '../../services/axios';
-import { ArticlesInitialState, ArticleData } from '../../types/modules/article.type';
+import {
+  ArticlesInitialState,
+  ArticleData,
+} from '../../types/modules/article.type';
 import { EventsFilters } from '../../types/modules/eventsFilters.type';
 
 const articlesIntialState: ArticlesInitialState = {
   status: 'idle',
   error: false,
   loaded: false,
-  articles: []
-}
+  articles: [],
+};
 
 export const fetchArticles = createAsyncThunk(
   'articles',
   async (data: EventsFilters) => {
-    const {start_date, end_date, language} = data;
-    const apiUrl = `${process.env.REACT_APP_ENDPOINT_URL}get-articles/${start_date}/${end_date}/${language}`
+    const { start_date, end_date, language } = data;
+    const apiUrl = `${process.env.REACT_APP_ENDPOINT_URL}get-articles/${start_date}/${end_date}/${language}`;
     const response = await axios.get(apiUrl, {
       params: {
         commune_id: data.commune_id > 0 ? data.commune_id : undefined,
-        event_id: data.event_id > 0 ? data.event_id: undefined
-      }
-    });    
+        event_id: data.event_id > 0 ? data.event_id : undefined,
+      },
+    });
     const result = transformArticlesResult(response.data.data);
-    
+
     return result;
   },
 );
 
-const transformArticlesResult = ( articles: any ) => {
+const transformArticlesResult = (articles: any) => {
   const transformedArticles: ArticleData[] = [];
-  articles.map( (article: any) => {
+  articles.map((article: any) => {
     const transformedArticle: ArticleData = {
       eventInfoId: article.event_info_id,
       publicationDate: article.publication_date,
@@ -46,10 +49,10 @@ const transformArticlesResult = ( articles: any ) => {
     };
 
     return transformedArticles.push(transformedArticle);
-  })
+  });
 
   return transformedArticles;
-}
+};
 
 const articlesSlice = createSlice({
   name: 'articles',

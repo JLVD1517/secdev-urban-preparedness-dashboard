@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   XAxis,
   YAxis,
@@ -7,11 +7,11 @@ import {
   LineChart,
   Line,
   Legend,
-} from "recharts";
-import { useTheme, Theme } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
-import { MapGradientType, PlotData } from "../../types";
-import "./tooltip.scss";
+} from 'recharts';
+import { useTheme, Theme } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
+import { MapGradientType, PlotData } from '../../types';
+import './tooltip.scss';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -19,21 +19,24 @@ const CustomTooltip = ({ active, payload, label }: any) => {
       <ul className="custom-tooltip custom-tooltip-list">
         <p className="intro">{label}</p>
         {payload.map(({ value, name, color }: any) => {
-            return (
-              <li className={"custom-tooltip-item"}>
-                <h5 className={"custom-tooltip-item-title"}>
-                  <span
-                    className={"custom-tooltip-item-icon"}
-                    style={{ backgroundColor: color }}
-                  />
-                  <span className={"custom-tooltip-item-text"}>{name}: </span> 
-                  <span className={"custom-tooltip-item-text"}> {typeof value === "number"
+          return (
+            <li className={'custom-tooltip-item'}>
+              <h5 className={'custom-tooltip-item-title'}>
+                <span
+                  className={'custom-tooltip-item-icon'}
+                  style={{ backgroundColor: color }}
+                />
+                <span className={'custom-tooltip-item-text'}>{name}: </span>
+                <span className={'custom-tooltip-item-text'}>
+                  {' '}
+                  {typeof value === 'number'
                     ? value.toFixed(1)
-                    : (0).toFixed(1)} </span>
-                </h5>
-              </li>
-            );
-          })}
+                    : (0).toFixed(1)}{' '}
+                </span>
+              </h5>
+            </li>
+          );
+        })}
       </ul>
     );
   }
@@ -55,7 +58,7 @@ const AreaChartData: React.FC<AreaChartProps> = ({
   const theme = useTheme();
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
-      position: "relative",
+      position: 'relative',
     },
   }));
 
@@ -77,27 +80,28 @@ const AreaChartData: React.FC<AreaChartProps> = ({
           <stop offset="96%" stopColor={mapGradient.step6} stopOpacity={1} />
         </linearGradient>
       </defs>
-      <XAxis dataKey="date" stroke={darkTheme ? "#fff" : "#000"} fontSize={10}>
+      <XAxis dataKey="date" stroke={darkTheme ? '#fff' : '#000'} fontSize={10}>
         {/* <Label value="Pages of my website" stroke={darkTheme ? "#fff" : "#000"} offset={-12} position="insideBottom" /> */}
       </XAxis>
       <YAxis
         label={{
-          value: "Avg Tone of Events",
-          stroke: darkTheme ? "#fff" : "#000",
+          value: 'Avg Tone of Events',
+          stroke: darkTheme ? '#fff' : '#000',
           angle: -90,
-          position: "center",
+          position: 'center',
           dx: -20,
         }}
-        stroke={darkTheme ? "#fff" : "#000"}
+        stroke={darkTheme ? '#fff' : '#000'}
         fontSize={10}
       />
-      <Tooltip 
+      <Tooltip
         filterNull={true}
-        contentStyle={{ color: "#000" }}
-        cursor={{ stroke: "rgba(230, 234, 238, 0.6)", strokeWidth: 3 }}
+        contentStyle={{ color: '#000' }}
+        cursor={{ stroke: 'rgba(230, 234, 238, 0.6)', strokeWidth: 3 }}
         isAnimationActive={false}
         offset={40}
-        content={<CustomTooltip />} />
+        content={<CustomTooltip />}
+      />
       {/* <Legend /> */}
       <Line
         type="monotone"
