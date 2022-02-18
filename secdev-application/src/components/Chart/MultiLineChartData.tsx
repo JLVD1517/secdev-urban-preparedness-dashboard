@@ -21,7 +21,10 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         <p className="intro">{label}</p>
         {payload.map(({ value, name, color }: any) => {
           return (
-            <li className={'custom-tooltip-item'}>
+            <li
+              className={'custom-tooltip-item'}
+              key={'custom-tooltip-item-text'}
+            >
               <h5 className={'custom-tooltip-item-title'}>
                 <span
                   className={'custom-tooltip-item-icon'}
@@ -140,6 +143,7 @@ const MultiLineChartData: React.FC<AreaChartProps> = ({
             <Line
               type="monotone"
               dataKey={key}
+              key={key}
               stroke={colours[index]}
               fill={colours[index]}
               dot={false}

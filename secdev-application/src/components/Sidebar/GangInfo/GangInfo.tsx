@@ -80,6 +80,7 @@ const GangInfo: React.FC = () => {
                 component="nav"
                 aria-labelledby="nested-list-subheader"
                 className={classes.root}
+                key={key}
               >
                 <ListItem button onClick={() => handleClick(index)}>
                   <ListItemText primary={group_details[key].name} />

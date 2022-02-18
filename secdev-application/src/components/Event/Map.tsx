@@ -1,113 +1,113 @@
-import React, { useEffect, useRef, useState } from "react";
-import ReactDOM from "react-dom";
-import { useDispatch, useSelector } from "react-redux";
-import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import { Paper, FormControlLabel } from "@material-ui/core";
-import EventNoteIcon from "@material-ui/icons/EventNote";
+import React, { useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
+import { Paper, FormControlLabel } from '@material-ui/core';
+import EventNoteIcon from '@material-ui/icons/EventNote';
 import {
   makeStyles,
   createMuiTheme,
   ThemeProvider,
-} from "@material-ui/core/styles";
-import Footerbar from "../FootBar/FooterBar";
-import DateRangeFilter from "../DateRangeFilter/DateRangeFilter";
-import AreaChartData from "../Chart/AreaChartData";
-import CustomSwitch from "../BaseUIComponents/CustomSwitch";
+} from '@material-ui/core/styles';
+import Footerbar from '../FootBar/FooterBar';
+import DateRangeFilter from '../DateRangeFilter/DateRangeFilter';
+import AreaChartData from '../Chart/AreaChartData';
+import CustomSwitch from '../BaseUIComponents/CustomSwitch';
 import {
   mapAreaConfig,
   primaryScore,
   eventMapAreaConfig,
   eventsPrimaryScore,
   LANGUAGE,
-} from "../../configuration/app-config";
-import { MapGradientType, AppState, ArticleData } from "../../types";
+} from '../../configuration/app-config';
+import { MapGradientType, AppState, ArticleData } from '../../types';
 import {
   resetFilterSlider,
   setSelectedItem,
-} from "../../store/modules/sidebarControlStore";
-import { scaleSteps } from "../../services/sharedFunctions";
-import "./Map.scss";
-import Popup from "./MapTooltip/Popup";
-import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { PlotData } from "../../types";
-import ToneSlider from "../../ToneSlider/ToneSlider";
-import { fetchArticles } from "../../store/modules/articlesStore";
-import { Event, EventsFilters } from "../../types/modules/eventsFilters.type";
-import { fetchAvgArticlesTonePlot } from "../../store/modules/avgArticleTonePlotStore";
-import { fetchNoOfArticlesPlot } from "../../store/modules/noOfArticlePlotStore";
+} from '../../store/modules/sidebarControlStore';
+import { scaleSteps } from '../../services/sharedFunctions';
+import './Map.scss';
+import Popup from './MapTooltip/Popup';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import { PlotData } from '../../types';
+import ToneSlider from '../../ToneSlider/ToneSlider';
+import { fetchArticles } from '../../store/modules/articlesStore';
+import { Event, EventsFilters } from '../../types/modules/eventsFilters.type';
+import { fetchAvgArticlesTonePlot } from '../../store/modules/avgArticleTonePlotStore';
+import { fetchNoOfArticlesPlot } from '../../store/modules/noOfArticlePlotStore';
 import {
   setEventsLanguage,
   setSelectedCommuneId,
-} from "../../store/modules/eventsPageStore";
-import moment from "moment";
-import SelectEvent from "../SelectBox/SelectEvent";
-import { EventypePlotdata } from "../../types/modules/eventsPlots.type";
-import { fetchNoOfArticlesPlotByEventType } from "../../store/modules/noOfArticleByEventTypePlotStore";
-import MultiLineChartData from "../Chart/MultiLineChartData";
-import MapAttribution from "./MapAttribution";
+} from '../../store/modules/eventsPageStore';
+import moment from 'moment';
+import SelectEvent from '../SelectBox/SelectEvent';
+import { EventypePlotdata } from '../../types/modules/eventsPlots.type';
+import { fetchNoOfArticlesPlotByEventType } from '../../store/modules/noOfArticleByEventTypePlotStore';
+import MultiLineChartData from '../Chart/MultiLineChartData';
+import MapAttribution from './MapAttribution';
 
-const mapboxgl = require("mapbox-gl");
+const mapboxgl = require('mapbox-gl');
 
 mapboxgl.accessToken = `${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`;
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
-    width: "100%",
+    width: '100%',
     backgroundColor: theme.palette.background.default,
-    position: "relative",
-    overflow: "auto",
+    position: 'relative',
+    overflow: 'auto',
     maxHeight: 300,
   },
   listSection: {
-    backgroundColor: "inherit",
+    backgroundColor: 'inherit',
     height: 80,
-    padding: "5px 15px",
-    margin: "10px",
+    padding: '5px 15px',
+    margin: '10px',
   },
   headlines: {
     fontWeight: 700,
-    fontSize: "18px",
-    cursor: "pointer",
-    textDecoration: "none",
-    color: "inherit",
-    "&:hover": {
-      textDecoration: "underline",
+    fontSize: '18px',
+    cursor: 'pointer',
+    textDecoration: 'none',
+    color: 'inherit',
+    '&:hover': {
+      textDecoration: 'underline',
     },
   },
   datePubline: {
     fontWeight: 700,
-    fontSize: "14px",
+    fontSize: '14px',
   },
   mainHeader: {
-    textAlign: "center",
+    textAlign: 'center',
   },
   mainHeader1: {
-    textAlign: "center",
-    padding: "10px 30px",
-    marginBottom: "2rem",
-    fontSize: "11px",
+    textAlign: 'center',
+    padding: '10px 30px',
+    marginBottom: '2rem',
+    fontSize: '11px',
   },
   rightDiv: {
     backgroundColor: theme.palette.background.default,
   },
   container2: {
-    height: "calc(100vh - 493px)",
+    height: 'calc(100vh - 493px)',
     backgroundColor: theme.palette.background.default,
-    border: "3px solid rgba(255, 255, 255, 0.12)",
+    border: '3px solid rgba(255, 255, 255, 0.12)',
   },
   summarySection: {
-    backgroundColor: "inherit",
+    backgroundColor: 'inherit',
     height: 50,
-    padding: "5px 15px",
-    margin: "10px",
+    padding: '5px 15px',
+    margin: '10px',
   },
   headlinesSummary: {
     fontWeight: 300,
-    fontSize: "18px",
-    textDecoration: "none",
-    color: "inherit",
+    fontSize: '18px',
+    textDecoration: 'none',
+    color: 'inherit',
   },
 }));
 
@@ -121,26 +121,26 @@ interface MapProps {
 const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
   const classes = useStyles();
   const tableTheme = darkTheme
-    ? createMuiTheme({ palette: { type: "dark" } })
-    : createMuiTheme({ palette: { type: "light" } });
+    ? createMuiTheme({ palette: { type: 'dark' } })
+    : createMuiTheme({ palette: { type: 'light' } });
   const [map, setMap]: any = useState(null);
   const mapRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
   const startDate: string = useSelector(
-    (state: AppState) => state.EventsPageStore.startDate
+    (state: AppState) => state.EventsPageStore.startDate,
   );
   const endDate: string = useSelector(
-    (state: AppState) => state.EventsPageStore.endDate
+    (state: AppState) => state.EventsPageStore.endDate,
   );
   const selectedCommuneId: number = useSelector(
-    (state: AppState) => state.EventsPageStore.selectedCommuneId
+    (state: AppState) => state.EventsPageStore.selectedCommuneId,
   );
   const language: string = useSelector(
-    (state: AppState) => state.EventsPageStore.language
+    (state: AppState) => state.EventsPageStore.language,
   );
   const selectedEvent: Event = useSelector(
-    (state: AppState) => state.EventsPageStore.selectedEvent
+    (state: AppState) => state.EventsPageStore.selectedEvent,
   );
 
   const eventsFilter: EventsFilters = {
@@ -154,28 +154,28 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
   };
 
   const selectedLayerId: string = useSelector(
-    (state: AppState) => state.SidebarControl.selectedLayerId
+    (state: AppState) => state.SidebarControl.selectedLayerId,
   );
   const satelliteView: boolean = useSelector(
-    (state: AppState) => state.MapControl.satelliteView
+    (state: AppState) => state.MapControl.satelliteView,
   );
   const filterSliderValue: [number, number] = useSelector(
-    (state: AppState) => state.SidebarControl.filterSlider
+    (state: AppState) => state.SidebarControl.filterSlider,
   );
   const noOfArticlesByEventTypePlotData: EventypePlotdata[] | [] = useSelector(
-    (state: AppState) => state.NoOfArticleStoreByEventType.data
+    (state: AppState) => state.NoOfArticleStoreByEventType.data,
   );
   const avgTonePlotData: PlotData[] = useSelector(
-    (state: AppState) => state.AverageArticleToneStore.avgTonePlotData
+    (state: AppState) => state.AverageArticleToneStore.avgTonePlotData,
   );
   const articlesData: ArticleData[] | [] = useSelector(
-    (state: AppState) => state.ArticlesStore.articles
+    (state: AppState) => state.ArticlesStore.articles,
   );
 
   const setSelection = (
     e: mapboxgl.MapMouseEvent & {
       features?: mapboxgl.MapboxGeoJSONFeature[] | undefined;
-    } & mapboxgl.EventData
+    } & mapboxgl.EventData,
   ): void => {
     if (e.features !== undefined && e.features.length > 0) {
       const newSelection = e.features[0];
@@ -192,9 +192,9 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
       | mapboxgl.StyleFunction
       | mapboxgl.Expression
       | undefined = [
-      "interpolate",
-      ["linear"],
-      ["to-number", ["get", eventsPrimaryScore]],
+      'interpolate',
+      ['linear'],
+      ['to-number', ['get', eventsPrimaryScore]],
       scaleSteps().step1,
       mapGradient.step1,
       scaleSteps().step2,
@@ -209,15 +209,15 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
       mapGradient.step6,
     ];
     if (map) {
-      map.setPaintProperty("secdev-layer", "fill-color", fillColor);
+      map.setPaintProperty('secdev-layer', 'fill-color', fillColor);
     }
   };
 
   const resetLayer = () => {
     if (map) {
-      if (map.getLayer("secdev-layer") !== undefined) {
-        map.removeLayer("secdev-layer");
-        map.removeSource("secdev-layer");
+      if (map.getLayer('secdev-layer') !== undefined) {
+        map.removeLayer('secdev-layer');
+        map.removeSource('secdev-layer');
       }
       map.addLayer(layer);
     }
@@ -225,31 +225,31 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
 
   const clearSelectedItem = () => {
     if (map) {
-      map.fire("close-all-popups");
-      map.fire("clear-feature-state");
+      map.fire('close-all-popups');
+      map.fire('clear-feature-state');
       dispatch(setSelectedItem(null));
     }
   };
 
   const layer: mapboxgl.FillLayer = {
-    id: "secdev-layer",
-    type: "fill",
+    id: 'secdev-layer',
+    type: 'fill',
     source: {
-      type: "vector",
+      type: 'vector',
       tiles: [
         `${process.env.REACT_APP_MAP_TILESERVER_URL}get-commune/${startDate}/${endDate}/${language}/${selectedEvent.event_id}/{z}/{x}/{y}`,
       ],
-      promoteId: "gid",
+      promoteId: 'gid',
       minzoom: 0,
       maxzoom: 22,
     },
-    "source-layer": "tile",
+    'source-layer': 'tile',
     paint: {
-      "fill-outline-color": "#343332",
-      "fill-color": "transparent",
-      "fill-opacity": [
-        "case",
-        ["boolean", ["feature-state", "click"], false],
+      'fill-outline-color': '#343332',
+      'fill-color': 'transparent',
+      'fill-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'click'], false],
         0.9,
         0.7,
       ],
@@ -258,9 +258,9 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
 
   const visCheck = (state: boolean) => {
     if (state === true) {
-      return "visible";
+      return 'visible';
     }
-    return "none";
+    return 'none';
   };
 
   let selectedId: number | string | undefined;
@@ -299,7 +299,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
 
     // set the default popup
     const popup = new mapboxgl.Popup({
-      className: "secdev-layer-popup",
+      className: 'secdev-layer-popup',
     });
 
     const clearFeatureState = () => {
@@ -307,15 +307,15 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
         map.setFeatureState(
           {
             id: selectedId,
-            source: "secdev-layer",
-            sourceLayer: "tile",
+            source: 'secdev-layer',
+            sourceLayer: 'tile',
           },
-          { click: false }
+          { click: false },
         );
       }
     };
 
-    map.on("load", () => {
+    map.on('load', () => {
       // set geocoder bounding box on load
       const bounds = map.getBounds();
       geocoder.setBbox([
@@ -326,7 +326,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
       ]);
 
       const addPopup = (el: JSX.Element, lat: number, lng: number) => {
-        const placeholder = document.createElement("div");
+        const placeholder = document.createElement('div');
 
         ReactDOM.render(el, placeholder);
 
@@ -336,12 +336,12 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
       };
 
       map.on(
-        "click",
-        "secdev-layer",
+        'click',
+        'secdev-layer',
         (
           e: mapboxgl.MapMouseEvent & {
             features?: any;
-          } & mapboxgl.EventData
+          } & mapboxgl.EventData,
         ) => {
           if (e.originalEvent.cancelBubble) {
             return;
@@ -353,7 +353,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
           addPopup(
             <Popup clickedItem={e.features[0].properties} />,
             e.lngLat.lat,
-            e.lngLat.lng
+            e.lngLat.lng,
           );
 
           // style the selected feature
@@ -367,46 +367,46 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
               map.setFeatureState(
                 {
                   id: selectedId,
-                  source: "secdev-layer",
-                  sourceLayer: "tile",
+                  source: 'secdev-layer',
+                  sourceLayer: 'tile',
                 },
-                { click: true }
+                { click: true },
               );
             }
           }
-        }
+        },
       );
 
       // pointer event on hover
-      map.on("mouseenter", "secdev-layer", () => {
-        map.getCanvas().style.cursor = "pointer";
+      map.on('mouseenter', 'secdev-layer', () => {
+        map.getCanvas().style.cursor = 'pointer';
       });
 
       // add layers and set map
       map.addLayer(layer);
       setMap(map);
 
-      if (document.getElementById("MapSearchBar")) {
+      if (document.getElementById('MapSearchBar')) {
         const removeAllChildNodes = (parent: any) => {
           while (parent.firstChild) {
             parent.removeChild(parent.firstChild);
           }
         };
 
-        const container = document.querySelector("#MapSearchBar");
+        const container = document.querySelector('#MapSearchBar');
         removeAllChildNodes(container);
 
         document
-          .getElementById("MapSearchBar")!
+          .getElementById('MapSearchBar')!
           .appendChild(geocoder.onAdd(map));
       }
     });
 
-    map.on("close-all-popups", () => {
+    map.on('close-all-popups', () => {
       popup.remove();
     });
 
-    map.on("clear-feature-state", () => {
+    map.on('clear-feature-state', () => {
       clearFeatureState();
     });
   }, [mapGradient, darkTheme]);
@@ -419,7 +419,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
             ? mapAreaConfig.style.satellite
             : darkTheme
             ? mapAreaConfig.style.dark
-            : mapAreaConfig.style.light
+            : mapAreaConfig.style.light,
         );
         setTimeout(() => {
           resetLayer();
@@ -429,7 +429,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [satelliteView]
+    [satelliteView],
   );
 
   useEffect(
@@ -444,7 +444,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
       dispatch(fetchNoOfArticlesPlotByEventType(eventsFilter));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [language, startDate, selectedEvent]
+    [language, startDate, selectedEvent],
   );
 
   useEffect(
@@ -453,7 +453,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
       dispatch(resetFilterSlider());
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [map, mapGradient, selectedLayerId]
+    [map, mapGradient, selectedLayerId],
   );
 
   // Filtering functions
@@ -462,15 +462,15 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
       clearSelectedItem();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [map, filterSliderValue]
+    [map, filterSliderValue],
   );
 
   const toggleLanguage = () => {
     dispatch(setSelectedCommuneId(-1));
     dispatch(
       setEventsLanguage(
-        language === LANGUAGE.ENGLISH ? LANGUAGE.FRENCH : LANGUAGE.ENGLISH
-      )
+        language === LANGUAGE.ENGLISH ? LANGUAGE.FRENCH : LANGUAGE.ENGLISH,
+      ),
     );
   };
 
@@ -482,7 +482,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
     <div>
       <Grid container className="containerBox">
         <Grid item md={8} className={`${classes.rightDiv}`}>
-          <div style={{ paddingTop: "4rem" }}>
+          <div style={{ paddingTop: '4rem' }}>
             <div className="row">
               <h1 className={classes.mainHeader}>
                 Violence in Port-au-Prince in the Media
@@ -522,9 +522,11 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
               <SelectEvent />
             </div>
           </div>
-          <Grid container style={{ paddingBottom: "15px" }}>
+          <Grid container style={{ paddingBottom: '15px' }}>
             <Grid item md={6} className="containerBox">
-              <h3 style={{textAlign:'center', marginBottom:'-4px'}}>Articles By Event Type Over Time</h3>
+              <h3 style={{ textAlign: 'center', marginBottom: '-4px' }}>
+                Articles By Event Type Over Time
+              </h3>
               <MultiLineChartData
                 darkTheme={darkTheme}
                 data={noOfArticlesByEventTypePlotData}
@@ -532,7 +534,9 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
               />
             </Grid>
             <Grid item md={6} className="containerBox">
-              <h3 style={{textAlign:'center', marginBottom:'-4px'}}>Average Tone of Articles Over Time</h3>
+              <h3 style={{ textAlign: 'center', marginBottom: '-4px' }}>
+                Average Tone of Articles Over Time
+              </h3>
               <AreaChartData
                 darkTheme={darkTheme}
                 mapGradient={mapGradient}
@@ -546,7 +550,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
             <div className="mapEventContainer" id="map" ref={mapRef} />
             <Footerbar
               mapGradient={mapGradient}
-              elementData={"Number Of Events"}
+              elementData={'Number Of Events'}
               event={true}
             />
           </div>
@@ -554,52 +558,62 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
         </Grid>
       </Grid>
       <Grid item md={12} className={classes.container2}>
-          <ThemeProvider theme={tableTheme}>
-            <Paper
-              className={classes.summarySection}
-              elevation={1}
-            >
-              <Grid container className={classes.headlinesSummary}>
-                  {`Articles from ${moment(startDate, 'DD-MM-YYYY').format('DD MMM YYYY')} to ${moment(endDate, 'DD-MM-YYYY').format('DD MMM YYYY')} ${selectedEvent.event_id> 0 ? `for ${selectedEvent.name} events`: '' } in ${language.toUpperCase()}`}
-              </Grid> 
-            </Paper>
-            <Box className={classes.root}>
-              {articlesData && articlesData.length ?
-                (articlesData as any[]).map((article: ArticleData) => (
-                  <Paper
-                    className={classes.listSection}
-                    elevation={1}
+        <ThemeProvider theme={tableTheme}>
+          <Paper className={classes.summarySection} elevation={1}>
+            <Grid container className={classes.headlinesSummary}>
+              {`Articles from ${moment(startDate, 'DD-MM-YYYY').format(
+                'DD MMM YYYY',
+              )} to ${moment(endDate, 'DD-MM-YYYY').format('DD MMM YYYY')} ${
+                selectedEvent.event_id > 0
+                  ? `for ${selectedEvent.name} events`
+                  : ''
+              } in ${language.toUpperCase()}`}
+            </Grid>
+          </Paper>
+          <Box className={classes.root}>
+            {articlesData && articlesData.length ? (
+              (articlesData as any[]).map((article: ArticleData) => (
+                <Paper
+                  className={classes.listSection}
+                  key={article.eventInfoId}
+                  elevation={1}
+                >
+                  <a
+                    href={article.url}
+                    target="_blank"
+                    className={classes.headlines}
+                    rel="noreferrer"
                   >
-                    <a href={article.url} target="_blank" className={classes.headlines} rel="noreferrer"><span>{article.title}</span></a>
-                      <Grid container>
-                        <Grid item md={5} className={classes.datePubline}>
-                          {article.publicationDate}
-                        </Grid>
-                        <Grid item md={3} className={classes.datePubline}>
-                          {article.source}
-                        </Grid>
-                      </Grid>
-                      <Grid item md={3} className={classes.datePubline}>
-                        {article.source}
-                      </Grid>
+                    <span>{article.title}</span>
+                  </a>
+                  <Grid container>
+                    <Grid item md={5} className={classes.datePubline}>
+                      {article.publicationDate}
                     </Grid>
+                    <Grid item md={3} className={classes.datePubline}>
+                      {article.source}
+                    </Grid>
+                    <Grid item md={3} className={classes.datePubline}>
+                      {article.source}
+                    </Grid>
+                  </Grid>
 
-                    <Grid container>
-                      <Grid item md={5} className={classes.datePubline}>
-                        Event Type:{" "}
-                        {article?.eventType.charAt(0).toUpperCase() +
-                          article?.eventType.slice(1)}
-                      </Grid>
-                      <Grid item md={3} className={classes.datePubline}>
-                        Tone: {article.tone}
-                      </Grid>
+                  <Grid container>
+                    <Grid item md={5} className={classes.datePubline}>
+                      Event Type:{' '}
+                      {article?.eventType.charAt(0).toUpperCase() +
+                        article?.eventType.slice(1)}
                     </Grid>
+                    <Grid item md={3} className={classes.datePubline}>
+                      Tone: {article.tone}
+                    </Grid>
+                  </Grid>
                 </Paper>
               ))
             ) : (
               <div className="noDataAvail">
-                <EventNoteIcon />{" "}
-                <span style={{ paddingLeft: "1rem" }}>
+                <EventNoteIcon />{' '}
+                <span style={{ paddingLeft: '1rem' }}>
                   No News Headlines Available
                 </span>
               </div>

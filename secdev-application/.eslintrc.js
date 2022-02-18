@@ -11,7 +11,7 @@ module.exports = {
   settings: { react: { version: 'detect' } },
   env: { node: true },
   extends: [
-    'airbnb-typescript',
+    //'airbnb-typescript/base',
     'react-app',
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
