@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { InitialStateAppControl } from '../../types';
 
 const appControlInitialState: InitialStateAppControl = {
-  darkTheme: true,
+  darkTheme: false,
   sideNavOpen: false,
 };
 
