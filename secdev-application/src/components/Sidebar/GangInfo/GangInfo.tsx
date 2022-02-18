@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import GroupsIcon from '@material-ui/icons/Group';
 import { AppState, SelectedItemType } from '../../../types';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -9,7 +10,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import {blankDark,blankLight} from '../../../configuration/img-config';
 import './GangInfo.scss';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -32,14 +32,14 @@ const useStyles = makeStyles((theme: Theme) =>
         margin:".8rem 0"
     },
     imgNoData:{
-      height:'230px',
-      width:'230px'
+      height:'100px',
+      width:'100px',
+      paddingLeft:'30px'
     },
     imgNoDatatext:{
       fontWeight:800,
       display:'flex',
-      justifyContent:'center',
-      marginTop:'-30px'
+      marginTop:'-10px'
     }
   }),
 );
@@ -89,7 +89,13 @@ const GangInfo: React.FC = () => {
             </Paper>  
         </Collapse>
       </List>
-    }): <div><div><img src={darkTheme ? blankDark : blankLight} className={classes.imgNoData} alt="No Data"/></div><div className={classes.imgNoDatatext}>No Groups Available</div></div> )}
+    }): <div style={{marginBottom:'10px', justifyContent:'center'}}>
+      <div>
+        <GroupsIcon color='primary' className={classes.imgNoData}/>
+      </div>
+      <div className={classes.imgNoDatatext}>No Groups Available</div>
+      </div> )
+    }
   </Paper>
   );
 }
