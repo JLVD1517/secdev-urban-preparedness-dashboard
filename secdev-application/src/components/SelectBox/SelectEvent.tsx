@@ -27,8 +27,8 @@ const SelectEvent: React.FC = () => {
       event_id: -1,
       name: ''
     }
-    if(event.target.value != -1) {
-      selectedItem = eventsList.find(item => item.event_id as number == event.target.value);
+    if(event.target.value !== -1) {
+      selectedItem = eventsList.find(item => item.event_id as number === event.target.value);
     }
 
     dispatch(setSelectedEventId(selectedItem as any as Event));
@@ -37,10 +37,10 @@ const SelectEvent: React.FC = () => {
   const classes = useStyles();
   return (
     <FormControl className={classes.formControl} variant="outlined">
-      <InputLabel htmlFor="IndexSelect">Select Event</InputLabel>
+      <InputLabel htmlFor="IndexSelect">Select Event Type</InputLabel>
       <Select
         id="IndexSelect"
-        label="Urban Resiliency Index"
+        label="Select Event Type"
         native
         value={selectedEvent.event_id > 0 ? selectedEvent.event_id : ''}
         onChange={handleSelect}
