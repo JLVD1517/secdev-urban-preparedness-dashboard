@@ -147,8 +147,8 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       'fill-opacity': [
         'case',
         ['boolean', ['feature-state', 'click'], false],
-        0.85,
-        0.4,
+        0.9,
+        0.7,
       ],
     },
   };
