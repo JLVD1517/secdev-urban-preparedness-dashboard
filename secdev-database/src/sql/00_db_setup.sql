@@ -66,15 +66,16 @@ CREATE TYPE secdev.GROUP_TYPE AS ENUM (
 
 CREATE TABLE secdev.commune (
   "commune_id" SERIAL PRIMARY KEY,
-  "adm2_pcode" text,
+  "admin2pcode" text,
   "name" text
 );
 
 CREATE TABLE secdev.sub_commune (
   "sub_commune_id" SERIAL PRIMARY KEY,
-  "adm3_pcode" text,
+  "admin3pcode" text,
   "commune_id" int,
-  "name" text
+  "name" text,  -- 'pretty' name
+  "admin3name_en" text  -- full admin name in english
 );
 
 CREATE TABLE secdev.groups (
@@ -103,14 +104,15 @@ CREATE TABLE secdev.group_records (
   "year" int
 );
 
-CREATE TABLE secdev.events (
+CREATE TABLE secdev.events ( -- actually event_types
   "event_id" SERIAL PRIMARY KEY,
-  "type" text UNIQUE
+  "type" text UNIQUE,
+  "language" secdev.LANGUAGE
 );
 
 CREATE TABLE secdev.event_info (
   "event_info_id" SERIAL PRIMARY KEY,
-  "event_id" int,
+  "event_id" int,  -- event_type id
   "pub_date" text,
   "source" text,
   "title" text,

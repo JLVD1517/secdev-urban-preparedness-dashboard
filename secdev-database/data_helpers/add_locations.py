@@ -48,37 +48,52 @@ commune_list = df.drop_duplicates(['admin2Name_en'])
 commune_list = commune_list[['admin2Name_en', 'admin2Pcode']]
 logger.debug(commune_list)
 
-commune_ids = {'HT0113': 1, 'HT0117': 2, 'HT0134': 3, 'HT0131': 4, 
-        'HT0112': 5, 'HT0135': 6, 'HT0133': 7, 'HT0116': 8, 
-        'HT0115': 9, 'HT0114': 10, 'HT0111': 11, 'HT0118': 12, 
-        'HT0132': 13}
+commune_ids = {}
 
+def get_commune_id(cur, row):
+    com_sql = f'''SELECT gid FROM haiti_commune WHERE lower(adm2_pcode) = '{row['admin2Pcode'].lower()}' '''
+    try:
+        cur.execute(com_sql)
+        return cur.fetchone()[0]
+    except Exception as e:
+        logger.error(e)
 
-# Uncomment to initialize commune table
+def get_subcommune_id(cur, row):
+    subcom_sql = f'''SELECT gid FROM haiti_subcommune WHERE lower(adm3_en) = '{row['admin3Name_en'].lower().replace("'", "''")}' '''
+    try:
+        cur.execute(subcom_sql)
+        return cur.fetchone()[0]
+    except Exception as e:
+        logger.error(e)
+
 for index, row in commune_list.iterrows():
-    com_sql = f''' INSERT INTO commune (name, adm2_pcode) 
-                VALUES ('{row['admin2Name_en']}', '{row['admin2Pcode']}')
-                RETURNING commune_id'''
-    logger.info(f"Adding {row['admin2Name_en']}, {row['admin2Pcode']} to database")
-    cur.execute(com_sql)
-    commune_id = cur.fetchone()[0]
+
+    commune_id = get_commune_id(cur, row)
     commune_ids[row['admin2Pcode']] = commune_id
 
-logger.debug(commune_ids)
+    com_sql = f''' INSERT INTO commune (commune_id, name, admin2pcode) 
+                VALUES ('{commune_id}', '{row['admin2Name_en']}', '{row['admin2Pcode']}')
+                ON CONFLICT DO NOTHING '''
+    logger.info(f"Adding {row['admin2Name_en']}, {row['admin2Pcode']} to database")
+    cur.execute(com_sql)
 
 df['commune_id'] = df['admin2Pcode'].map(commune_ids)
-subcommune_list = df[['admin3_clean','admin3Pcode','commune_id']]
+subcommune_list = df[['admin3_clean','admin3Name_en','admin3Pcode','commune_id']]
 logger.debug(subcommune_list)
 
 subcommune_ids = {}
 for index, row in subcommune_list.iterrows():
+    sub_commune_id = get_subcommune_id(cur, row)
+    subcommune_ids[row['admin3Pcode']] = sub_commune_id
+
     subcom_sql = f'''
-                INSERT INTO sub_commune (name, commune_id, adm3_pcode)
-                VALUES ('{row['admin3_clean']}', '{row['commune_id']}', '{row['admin3Pcode']}')
-                RETURNING sub_commune_id
+                INSERT INTO sub_commune (sub_commune_id, name, commune_id, admin3pcode, admin3name_en)
+                VALUES ('{sub_commune_id}','{row['admin3_clean'].replace("'", "''")}', '{row['commune_id']}', '{row['admin3Pcode']}', '{row['admin3Name_en'].replace("'", "''")}')
+                ON CONFLICT DO NOTHING
                 '''
-    cur.execute(subcom_sql)
-    subcommune_id = cur.fetchone()[0]
-    subcommune_ids[row['admin3Pcode']] = subcommune_id
+    try:
+        cur.execute(subcom_sql)
+    except Exception as e:
+        logger.error(e)
 
 logger.debug(subcommune_ids)
