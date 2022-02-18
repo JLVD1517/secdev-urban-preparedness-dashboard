@@ -7,7 +7,7 @@ import {
   useTheme,
 } from '@material-ui/core/styles';
 import { setSelectedMonth } from '../../../store/modules/sidebarControlStore';
-import { AppState } from '../../../types';
+import { AppState, MapGradientType } from '../../../types';
 import { availableMonths } from '../../../configuration/app-config';
 
 interface MarksType {
@@ -15,7 +15,11 @@ interface MarksType {
   label: number;
 }
 
-const DateSlider: React.FC = () => {
+interface FilterSliderProps {
+  mapGradient: MapGradientType;
+}
+
+const DateSlider: React.FC<FilterSliderProps> = ({ mapGradient }) => {
   const dispatch = useDispatch();
 
   const selectedMonth: number | number[] = useSelector(
@@ -67,13 +71,13 @@ const DateSlider: React.FC = () => {
           display: 'none',
         },
         track: {
-          color: theme.palette.primary.main,
+          color: mapGradient.step5,
         },
         rail: {
-          color: theme.palette.primary.main,
+          color: mapGradient.step5,
         },
         thumb: {
-          color: theme.palette.primary.main,
+          color: mapGradient.step5,
         },
         markLabel: {
           color: theme.palette.text.secondary,

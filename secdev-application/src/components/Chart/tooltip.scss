@@ -1,0 +1,43 @@
+.custom-tooltip.custom-tooltip-list {
+  list-style: none;
+  background-color: rgba(34, 44, 60, 0.9);
+  box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.05);
+  border-radius: 2px;
+  margin: 0;
+  padding: 16px;
+  max-width: 200px;
+
+  .custom-tooltip-item {
+    margin: 0;
+    padding: 0;
+    color: #ffffff;
+  }
+
+  .custom-tooltip-item-title {
+    display: flex;
+    align-items: baseline;
+    margin: 0;
+    font-size: 10px;
+    line-height: 16px;
+    font-weight: bold;
+
+    .custom-tooltip-item-icon {
+      display: flex;
+      width: 8px;
+      min-width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: ghostwhite;
+    }
+
+    .custom-tooltip-item-text {
+      margin-left: 8px;
+    }
+  }
+}
+
+.custom-tooltip-item-value {
+  margin: 0 0 0 16px;
+  font-size: 14px;
+  line-height: 20px;
+}
