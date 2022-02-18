@@ -40,9 +40,9 @@ const SelectEvent: React.FC = () => {
       <InputLabel htmlFor="IndexSelect">Select Event</InputLabel>
       <Select
         id="IndexSelect"
-        label="Urban Resiliency Index"
+        label="Select Event"
         native
-        value={selectedEvent.event_id > 0 ? selectedEvent.event_id : ''}
+        value={selectedEvent.event_id > 0 ? selectedEvent.event_id : 'All'}
         onChange={handleSelect}
       >
         <option aria-label="None" value="-1" >

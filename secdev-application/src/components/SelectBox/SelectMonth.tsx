@@ -63,7 +63,7 @@ const SelectMonth: React.FC = () => {
         <InputLabel htmlFor="IndexSelect">Select Month</InputLabel>
         <Select
           id="IndexSelect"
-          label="Urban Resiliency Index"
+          label="Select Month"
           native
         //   value={}
         //   onChange={handleChange}
