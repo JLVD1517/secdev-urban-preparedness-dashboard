@@ -8,7 +8,6 @@ import { AboutBackgroundImage } from '../configuration/img-config';
 import { componentSizing } from '../services/component-sizing';
 import InfoPageContainer from './BaseUIComponents/InfoPageContainer';
 import { AppState } from '../types';
-import Partners from './Partners';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,9 +22,10 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: '0.5rem',
     },
     Button: {
-      marginTop: '1rem',
-      marginBottom: '1rem',
+      marginLeft: '5rem',
+      margin: '2rem',
       fontSize: '20px',
+      backgroundColor: theme.palette.background.paper,
     },
   }),
 );
@@ -41,19 +41,18 @@ export const About: React.FC = () => {
     <InfoPageContainer image={AboutBackgroundImage}>
       <Container>
         <Grid container spacing={1} className={classes.AboutContainer}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={8}>
             <h1 className={classes.SectionHeader}>Port Au Prince</h1>
             <h2 className={classes.IntroHeader}>
             Community violence reduction monitor
             </h2>
             <Typography variant="body1" gutterBottom>
             The community violence reduction monitor is an interactive dashboard designed 
-            to improve situational awareness in Port-au-Prince, Haiti. <br/>
+            to improve situational awareness in Port-au-Prince, Haiti. <br/><br/>
             The platform has two basic functions: <br/>
-            <ul>
-            <li>visualizing patterns of crime and victimization from English and French media sources and</li>
-            <li>mapping the influence of armed groups across the metropolitan area. </li>  
-            </ul>
+            1. visualizing patterns of crime and victimization from English and French media sources and
+            <br/>
+            2. mapping the influence of armed groups across the metropolitan area.<br/><br/>
             Users can interact with the map and filters to track the scope, scale and 
             dynamics of community violence over time.{' '}
             </Typography>
@@ -61,11 +60,19 @@ export const About: React.FC = () => {
               variant="outlined"
               className={classes.Button}
               component={RouterLink}
-              fullWidth
               to="/groups"
-              aria-label="go to group"
+              aria-label="go to group page"
             >
               View Group Map
+            </Button>{' '}
+            <Button
+              variant="outlined"
+              className={classes.Button}
+              component={RouterLink}
+              to="/events"
+              aria-label="go to events page"
+            >
+              View Media Dashboard
             </Button>
             <h2 className={classes.SectionHeader}>About</h2>
             <Typography variant="body1" gutterBottom>
@@ -83,7 +90,6 @@ export const About: React.FC = () => {
             Haitian authorities and civil society groups improve data-driven and 
             evidence-based community violence reduction strategies. 
             </Typography>
-            <Partners />
           </Grid>
         </Grid>
       </Container>
