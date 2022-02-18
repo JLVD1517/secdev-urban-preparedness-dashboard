@@ -3,7 +3,7 @@ import {
   MapLayerDataConfigType,
   RacialDistDataType,
   RadarChartDataType,
-  PointsOfInterestType
+  PointsOfInterestType,
 } from '../types';
 
 export const mapAreaConfig = {
@@ -42,8 +42,8 @@ export const filterScale = {
 
 export const LANGUAGE = {
   ENGLISH: 'english',
-  FRENCH: 'french'
-}
+  FRENCH: 'french',
+};
 
 export const tractId = 'gid';
 export const primaryScore = 'no_of_groups';
@@ -51,24 +51,24 @@ export const totalPopCol = 'gid';
 export const avgTone = 'avg_tone';
 export const eventsPrimaryScore = 'no_of_articles';
 export const subCommuneNameKey = 'adm2_en';
-export const communeNameKey = 'adm3_en'
+export const communeNameKey = 'adm3_en';
 
 export const currentYear = 2021;
 export const currentMonth = 12;
 export const availableYears: number[] = [2022, 2021];
 export const availableMonths: any[] = [
-  {label: "JAN", value: 1},
-  {label: "MAR", value: 3},
-  {label: "MAY", value: 5},
-  {label: "JUL", value: 7},
-  {label: "SEP", value: 9},
-  {label: "DEC", value: 12},
+  { label: 'JAN', value: 1 },
+  { label: 'MAR', value: 3 },
+  { label: 'MAY', value: 5 },
+  { label: 'JUL', value: 7 },
+  { label: 'SEP', value: 9 },
+  { label: 'DEC', value: 12 },
 ];
 export const projectedYears: number[] = [];
 
 export const mapLayers: MapLayerDataConfigType[] = [
   {
-    title: 'Urban Pandemic Preparedness Index',
+    title: 'Community Violence Reduction Monitor',
     colName: 'gid',
     subcategories: [],
   },
