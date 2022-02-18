@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       maxWidth: 360,
       backgroundColor: theme.palette.background.paper,
-      boxShadow:`0 0 5px 2px ${theme.palette.background.default}`,
+      //boxShadow:`0 0 5px 2px ${theme.palette.background.default}`,
       marginBottom:'13px'
     },
     nested: {

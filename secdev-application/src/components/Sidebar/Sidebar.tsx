@@ -171,7 +171,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
         {!desktopCollapse ? (
           <div>
             <h1 className={classes.mainHeader}>
-              Community Violence Reduction Dashboard
+              Armed Actor Groups in Port-Au-Prince
             </h1>
             <Box
               my={3}
@@ -200,9 +200,9 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
                   })}
                 </Select>
               </FormControl>
-            </Box>
-            <SelectGroup/>      
+            </Box>  
             <DateSlider />
+            <SelectGroup/>    
             <FilterSlider mapGradient={mapGradient} />
             <p>{sidebarText}</p>
             {selectedItem && <h2 className="main-header">Group Details</h2>}
@@ -225,7 +225,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
               <>
                 <SignalCellularAlt />
                 <Box mt={-1}>
-                  <p>{formatDisplayNumber(selectedItem[primaryScore])}</p>
+                  <p>{formatDisplayNumber(selectedItem[primaryScore], 0)}</p>
                 </Box>
               </>
             )}

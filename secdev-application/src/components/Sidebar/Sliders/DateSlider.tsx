@@ -88,7 +88,7 @@ const DateSlider: React.FC = () => {
 
   return (
     <div>
-      <h2 className="main-header">Select Month</h2>
+      <h3 className="main-header">Select Month</h3>
       <Box px={3} mb={-3} mt={4}>
         <ThemeProvider theme={muiTheme}>
           {availableMonths.length > 0 && (

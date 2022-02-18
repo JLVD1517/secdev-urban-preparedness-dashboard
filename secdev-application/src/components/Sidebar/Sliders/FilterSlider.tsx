@@ -105,7 +105,7 @@ const FilterSlider: React.FC<FilterSliderProps> = ({ mapGradient }) => {
 
   return (
     <div>
-      <h2 className="main-header">Select Filter</h2>
+      <h3 className="main-header">Filter by Number of Groups</h3>
       <Box mx={3}>
         <Histogram mapGradient={mapGradient} sliderWidth={sliderWidth} />
         <ThemeProvider theme={muiTheme}>
