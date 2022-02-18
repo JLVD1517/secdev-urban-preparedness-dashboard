@@ -402,6 +402,11 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
       }
     });
 
+    popup.on('close', () => {
+      clearFeatureState();
+       dispatch(setSelectedCommuneId(-1));
+    });
+
     map.on("close-all-popups", () => {
       popup.remove();
     });
