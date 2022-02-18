@@ -1,5 +1,5 @@
 import React from "react";
-import { Select, FormControl, InputLabel , Box} from "@material-ui/core";
+import { Select, FormControl, InputLabel, Box} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from '../../types';
@@ -29,8 +29,8 @@ const SelectGroup: React.FC = () => {
       group_id: -1,
       name: ''
     }
-    if(event.target.value != -1) {
-      selectedItem = groupsList.find(item => item.group_id == event.target.value);
+    if(event.target.value !== -1) {
+      selectedItem = groupsList.find(item => item.group_id === event.target.value);
     }
     dispatch(setSelectedGroup(selectedItem as any as Group));
   };
@@ -48,7 +48,7 @@ const SelectGroup: React.FC = () => {
         <InputLabel htmlFor="IndexSelect">Select Group</InputLabel>
         <Select
           id="IndexSelect"
-          label="Urban Resiliency Index"
+          label="Select Group"
           native
           value={selectedGroup.group_id > 0 ? selectedGroup.group_id : ''}
           onChange={handleSelect}
