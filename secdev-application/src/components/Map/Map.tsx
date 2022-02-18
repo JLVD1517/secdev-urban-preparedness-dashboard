@@ -229,8 +229,6 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       };
 
       const generatePoiLayers = () => {
-        console.log("PointsOfInterest ===>>> ", PointsOfInterest);
-        
         PointsOfInterest.forEach(item => {
           map.addLayer({
             id: item.title,
