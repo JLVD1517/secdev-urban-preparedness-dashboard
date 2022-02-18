@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import  moment from 'moment';
 import { LANGUAGE } from '../../configuration/app-config';
 import { InitialEventsComponentState } from '../../types';
 
 const eventsComponentInitialState: InitialEventsComponentState = {
-  startDate: '01-12-2020',
-  endDate:  '01-12-2022',
+  startDate: moment().subtract(1, 'months').format("DD-MM-YYYY"),
+  endDate:  moment().format("DD-MM-YYYY"),
   selectedCommuneId: -1,
   language: LANGUAGE.ENGLISH,
   selectedEvent: {
