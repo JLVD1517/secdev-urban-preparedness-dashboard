@@ -155,9 +155,15 @@ export const PointsOfInterest: PointsOfInterestType[] = [
     nameField: 'name',
   },
   {
-    title: 'Settlements As Points',
+    title: 'Settlements',
     endpoint: 'settlements_as_points',
-    icon: 'stadium-15',
+    icon: 'village-15',
+    nameField: 'name',
+  },
+  {
+    title: 'Schools',
+    endpoint: 'schools',
+    icon: 'school-15',
     nameField: 'name',
   },
 ];
