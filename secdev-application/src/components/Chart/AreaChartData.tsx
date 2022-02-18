@@ -90,6 +90,7 @@ const AreaChartData: React.FC<AreaChartProps> = ({
         }}
         stroke={darkTheme ? "#fff" : "#000"}
         fontSize={10}
+        reversed
       />
       <Tooltip 
         filterNull={true}

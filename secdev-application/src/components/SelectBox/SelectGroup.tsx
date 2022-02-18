@@ -48,7 +48,7 @@ const SelectGroup: React.FC = () => {
         <InputLabel htmlFor="IndexSelect">Select Group</InputLabel>
         <Select
           id="IndexSelect"
-          label="Urban Resiliency Index"
+          label="Select Group"
           native
           value={selectedGroup.group_id > 0 ? selectedGroup.group_id : ''}
           onChange={handleSelect}
