@@ -13,13 +13,13 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     AboutContainer: {
       minHeight: `calc(100vh - ${componentSizing.appBarHeight})`,
-      padding: '5rem 0',
+      padding: "5rem 0",
     },
     SectionHeader: {
-      marginTop: '1rem',
+      marginTop: "1rem",
     },
     IntroHeader: {
-      marginTop: '0.5rem',
+      marginTop: "0.5rem",
     },
     Button: {
       marginLeft: '5rem',
@@ -27,14 +27,18 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '20px',
       backgroundColor: theme.palette.background.paper,
     },
-  }),
+    btnStyle: {
+      display: "flex",
+      justifyContent: "space-around",
+    },
+  })
 );
 
 export const About: React.FC = () => {
   const classes = useStyles();
 
   const darkTheme: boolean = useSelector(
-    (state: AppState) => state.AppControl.darkTheme,
+    (state: AppState) => state.AppControl.darkTheme
   );
 
   return (
