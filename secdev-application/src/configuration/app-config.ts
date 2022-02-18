@@ -36,7 +36,7 @@ export const eventMapAreaConfig = {
 
 export const filterScale = {
   lowBound: 0,
-  highBound: 10,
+  highBound: 15,
   step: 1,
 };
 

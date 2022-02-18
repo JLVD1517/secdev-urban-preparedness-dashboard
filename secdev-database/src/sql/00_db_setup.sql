@@ -43,28 +43,6 @@ CREATE TYPE secdev.EVENT_CATEGORY AS ENUM (
   'news'
 );
 
-CREATE TYPE secdev.EVENT_TYPE AS ENUM (
-  'Violence mortelle',
-  'Violence électorale',
-  'Violence interpersonnelle',
-  'Violence criminelle',
-  'Violence organisée',
-  'Troubles sociaux',
-  'Violence contre les femmes et les filles',
-  'Enlèvement et rançon',
-  'Implication du groupe armé',
-  'Violence de lÉtat',
-  'Lethal violence',
-  'Election violence',
-  'Interpersonal violence',
-  'Criminal violence',
-  'Organized violence',
-  'Social unrest',
-  'Violence against women and girls',
-  'Kidnapping and ransom',
-  'Armed group involvement',
-  'State violence'
-);
 
 CREATE TYPE secdev.ACTIVITIES AS ENUM (
   'Assassination',
@@ -127,8 +105,7 @@ CREATE TABLE secdev.group_records (
 
 CREATE TABLE secdev.events (
   "event_id" SERIAL PRIMARY KEY,
-  "url" text UNIQUE NOT NULL,
-  "type" secdev.EVENT_TYPE
+  "type" text UNIQUE
 );
 
 CREATE TABLE secdev.event_info (

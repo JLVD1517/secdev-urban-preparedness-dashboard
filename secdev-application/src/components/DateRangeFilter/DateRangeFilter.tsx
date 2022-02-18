@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
-import { useTheme, Theme } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
-import TextField from '@material-ui/core/TextField';
-import DateRangeIcon from '@material-ui/icons/DateRange';
-import moment from 'moment';
-import DateRangePicker from 'react-daterange-picker';
-import 'react-daterange-picker/dist/css/react-calendar.css';
-import './DateRangeFilter.scss';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from '../../types';
+import React, { useState } from "react";
+import { useTheme, Theme } from "@material-ui/core";
+import { makeStyles } from "@material-ui/styles";
+import TextField from "@material-ui/core/TextField";
+import DateRangeIcon from "@material-ui/icons/DateRange";
+import * as Moment from 'moment';
+import  moment from 'moment';
+import DateRangePicker from "react-daterange-picker";
+import { extendMoment } from "moment-range";
+import "react-daterange-picker/dist/css/react-calendar.css";
+import "./DateRangeFilter.scss";
+import { useDispatch, useSelector } from "react-redux";
+import { AppState } from "../../types";
 import {
   setEventsEndDate,
   setEventsStartDate,
-} from '../../store/modules/eventsPageStore';
+} from "../../store/modules/eventsPageStore";
+const moment_range = extendMoment(Moment);
 
 interface DateRangeFilterProps {
   darkTheme: boolean;
@@ -32,7 +35,7 @@ const DateRangeFilter: React.FC<DateRangeFilterProps> = ({ darkTheme }) => {
       zIndex: 2,
     },
   }));
-  const [value, onSelect]: any = useState(null);
+  const [value, onSelect]: any = useState(moment_range.range(moment().subtract(1, 'months'),moment()));
   const [modal, setModal]: any = useState<Boolean>(false);
 
   const startDate: string = useSelector(

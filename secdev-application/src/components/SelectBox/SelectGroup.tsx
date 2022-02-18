@@ -50,7 +50,7 @@ const SelectGroup: React.FC = () => {
           id="IndexSelect"
           label="Select Group"
           native
-          value={selectedGroup.group_id > 0 ? selectedGroup.group_id : ''}
+          value={selectedGroup && selectedGroup.group_id > 0 ? selectedGroup.group_id : 'All'}
           onChange={handleSelect}
         >
           <option aria-label="None" value="-1">
