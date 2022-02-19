@@ -13,9 +13,6 @@ import sdgLogoBlack from '../assets/appBranding/secdevanalytics_black.png';
 import mbLogoWhite from '../assets/appBranding/mapbox-logo-white.png';
 import mbLogoBlack from '../assets/appBranding/mapbox-logo-black.png';
 
-import blankDarkImg from '../assets/img/user-groups-svgrepo-com.svg';
-import blankLightImg from '../assets/img/user-groups-svgrepo-com.svg';
-
 export const mainLogo = navLogo;
 
 // Background image for the About Page
@@ -31,6 +28,3 @@ export const mbLogo = mbLogoWhite;
 export const sdgDark = sdgLogoBlack;
 export const mbDark = mbLogoBlack;
 
-//Blank Data
-export const blankDark = blankDarkImg;
-export const blankLight = blankLightImg;

@@ -155,8 +155,8 @@ def add_events(config, data):
                         '{each.get("category")}'
                     ) ON CONFLICT DO NOTHING'''
         try:
-            print(info_sql)
-            #cur.execute(info_sql)
+            # print(info_sql)
+            cur.execute(info_sql)
         except Exception as e:
             logger.error(f'Could not add event with url {each["url"]}')
             logger.error(e)
