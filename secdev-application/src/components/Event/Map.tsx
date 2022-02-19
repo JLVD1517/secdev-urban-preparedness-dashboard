@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.default,
     position: 'relative',
     overflow: 'auto',
-    maxHeight: 300,
+    //maxHeight: 300,
   },
   listSection: {
     backgroundColor: 'inherit',
@@ -404,10 +404,10 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
 
     popup.on('close', () => {
       clearFeatureState();
-       dispatch(setSelectedCommuneId(-1));
+      dispatch(setSelectedCommuneId(-1));
     });
 
-    map.on("close-all-popups", () => {
+    map.on('close-all-popups', () => {
       popup.remove();
     });
 
@@ -495,15 +495,11 @@ const Map: React.FC<MapProps> = ({ darkTheme, mapGradient }) => {
             </div>
             <div className="row">
               <h3 className={classes.mainHeader1}>
-                The community violence reduction monitor collects and
-                synthesizes relevant events from global and local news media in
-                French and English. A predefined list of queries are
-                automatically sent to searX, a meta search engine, on a daily
-                basis with an aim to collect news articles published in the
-                online news media. These articles are then processed using
-                Natural Language Processing (NLP) techniques to extract the
-                summary, date, place, keywords, event category and sentiment of
-                the articles.
+                Articles related to violence in Port-au-Prince are processed using Natural Language
+                Processing (NLP) techniques to extract the event category and
+                sentiment or tone. The tone represents the level of violence or
+                seriousness detected in the language of the article, where 0 is
+                the least serious and -20 is the most serious.
               </h3>
             </div>
           </div>

@@ -353,7 +353,7 @@ const Map: React.FC<MapProps> = ({
 
     popup.on('close', () => {
       clearFeatureState();
-      dispatch(setSelectedItem(null))
+      dispatch(setSelectedItem(null));
     });
 
     map.on('close-all-popups', () => {
