@@ -6,17 +6,14 @@ const groupsInitialState: GroupsInitialState = {
   status: 'idle',
   error: false,
   loaded: false,
-  groups: []
-}
+  groups: [],
+};
 
-export const fetchGroups = createAsyncThunk(
-  'fetch-groups',
-  async () => {
-    const apiUrl = `${process.env.REACT_APP_ENDPOINT_URL}groups`
-    const response = await axios.get(apiUrl);
-    return response.data
-  },
-);
+export const fetchGroups = createAsyncThunk('fetch-groups', async () => {
+  const apiUrl = `${process.env.REACT_APP_ENDPOINT_URL}groups`;
+  const response = await axios.get(apiUrl);
+  return response.data;
+});
 
 const groupsListSlice = createSlice({
   name: 'groups-list',

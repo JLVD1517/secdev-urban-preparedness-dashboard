@@ -1,34 +1,34 @@
-import React from "react";
-import { Select, FormControl, InputLabel } from "@material-ui/core";
+import React from 'react';
+import { Select, FormControl, InputLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../types';
-import { Event } from "../../types/modules/eventsFilters.type";
-import { setSelectedEventId } from "../../store/modules/eventsPageStore";
+import { Event } from '../../types/modules/eventsFilters.type';
+import { setSelectedEventId } from '../../store/modules/eventsPageStore';
 
 const SelectEvent: React.FC = () => {
-  const useStyles = makeStyles((theme) => ({
+  const useStyles = makeStyles(theme => ({
     formControl: {
       minWidth: 250,
     },
   }));
   const dispatch = useDispatch();
-  const eventsList: Event[] | [] = useSelector (
-    (state: AppState) => state.EventsListStore.events
+  const eventsList: Event[] | [] = useSelector(
+    (state: AppState) => state.EventsListStore.events,
   );
-  const selectedEvent: Event = useSelector (
-    (state: AppState) => state.EventsPageStore.selectedEvent
+  const selectedEvent: Event = useSelector(
+    (state: AppState) => state.EventsPageStore.selectedEvent,
   );
 
-  const handleSelect = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ) => {
-    let selectedItem: Event| any = {
+  const handleSelect = (event: React.ChangeEvent<{ value: unknown }>) => {
+    let selectedItem: Event | any = {
       event_id: -1,
-      name: ''
-    }
-    if(event.target.value != -1) {
-      selectedItem = eventsList.find(item => item.event_id as number == event.target.value);
+      name: '',
+    };
+    if (event.target.value !== -1) {
+      selectedItem = eventsList.find(
+        item => (item.event_id as number) === event.target.value,
+      );
     }
 
     dispatch(setSelectedEventId(selectedItem as any as Event));
@@ -37,15 +37,15 @@ const SelectEvent: React.FC = () => {
   const classes = useStyles();
   return (
     <FormControl className={classes.formControl} variant="outlined">
-      <InputLabel htmlFor="IndexSelect">Select Event</InputLabel>
+      <InputLabel htmlFor="IndexSelect">Select Event Type</InputLabel>
       <Select
         id="IndexSelect"
-        label="Urban Resiliency Index"
+        label="Select Event Type"
         native
-        value={selectedEvent.event_id > 0 ? selectedEvent.event_id : ''}
+        value={selectedEvent.event_id > 0 ? selectedEvent.event_id : 'All'}
         onChange={handleSelect}
       >
-        <option aria-label="None" value="-1" >
+        <option aria-label="None" value="-1">
           {'All'}
         </option>
         {(eventsList as Event[]).map((item: Event, index: number) => {

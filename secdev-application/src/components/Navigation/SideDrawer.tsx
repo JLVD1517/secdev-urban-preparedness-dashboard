@@ -81,6 +81,9 @@ const SideDrawer: React.FC = () => {
 
   const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+      icon: {
+        color: 'white',
+      },
       sideBarHeader: {
         borderBottom: `2px solid ${theme.palette.text.disabled}`,
       },
@@ -181,7 +184,10 @@ const SideDrawer: React.FC = () => {
             >
               {' '}
               <ListItemIcon>
-                <item.icon aria-label={`icon for ${item.name} page`} />
+                <item.icon
+                  className={classes.icon}
+                  aria-label={`icon for ${item.name} page`}
+                />
               </ListItemIcon>
               <ListItemText primary={item.name} />
             </ListItem>

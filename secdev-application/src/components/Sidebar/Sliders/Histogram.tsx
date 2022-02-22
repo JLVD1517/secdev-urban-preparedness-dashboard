@@ -51,7 +51,7 @@ const Histogram: React.FC<HistogramProps> = ({ mapGradient, sliderWidth }) => {
           type: 'histogram',
           // @ts-ignore
           nbinsx: 6,
-          cumulative: {enabled: true},
+          cumulative: { enabled: true },
           marker: {
             color: [
               mapGradient.step1,

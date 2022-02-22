@@ -61,7 +61,7 @@ const Events: React.FC = () => {
           <Map
             darkTheme={darkTheme}
             selectedYear={selectedYear}
-            selectedMonth = {selectedMonth}
+            selectedMonth={selectedMonth}
             mapGradient={currentMapGradient}
           />
           {/* <Sidebar mapGradient={currentMapGradient} /> */}

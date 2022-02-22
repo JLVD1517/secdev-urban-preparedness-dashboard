@@ -1,13 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Slider } from '@material-ui/core';
-import {
-  createTheme,
-  ThemeProvider,
-  useTheme,
-} from '@material-ui/core/styles';
+import { createTheme, ThemeProvider, useTheme } from '@material-ui/core/styles';
 import { setSelectedMonth } from '../../../store/modules/sidebarControlStore';
-import { AppState } from '../../../types';
+import { AppState, MapGradientType } from '../../../types';
 import { availableMonths } from '../../../configuration/app-config';
 
 interface MarksType {
@@ -15,7 +11,11 @@ interface MarksType {
   label: number;
 }
 
-const DateSlider: React.FC = () => {
+interface FilterSliderProps {
+  mapGradient: MapGradientType;
+}
+
+const DateSlider: React.FC<FilterSliderProps> = ({ mapGradient }) => {
   const dispatch = useDispatch();
 
   const selectedMonth: number | number[] = useSelector(
@@ -67,13 +67,13 @@ const DateSlider: React.FC = () => {
           display: 'none',
         },
         track: {
-          color: theme.palette.primary.main,
+          color: mapGradient.step5,
         },
         rail: {
-          color: theme.palette.primary.main,
+          color: mapGradient.step5,
         },
         thumb: {
-          color: theme.palette.primary.main,
+          color: mapGradient.step5,
         },
         markLabel: {
           color: theme.palette.text.secondary,
@@ -88,7 +88,7 @@ const DateSlider: React.FC = () => {
 
   return (
     <div>
-      <h2 className="main-header">Select Month</h2>
+      <h3 className="main-header">Select Month</h3>
       <Box px={3} mb={-3} mt={4}>
         <ThemeProvider theme={muiTheme}>
           {availableMonths.length > 0 && (

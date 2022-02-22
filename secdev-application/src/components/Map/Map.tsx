@@ -11,7 +11,7 @@ import {
 import {
   MapGradientType,
   AppState,
-  PointsOfInterestStoreType
+  PointsOfInterestStoreType,
 } from '../../types';
 import {
   resetFilterSlider,
@@ -34,7 +34,12 @@ interface MapProps {
   mapGradient: MapGradientType;
 }
 
-const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGradient }) => {
+const Map: React.FC<MapProps> = ({
+  darkTheme,
+  selectedYear,
+  selectedMonth,
+  mapGradient,
+}) => {
   const [map, setMap]: any = useState(null);
 
   const mapRef = useRef<HTMLDivElement>(null);
@@ -50,11 +55,11 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
   const filterSliderValue: [number, number] = useSelector(
     (state: AppState) => state.SidebarControl.filterSlider,
   );
-  const selectedGroup: Group = useSelector (
-    (state: AppState) => state.GroupsPageStore.selectedGroup
+  const selectedGroup: Group = useSelector(
+    (state: AppState) => state.GroupsPageStore.selectedGroup,
   );
   const pointsOfInterest: PointsOfInterestStoreType = useSelector(
-    (state: AppState) => state.SidebarControl.pointsOfInterest
+    (state: AppState) => state.SidebarControl.pointsOfInterest,
   );
 
   const setSelection = (
@@ -132,9 +137,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
     source: {
       type: 'vector',
       tiles: [
-        `${
-          process.env.REACT_APP_MAP_TILESERVER_URL
-        }get-subcommune/${selectedMonth}/${selectedYear}/${selectedGroup.group_id}/{z}/{x}/{y}`,
+        `${process.env.REACT_APP_MAP_TILESERVER_URL}get-subcommune/${selectedMonth}/${selectedYear}/${selectedGroup.group_id}/{z}/{x}/{y}`,
       ],
       promoteId: tractId,
       minzoom: 0,
@@ -147,8 +150,8 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       'fill-opacity': [
         'case',
         ['boolean', ['feature-state', 'click'], false],
-        0.85,
-        0.4,
+        0.9,
+        0.7,
       ],
     },
   };
@@ -229,8 +232,8 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       };
 
       const generatePoiLayers = () => {
-        console.log("PointsOfInterest ===>>> ", PointsOfInterest);
-        
+        console.log('PointsOfInterest ===>>> ', PointsOfInterest);
+
         PointsOfInterest.forEach(item => {
           map.addLayer({
             id: item.title,
@@ -294,7 +297,6 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
           }
           // set selection
           setSelection(e);
-
           // add the popup
           addPopup(
             <Popup clickedItem={e.features[0].properties} />,
@@ -327,7 +329,7 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       map.on('mouseenter', 'secdev-layer', () => {
         map.getCanvas().style.cursor = 'pointer';
       });
-        
+
       // add layers and set map
       map.addLayer(layer);
       generatePoiLayers();
@@ -347,6 +349,11 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
           .getElementById('MapSearchBar')!
           .appendChild(geocoder.onAdd(map));
       }
+    });
+
+    popup.on('close', () => {
+      clearFeatureState();
+      dispatch(setSelectedItem(null));
     });
 
     map.on('close-all-popups', () => {

@@ -15,7 +15,7 @@ export const fetchColumnData = createAsyncThunk(
     // const response = await axios.get(apiUrl);
     // return response.data;
 
-    return {data: [1,2,3,4,5,6]}
+    return { data: [1, 2, 3, 4, 5, 6] };
   },
 );
 

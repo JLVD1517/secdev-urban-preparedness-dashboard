@@ -2,21 +2,21 @@ import { createTheme, lighten } from '@material-ui/core';
 import { Overrides } from '@material-ui/core/styles/overrides';
 
 export const mapGradientDark = {
-  step1: '#FEE5D9',
-  step2: '#FCBBA1',
-  step3: '#FC9272',
-  step4: '#FB6A4A',
-  step5: '#DE2D26',
-  step6: '#A50F15',
-}
+  step1: '#edf8fb',
+  step2: '#ccece6',
+  step3: '#99d8c9',
+  step4: '#66c2a4',
+  step5: '#2ca25f',
+  step6: '#006d2c',
+};
 
 export const mapGradientLight = {
-  step1: '#EFF3FF',
-  step2: '#C6DBEF',
-  step3: '#9ECAE1',
-  step4: '#6BAED6',
-  step5: '#3182BD',
-  step6: '#08519C',
+  step1: '#f6eff7',
+  step2: '#d0d1e6',
+  step3: '#a6bddb',
+  step4: '#67a9cf',
+  step5: '#1c9099',
+  step6: '#016c59',
 };
 
 export const themeOverrides: Overrides = {
@@ -117,15 +117,17 @@ darkTheme.overrides = {
       },
 
       //  style sugestion background color
-      '.suggestions > a, .mapboxgl-ctrl-geocoder >.suggestions > a, .mapboxgl-ctrl-geocoder .suggestions > li': {
-        backgroundColor: `${darkTheme.palette.background.default} !important`,
-      },
+      '.suggestions > a, .mapboxgl-ctrl-geocoder >.suggestions > a, .mapboxgl-ctrl-geocoder .suggestions > li':
+        {
+          backgroundColor: `${darkTheme.palette.background.default} !important`,
+        },
 
       // style hovered suggestions
-      '.suggestions > a, .mapboxgl-ctrl-geocoder >.suggestions > a, .mapboxgl-ctrl-geocoder .suggestions > li > :hover': {
-        backgroundColor: `${darkTheme.palette.secondary.main} !important`,
-        color: `${darkTheme.palette.background.default} !important`,
-      },
+      '.suggestions > a, .mapboxgl-ctrl-geocoder >.suggestions > a, .mapboxgl-ctrl-geocoder .suggestions > li > :hover':
+        {
+          backgroundColor: `${darkTheme.palette.secondary.main} !important`,
+          color: `${darkTheme.palette.background.default} !important`,
+        },
     },
   },
 };
@@ -187,15 +189,17 @@ lightTheme.overrides = {
       },
 
       //  style sugestion background color
-      '.suggestions> a, .mapboxgl-ctrl-geocoder >.suggestions > a, .mapboxgl-ctrl-geocoder .suggestions > li': {
-        backgroundColor: `${lightTheme.palette.background.default} !important`,
-      },
+      '.suggestions> a, .mapboxgl-ctrl-geocoder >.suggestions > a, .mapboxgl-ctrl-geocoder .suggestions > li':
+        {
+          backgroundColor: `${lightTheme.palette.background.default} !important`,
+        },
 
       // style hovered suggestions
-      '.suggestions> a, .mapboxgl-ctrl-geocoder >.suggestions > a, .mapboxgl-ctrl-geocoder .suggestions > li > :hover': {
-        backgroundColor: `${lightTheme.palette.secondary.main} !important`,
-        color: `${lightTheme.palette.action.active} !important`,
-      },
+      '.suggestions> a, .mapboxgl-ctrl-geocoder >.suggestions > a, .mapboxgl-ctrl-geocoder .suggestions > li > :hover':
+        {
+          backgroundColor: `${lightTheme.palette.secondary.main} !important`,
+          color: `${lightTheme.palette.action.active} !important`,
+        },
     },
   },
 };

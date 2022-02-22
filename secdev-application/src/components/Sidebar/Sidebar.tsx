@@ -21,7 +21,6 @@ import {
   CalendarToday,
   SignalCellularAlt,
 } from '@material-ui/icons';
-import CensusInfo from './CensusInfo/CensusInfo';
 import FilterSlider from './Sliders/FilterSlider';
 import DateSlider from './Sliders/DateSlider';
 import { AppState, MapGradientType, SelectedItemType } from '../../types';
@@ -39,6 +38,7 @@ import { formatDisplayNumber } from '../../services/sharedFunctions';
 import { componentSizing } from '../../services/component-sizing';
 import GangInfo from './GangInfo/GangInfo';
 import SelectGroup from '../SelectBox/SelectGroup';
+import SelectMonth from '../SelectBox/SelectMonth';
 
 interface SidebarProps {
   mapGradient: MapGradientType;
@@ -171,7 +171,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
         {!desktopCollapse ? (
           <div>
             <h1 className={classes.mainHeader}>
-              Community Violence Reduction Dashboard
+              Armed Actor Groups in Port-Au-Prince
             </h1>
             <Box
               my={3}
@@ -181,12 +181,10 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
               justifyContent="center"
             >
               <FormControl className={classes.formControl} variant="outlined">
-                <InputLabel htmlFor="IndexSelect">
-                  Select year
-                </InputLabel>
+                <InputLabel htmlFor="IndexSelect">Select year</InputLabel>
                 <Select
                   id="IndexSelect"
-                  label="Urban Resiliency Index"
+                  label="Select Year"
                   native
                   value={selectedYear}
                   onChange={handleYearSelection}
@@ -201,12 +199,12 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
                 </Select>
               </FormControl>
             </Box>
-            <SelectGroup/>      
-            <DateSlider />
+            <DateSlider mapGradient={mapGradient} />
+            <SelectGroup />
             <FilterSlider mapGradient={mapGradient} />
             <p>{sidebarText}</p>
-            {selectedItem && <h2 className="main-header">Groups Details</h2>}
-            <GangInfo/>
+            {selectedItem && <h2 className="main-header">Group Details</h2>}
+            <GangInfo />
           </div>
         ) : (
           <Grid
@@ -225,7 +223,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mapGradient }) => {
               <>
                 <SignalCellularAlt />
                 <Box mt={-1}>
-                  <p>{formatDisplayNumber(selectedItem[primaryScore])}</p>
+                  <p>{formatDisplayNumber(selectedItem[primaryScore], 0)}</p>
                 </Box>
               </>
             )}

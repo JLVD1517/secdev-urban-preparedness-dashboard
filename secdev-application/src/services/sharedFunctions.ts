@@ -1,4 +1,8 @@
-import { MapGradientType, PointsOfInterestStoreType, PointsOfInterestType } from '../types';
+import {
+  MapGradientType,
+  PointsOfInterestStoreType,
+  PointsOfInterestType,
+} from '../types';
 
 import { filterScale } from '../configuration/app-config';
 

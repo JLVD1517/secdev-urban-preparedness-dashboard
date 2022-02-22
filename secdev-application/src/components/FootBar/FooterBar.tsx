@@ -6,10 +6,14 @@ import { MapGradientType } from '../../types';
 interface FootBarProps {
   mapGradient: MapGradientType;
   elementData: string;
-  event:Boolean
+  event: Boolean;
 }
 
-const FootBar: React.FC<FootBarProps> = ({ mapGradient, elementData, event}) => {
+const FootBar: React.FC<FootBarProps> = ({
+  mapGradient,
+  elementData,
+  event,
+}) => {
   const theme = useTheme();
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -28,7 +32,7 @@ const FootBar: React.FC<FootBarProps> = ({ mapGradient, elementData, event}) => 
     bar: {
       opacity: 1,
       backgroundImage: `linear-gradient(90deg, ${mapGradient.step1} 0%, ${mapGradient.step2} 18.23%, ${mapGradient.step3} 39.38%, ${mapGradient.step4} 59.23%, ${mapGradient.step5} 79.87%, ${mapGradient.step6} 100%)`,
-      width: event ? '190': '263px',
+      width: event ? '190' : '263px',
       height: event ? '18px' : '24px',
     },
     text: {

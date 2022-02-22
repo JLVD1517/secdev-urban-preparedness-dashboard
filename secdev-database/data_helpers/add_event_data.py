@@ -77,7 +77,43 @@ def add_events(config, data):
         logger.debug(f'Could not connect to frontend database')
         raise e
 
+    eventtypes = {}
+
     for each in data:
+
+        event_type = each['eventtype'].lower().replace("'", "''")
+
+        # check the event_type exists and get its id
+        if event_type not in eventtypes.keys():
+            # add to database and list
+            sql = f''' INSERT INTO events (type, language) VALUES ('{event_type}', '{each["language"].lower()}') 
+                        ON CONFLICT DO NOTHING RETURNING event_id'''
+            try:
+                cur.execute(sql)
+                result = cur.fetchone()
+                if result:
+                    eventtypes[event_type] = result[0]
+                else:
+                    sql = f''' SELECT event_id from events where type = '{event_type}' '''
+                    try:
+                        cur.execute(sql)
+                        result = cur.fetchone()
+                        if result:
+                            eventtypes[event_type] = result[0]
+                    except Exception as e:
+                        logger.error(f'Could not find {event_type} in events table')
+            except Exception as e:
+                logger.error(f'Could not add {event_type} to events table')
+                sql = f''' SELECT event_id from events where type = '{event_type}' '''
+                try:
+                    cur.execute(sql)
+                    result = cur.fetchone()
+                    if result:
+                        eventtypes[event_type] = result[0]
+                except Exception as e:
+                    logger.error(f'Could not find {event_type} in events table')
+
+        each['event_id'] = eventtypes.get(event_type)
 
         # remove apostrophes
         for key, val in each.items():
@@ -94,38 +130,19 @@ def add_events(config, data):
 
         # get the commune_ids
         try:
-            each['commune_id'] = commune_ids[each['place']]
+            each['commune_id'] = commune_ids[each['place'].lower()]
         except KeyError:
             logger.error(f'Could not find a commune_id for {each["place"]}')
             logger.warning(f'This means the event with url {each["url"]} will not be added to the front end')
             continue
 
-        # add to events table and return event_id
-        event_sql = f'''INSERT INTO events (url, type) VALUES ('{each["url"]}', '{each["eventtype"]}') 
-                        ON CONFLICT(url) DO NOTHING RETURNING (event_id) '''
-        
-        event_exists_sql = f'''SELECT event_id FROM events WHERE url = '{each["url"]}'
-                            '''
-        result = None
-        try:
-            cur.execute(event_sql)
-            result = cur.fetchone()
-        except Exception as e:
-            logger.error(e)
-        
-        if not result:
-            cur.execute(event_exists_sql)
-            result = cur.fetchone()
-
-        if result:
-            each['event_id'] = result[0]
-            # if an id value is returned, insert into event_info table
-            info_sql = f'''INSERT INTO event_info (
+        # if an id value is returned, insert into event_info table
+        info_sql = f'''INSERT INTO event_info (
                     event_id, tone, source, language,
                     pub_date, title, url, summary, compound, 
                     commune_id, category
                     ) VALUES (
-                        {each.get("event_id")},
+                        '{each.get("event_id")}',
                         '{each.get("tone")}', 
                         '{each.get("source")}',
                         '{each.get("language").lower()}',
@@ -137,13 +154,14 @@ def add_events(config, data):
                         '{each.get("commune_id")}',
                         '{each.get("category")}'
                     ) ON CONFLICT DO NOTHING'''
-            try:
-                cur.execute(info_sql)
-            except Exception as e:
-                logger.error(f'Could not add event with url {each["url"]}')
-                logger.error(e)
-        else:
-            logger.error(f'Could not find or generate an id for event with url {each["url"]}')
+        try:
+            # print(info_sql)
+            cur.execute(info_sql)
+        except Exception as e:
+            logger.error(f'Could not add event with url {each["url"]}')
+            logger.error(e)
+    else:
+        logger.error(f'Could not find or generate an id for event with url {each["url"]}')
     conn.close()
 
 def get_commune_ids(config):
@@ -161,7 +179,40 @@ def get_commune_ids(config):
     db_username = db_conf['db_username']
     db_password = db_conf['db_password']
 
-    sql = ''' SELECT name, commune_id FROM commune '''
+    sql = ''' SELECT LOWER(name), commune_id FROM commune '''
+    
+    # initialize database connection and query for data
+    try:
+        conn = psycopg2.connect(
+                    f"host={db_host} port={db_port} dbname={db_name} user={db_username} password={db_password}")
+        cur = conn.cursor()
+        cur.execute(sql)
+        results = cur.fetchall()
+        logger.debug(f'first result: {results[0]}')
+        conn.close()
+        return results
+    except Exception as e:
+        logger.error('Could not get commune data')
+        raise e
+
+def get_event_types(config):
+    '''
+    TODO merge with previous function
+
+    Connect to the frontend database, grab event_types and ids, and return the data
+    config - config object
+    '''
+
+    db_conf = config['frontend']
+
+    # get db variables from config
+    db_host = db_conf['db_host']
+    db_port = 5432
+    db_name = db_conf['db_name']
+    db_username = db_conf['db_username']
+    db_password = db_conf['db_password']
+
+    sql = ''' SELECT LOWER(type), event_id FROM events '''
     
     # initialize database connection and query for data
     try:

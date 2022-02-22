@@ -88,7 +88,9 @@ const PopupContent: React.FC<PopupContentProps> = ({
         gutterBottom
         className={classes.bigText}
       >
-        {clickedItem.no_of_articles as any as number > 0 ? clickedItem.no_of_articles : '-' }
+        {(clickedItem.no_of_articles as any as number) > 0
+          ? clickedItem.no_of_articles
+          : '-'}
       </Typography>
 
       <Typography className={classes.title} color="textSecondary" gutterBottom>

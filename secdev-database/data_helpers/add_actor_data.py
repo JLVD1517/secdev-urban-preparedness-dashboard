@@ -90,14 +90,17 @@ def num_check(x):
         x_str = str(x)
         if x_str.isdigit():
             return x
-        # take first num
+        # take first num if a range is provided using '-'
         if '-' in x_str:
             l = x_str.split('-')
             if l[0].isdigit():
                 return l[0]
+        # if the string is only numbers
         if x_str.strip().isdigit():
             return x
-    return ''
+        
+        # if the string contains other non-digit characters, but is not a range (no '-'), simply return the digits
+        return ''.join(filter(lambda i: i.isdigit(), x_str))
 
 
 # get commune and sub-commune ids
@@ -127,15 +130,26 @@ def subcommune_id(x):
     id_list = []
     for each in x:
         each = str(each).replace('é', 'e')
-        each = each.replace("'", "")
+        each = each.replace("'", "").lower().strip()
 
         if ' - ' in each:
-            commune, each = each.split(' - ')
-        sql = f"SELECT sub_commune_id FROM sub_commune WHERE name = '{each}'"
+            # TODO use commune name to verify the correct sub-commune
+            commune, each = each.split(' - ') 
+
+        # stopgaps to handle bad data, TODO remove when data validation is improved
+        if each == 'saint martin':
+            each = 'st martin'
+        if each == 'varreux':
+            each = '1 des Varreux'  # note that this creates artificial inflation for this sub-commune
+        if each == 'bellevue':
+            each = '3 Bellevue'  # note that this creates an artificial inflation for this sub-commune
+
+        sql = f"SELECT sub_commune_id FROM sub_commune WHERE LOWER(name) = LOWER('{each}')"
         cur.execute(sql)
         result = cur.fetchone()
         if result:
             id_list.append(result[0])
+
     return id_list
 
 for datafile in datafiles:
@@ -143,8 +157,42 @@ for datafile in datafiles:
     # open file and turn into dataframe
     df = pd.read_excel(filepath)
 
+    col_map = {
+        'Date de collecte': 'date_of_collection',   # also need to use for 'month_number' and 'year'
+        'Nom du Groupe': 'name',
+        'Groupe Type ': 'type',
+        'Nom du Chef du Groupemn Armé': 'leader_name',
+        'Effcetif de membres dans le groupe': 'group_size',
+        "Zone d'installation": 'base_commune_id',
+        'Sub-commune "influence"': 'sub_commune_influence',  # separate line list
+        'Key activities': 'key_activities',  # separate line list
+        "Positive connection  avec d'autres groupes armés [Nom du Groupe] ": 'alliance_groups',  # list
+        'Affiliation to a “federation” (e.g. G9, G20 or GPEP) - list': 'affiliation',  # single val
+        'Opposition to other armed group(s) [name group(s)] ': 'rival_groups',  # list
+        'Additional notes': 'additional_notes'
+    }
+
+    # replace column names with db names and remove unneeded columns
+    df.rename(columns=col_map, inplace=True)
+    df = df[col_map.values()]
+
+    # fill down single line columns to avoid data loss
+    key_cols = ['date_of_collection',
+                'name',
+                'type',
+                'leader_name',
+        'group_size',
+        "base_commune_id",
+        "alliance_groups",  # comma sep list
+        'affiliation',  # single val
+        'rival_groups',  # comma sep list
+        'additional_notes']
+
+    for col in key_cols:
+        df[col].ffill(inplace=True)
+
     # navigate dataframe 5 rows at a time to handle extra data on additional lines
-    multiline_cols = ['Key activities', 'Sub-commune "influence"']
+    multiline_cols = ['key_activities', 'sub_commune_influence']
     max = len(df)
 
     actor_list = []
@@ -164,6 +212,9 @@ for datafile in datafiles:
 
     actor_df = pd.DataFrame(actor_list)
 
+    # SANITY CHECK TODO: remove
+    print(actor_df['sub_commune_influence'])
+
     # clean column names
     for col in actor_df.columns:
         new_col = str(col).strip()
@@ -177,16 +228,17 @@ for datafile in datafiles:
 
     # turn string based lists that use commas and 'et' into lists
     str2list_cols = [
-                    "Positive connection  avec d'autres groupes armes [Nom du Groupe]",
-                    'Opposition to other armed group(s) [name group(s)]'
+                    'alliance_groups',
+                    'rival_groups'
                     ]
 
     for col in str2list_cols:
         actor_df[col] = actor_df[col].apply(create_list)
 
     # date handling - turn into YYYY-MM-DD format
-    actor_df['Date de collecte'] = actor_df['Date de collecte'].apply(handle_date)
+    actor_df['date_of_collection'] = actor_df['date_of_collection'].apply(handle_date)
 
+    # TODO improve date handling
     if 'dec' in datafile:
         actor_df['month_number'] = 12
         actor_df['year'] = 2021
@@ -194,27 +246,6 @@ for datafile in datafiles:
     if 'jan' in datafile:
         actor_df['month_number'] = 1
         actor_df['year'] = 2022
-
-    col_map = {
-        'Date de collecte': 'date_of_collection',   # also need to use for 'month_number' and 'year'
-        'month_number': 'month_number',
-        'year': 'year',
-        'Nom du Groupe': 'name',
-        'Groupe Type': 'type',
-        'Nom du Chef du Groupemn Arme': 'leader_name',
-        'Effcetif de membres dans le groupe': 'group_size',
-        "Zone d'installation": 'base_commune_id',
-        'Sub-commune "influence"': 'sub_commune_influence',  # separate line list
-        'Key activities': 'key_activities',  # separate line list
-        "Positive connection  avec d'autres groupes armes [Nom du Groupe]": 'alliance_groups',  # list
-        'Affiliation to a “federation” (e.g. G9, G20 or GPEP) - list': 'affiliation',  # single val
-        'Opposition to other armed group(s) [name group(s)]': 'rival_groups',  # list
-        'Additional notes': 'additional_notes'
-    }
-
-    # replace column names with db names and remove unneeded columns
-    actor_df.rename(columns=col_map, inplace=True)
-    actor_df = actor_df[col_map.values()]
         
     actor_df['group_size'] = actor_df['group_size'].apply(num_check)
 
@@ -223,6 +254,7 @@ for datafile in datafiles:
 
     # clean column strings
     actor_df['name'] = actor_df['name'].str.strip()
+    print(actor_df['name'])
     actor_df['type'] = actor_df['type'].str.strip()
     actor_df['affiliation'] = actor_df['affiliation'].str.strip()
 
@@ -277,7 +309,6 @@ for datafile in datafiles:
         columns = ', '.join(new_row.keys())
         values = ', '.join(new_row.values())
         sql = "INSERT INTO %s ( %s ) VALUES ( %s );" % ('group_records', columns, values)
-        print(sql)
         try:
             cur.execute(sql)
         except Exception as e:

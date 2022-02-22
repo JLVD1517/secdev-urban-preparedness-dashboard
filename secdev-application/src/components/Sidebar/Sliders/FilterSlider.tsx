@@ -1,10 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Slider } from '@material-ui/core';
-import {
-  createTheme,
-  ThemeProvider,
-  useTheme,
-} from '@material-ui/core/styles';
+import { createTheme, ThemeProvider, useTheme } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { cloneDeep } from 'lodash';
 import { AppState, MapGradientType } from '../../../types';
@@ -105,7 +101,7 @@ const FilterSlider: React.FC<FilterSliderProps> = ({ mapGradient }) => {
 
   return (
     <div>
-      <h2 className="main-header">Select Filter</h2>
+      <h3 className="main-header">Filter by Number of Groups</h3>
       <Box mx={3}>
         <Histogram mapGradient={mapGradient} sliderWidth={sliderWidth} />
         <ThemeProvider theme={muiTheme}>
