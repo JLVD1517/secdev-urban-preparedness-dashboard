@@ -5,13 +5,13 @@ ALTER DATABASE secdev_data SET search_path to secdev, public;
 CREATE ROLE admin SUPERUSER;
 CREATE ROLE readwrite;
 CREATE ROLE read;
- 
+
 CREATE USER secdevadmin WITH ENCRYPTED PASSWORD 'changeMe';
 CREATE USER secdevread WITH ENCRYPTED PASSWORD 'changeMe';
 CREATE USER secdevreadwrite WITH ENCRYPTED PASSWORD 'changeMe';
 
 ALTER USER postgres WITH ENCRYPTED PASSWORD 'changeMe';
- 
+
 GRANT admin TO secdevadmin;
 GRANT readwrite TO secdevreadwrite;
 GRANT read TO secdevread;
@@ -43,28 +43,6 @@ CREATE TYPE secdev.EVENT_CATEGORY AS ENUM (
   'news'
 );
 
-CREATE TYPE secdev.EVENT_TYPE AS ENUM (
-  'Violence mortelle',
-  'Violence électorale',
-  'Violence interpersonnelle',
-  'Violence criminelle',
-  'Violence organisée',
-  'Troubles sociaux',
-  'Violence contre les femmes et les filles',
-  'Enlèvement et rançon',
-  'Implication du groupe armé',
-  'Violence de lÉtat',
-  'Lethal violence',
-  'Election violence',
-  'Interpersonal violence',
-  'Criminal violence',
-  'Organized violence',
-  'Social unrest',
-  'Violence against women and girls',
-  'Kidnapping and ransom',
-  'Armed group involvement',
-  'State violence'
-);
 
 CREATE TYPE secdev.ACTIVITIES AS ENUM (
   'Assassination',
@@ -127,7 +105,7 @@ CREATE TABLE secdev.group_records (
 
 CREATE TABLE secdev.events (
   "event_id" SERIAL PRIMARY KEY,
-  "type" secdev.EVENT_TYPE
+  "type" text UNIQUE
 );
 
 CREATE TABLE secdev.event_info (
@@ -167,3 +145,30 @@ ALTER TABLE secdev.event_info ADD CONSTRAINT fk_event_id FOREIGN KEY (event_id) 
 ALTER TABLE secdev.sub_commune ADD CONSTRAINT fk_sub_to_commune_id FOREIGN KEY ("commune_id") REFERENCES secdev.commune ("commune_id");
 
 ALTER TABLE secdev.group_records ADD CONSTRAINT fk_group_id FOREIGN KEY ("group_id") REFERENCES secdev.groups ("group_id");
+
+
+
+ALTER  TABLE secdev.event_info alter column event_id set not null ;
+ALTER  TABLE secdev.event_info alter column tone set not null ;
+ALTER  TABLE secdev.event_info alter column source set not null ;
+ALTER  TABLE secdev.event_info alter column language set not null ;
+ALTER  TABLE secdev.event_info alter column pub_date set not null ;
+ALTER  TABLE secdev.event_info alter column title set not null ;
+ALTER  TABLE secdev.event_info alter column url set not null ;
+ALTER  TABLE secdev.event_info alter column summary set not null ;
+ALTER  TABLE secdev.event_info alter column compound set not null ;
+ALTER  TABLE secdev.event_info alter column commune_id set not null ;
+ALTER  TABLE secdev.event_info alter column category set not null ;
+
+
+
+
+ALTER  TABLE secdev.group_records alter column month_number set not null ;
+ALTER  TABLE secdev.group_records alter column year set not null ;
+ALTER  TABLE secdev.group_records alter column sub_commune_influence set not null ;
+ALTER  TABLE secdev.group_records alter column name set not null ;
+ALTER  TABLE secdev.group_records alter column type set not null ;
+ALTER  TABLE secdev.group_records alter column leader_name set not null ;
+ALTER  TABLE secdev.group_records alter column key_activities set not null ;
+ALTER  TABLE secdev.group_records alter column group_size set not null ;
+ALTER  TABLE secdev.group_records alter column affiliation set not null ;

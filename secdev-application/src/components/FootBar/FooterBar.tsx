@@ -1,47 +1,51 @@
-import React from 'react';
-import { useTheme, Theme } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
-import { MapGradientType } from '../../types';
+import React from "react";
+import { useTheme, Theme } from "@material-ui/core";
+import { makeStyles } from "@material-ui/styles";
+import { MapGradientType } from "../../types";
 
 interface FootBarProps {
   mapGradient: MapGradientType;
   elementData: string;
-  event:Boolean
+  event: Boolean;
 }
 
-const FootBar: React.FC<FootBarProps> = ({ mapGradient, elementData, event}) => {
+const FootBar: React.FC<FootBarProps> = ({
+  mapGradient,
+  elementData,
+  event,
+}) => {
   const theme = useTheme();
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
-      position: 'relative',
+      position: "relative",
       top: event ? `calc(100vh - 90vh)` : `calc(100vh - 15vh)`,
-      left: '10%',
-      width: event ? '210px' : '293px',
-      height: '50px',
+      left: "10%",
+      width: event ? "210px" : "293px",
+      height: "50px",
       background: theme.palette.background.paper,
-      borderRadius: '.5rem',
+      borderRadius: ".5rem",
     },
     lengend: {
-      margin: 'auto',
-      padding: '5px 5px 10px',
+      margin: "auto",
+      padding: "5px 5px 10px",
     },
     bar: {
       opacity: 1,
       backgroundImage: `linear-gradient(90deg, ${mapGradient.step1} 0%, ${mapGradient.step2} 18.23%, ${mapGradient.step3} 39.38%, ${mapGradient.step4} 59.23%, ${mapGradient.step5} 79.87%, ${mapGradient.step6} 100%)`,
-      width: event ? '190': '263px',
-      height: event ? '18px' : '24px',
+      width: event ? "190" : "263px",
+      height: event ? "18px" : "24px",
     },
     text: {
-      display: 'flex',
-      justifyContent: 'space-between',
+      display: "flex",
+      justifyContent: "space-between",
     },
     rangeText: {
-      fontSize: '12px',
-      lineHeight: '14.39px',
+      fontSize: "12px",
+      lineHeight: "14.39px",
     },
     centerBarText: {
-      fontSize: '16px',
-      lineHeight: '16.45px',
+      fontSize: "16px",
+      lineHeight: "16.45px",
       fontWeight: 700,
     },
   }));

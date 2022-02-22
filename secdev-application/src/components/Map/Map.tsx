@@ -229,8 +229,6 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
       };
 
       const generatePoiLayers = () => {
-        console.log("PointsOfInterest ===>>> ", PointsOfInterest);
-        
         PointsOfInterest.forEach(item => {
           map.addLayer({
             id: item.title,
@@ -294,7 +292,6 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
           }
           // set selection
           setSelection(e);
-
           // add the popup
           addPopup(
             <Popup clickedItem={e.features[0].properties} />,
@@ -347,6 +344,11 @@ const Map: React.FC<MapProps> = ({ darkTheme, selectedYear, selectedMonth, mapGr
           .getElementById('MapSearchBar')!
           .appendChild(geocoder.onAdd(map));
       }
+    });
+
+    popup.on('close', () => {
+      clearFeatureState();
+      dispatch(setSelectedItem(null))
     });
 
     map.on('close-all-popups', () => {
