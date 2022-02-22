@@ -48,8 +48,10 @@ const DateRangeFilter: React.FC<DateRangeFilterProps> = ({ darkTheme }) => {
   );
 
   const onDateSelect = (value: any) => {
-    dispatch(setEventsStartDate(moment(value.start).format("DD-MM-YYYY")));
+    
     dispatch(setEventsEndDate(moment(value.end).format("DD-MM-YYYY")));
+    dispatch(setEventsStartDate(moment(value.start).format("DD-MM-YYYY")));
+    
     onSelect(value);
   };
 
