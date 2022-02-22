@@ -59,6 +59,8 @@ COPY ./docker/pgscripts/     /usr/local/bin/
 COPY ./docker/dbscripts/     /usr/local/bin/
 COPY ./data_helpers/		/usr/local/bin/helpers/
 
+RUN chown postgres /usr/local/bin/helpers
+
 # Copy csv tables from python to postgres container
 COPY --from=csvkit /usr/local/data/csv/done/*.sql /usr/local/data/dbschema/
 
